@@ -34,3 +34,15 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Database (Prisma)
+
+If you haven't set up the database yet, make sure `DATABASE_URL` in your environment points to a Postgres instance.
+
+Run the following to generate the client, create the initial migration and seed the database with example diseases:
+
+```powershell
+pnpm prisma generate; pnpm prisma migrate dev --name init; pnpm run prisma:seed
+```
+
+The seed script will upsert example diseases: Cholera, Diarrhea, Typhoid and Hepatitis A.
