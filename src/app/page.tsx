@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Map from "@/components/Map";
+const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 import Chat from "@/components/Chat";
 
 type Incident = {
