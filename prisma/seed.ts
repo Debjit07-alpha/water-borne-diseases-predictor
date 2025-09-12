@@ -94,7 +94,51 @@ const diseases = [
       "Use bottled water in places where the water supply might be unsafe.",
     ],
     treatment:
-      "There is no specific treatment for hepatitis A. Your body will clear the hepatitis A virus on its own. In most cases, the liver heals completely in a month or two with no lasting damage.",
+      "There is no specific treatment for hepatitis A. Your body will clear the hepatitis A virus on its own. In most cases, a person's immune system will clear the virus from the body.",
+  },
+  {
+    name: "Dysentery",
+    slug: "dysentery",
+    overview:
+      "Dysentery is an intestinal inflammation, especially in the colon, that can lead to severe diarrhea with mucus or blood in the feces.",
+    symptoms: [
+      "Bloody diarrhea",
+      "Stomach cramps and pain",
+      "Nausea and vomiting",
+      "Fever",
+    ],
+    causes:
+      "Dysentery is usually caused by a bacterial or protozoan infection, most commonly from the Shigella bacterium (shigellosis) or an amoeba (amoebiasis). It spreads through poor hygiene, such as contaminated food and water.",
+    prevention: [
+      "Practice good hand hygiene by washing hands with soap and water.",
+      "Drink water from a safe source or boil it before drinking.",
+      "Avoid eating raw food and ensure all food is cooked thoroughly.",
+    ],
+    treatment:
+      "Mild dysentery can be treated with rest and plenty of fluids to prevent dehydration. For more severe cases, antibiotics may be necessary. Medical advice should be sought for proper diagnosis and treatment.",
+  },
+  {
+    name: "Giardiasis",
+    slug: "giardiasis",
+    overview:
+      "Giardiasis is a diarrheal disease caused by the microscopic parasite Giardia duodenalis. Once a person or animal has been infected with Giardia, the parasite lives in the intestines and is passed in feces.",
+    symptoms: [
+      "Watery, sometimes foul-smelling diarrhea",
+      "Fatigue",
+      "Abdominal cramps and bloating",
+      "Gas",
+      "Nausea",
+      "Weight loss",
+    ],
+    causes:
+      "Giardiasis is caused by the Giardia parasite, which is found in contaminated water, food, or soil. It can also be transmitted through person-to-person contact.",
+    prevention: [
+      "Avoid swallowing water from pools, lakes, rivers, or streams.",
+      "Wash hands thoroughly with soap and water.",
+      "Use a water filter or boil water before drinking in high-risk areas.",
+    ],
+    treatment:
+      "Several drugs can be used to treat giardiasis, such as metronidazole. Treatment is usually effective, but it's important to complete the full course of medication as prescribed by a healthcare provider.",
   },
 ];
 

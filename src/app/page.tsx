@@ -40,8 +40,11 @@ export default function Home() {
               <a href="/diseases" className="inline-block rounded-md border border-white px-6 py-3 text-white">Learn More</a>
             </div>
           </div>
-          <div className="h-80 rounded-md overflow-hidden border border-neutral-700 shadow-lg bg-white">
-            <Map position={mapPosition} onPositionChange={(lat, lng) => setMapPosition([lat, lng])} />
+          <div className="h-96 rounded-md overflow-hidden border border-neutral-700 shadow-lg bg-neutral-800 flex flex-col">
+            <h2 className="text-xl font-semibold p-4 bg-neutral-900/50 text-center">Water-Borne Disease Monitoring Map</h2>
+            <div className="flex-1">
+              <Map position={mapPosition} onPositionChange={(lat, lng) => setMapPosition([lat, lng])} />
+            </div>
           </div>
         </section>
 
