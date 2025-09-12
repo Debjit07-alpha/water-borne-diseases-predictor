@@ -52,12 +52,31 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
   }, []);
 
   if (!leafletLoaded || !LeafletComponents) {
-    return <div className="h-full w-full flex items-center justify-center">Loading map…</div>;
+    return <div className="h-full w-full flex items-center justify-center text-[#2C3E50]">Loading map…</div>;
   }
+
+  const customMapStyles = `
+    <style>
+      /* Force map labels and UI text to solid black for maximum readability */
+      .leaflet-container { color: #2C3E50 !important; }
+      .leaflet-control-container, .leaflet-control, .leaflet-bar a, .leaflet-popup-content, .leaflet-tooltip {
+        color: #2C3E50 !important;
+      }
+      .leaflet-bar a {
+        background: white !important;
+        border-color: #e2e8f0 !important;
+      }
+      .leaflet-bar a:hover {
+        background: #f8fafc !important;
+      }
+    </style>
+  `;
 
   const { MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip } = LeafletComponents;
 
   function HighRiskZoneMarkers() {
+    if (!zones?.length) return null;
+    
     return (
       <>
         {zones.map((zone) => (
@@ -92,19 +111,31 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
   }
 
   return (
-    <MapContainer
-      center={position || [25.5, 93.0]}
-      zoom={position ? 10 : 7}
-      style={{ height: "100%", width: "100%" }}
-    >
-      <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-      />
+    <div style={{ height: "100%", width: "100%", position: "relative" }}>
+      <style>{`
+        /* Force map labels and UI text to solid black for maximum readability */
+        .leaflet-container { color: #000000 !important; }
+        .leaflet-control-container, .leaflet-control, .leaflet-bar a, .leaflet-popup-content, .leaflet-tooltip {
+          color: #000000 !important;
+        }
+        /* Some tile providers render labels as images; prefer a light natural basemap */
+      `}</style>
+
+      <MapContainer
+        center={position || [25.5, 93.0]}
+        zoom={position ? 10 : 7}
+        style={{ height: "100%", width: "100%" }}
+      >
+        <TileLayer
+          /* Use a bright, natural-color basemap (Carto Voyager) with clear water/land rendering */
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        />
       {position && <Marker position={position} />}
       <LocationMarker onPositionChange={onPositionChange} />
       <HighRiskZoneMarkers />
-      <Legend />
-    </MapContainer>
+        <Legend />
+      </MapContainer>
+    </div>
   );
 }
