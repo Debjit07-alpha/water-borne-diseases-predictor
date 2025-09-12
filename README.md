@@ -46,3 +46,14 @@ pnpm prisma generate; pnpm prisma migrate dev --name init; pnpm run prisma:seed
 ```
 
 The seed script will upsert example diseases: Cholera, Diarrhea, Typhoid and Hepatitis A.
+
+### Running locally (Tailwind)
+
+This project uses Tailwind CSS (v4) via PostCSS. If styles don't appear, ensure dependencies are installed and run the dev server:
+
+```powershell
+pnpm install
+pnpm dev
+```
+
+If your editor flags `@tailwind` or `@apply` as unknown rules, that's the CSS linter — the build will process them correctly when the dev server is running.

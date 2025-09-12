@@ -28,19 +28,19 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[color:var(--background)] text-[color:var(--foreground)]">
       <Header />
-      <main className="container mx-auto px-4 py-8 flex-1">
+      <main className="container py-12 flex-1">
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <div>
-            <h1 className="text-4xl font-bold mb-4">Protecting Communities from Water-Borne Diseases</h1>
-            <p className="text-muted-foreground mb-6">AquaWatch is a community-driven platform for reporting, monitoring and learning about water-borne diseases. Help us keep your community safe by reporting suspected cases and staying informed.</p>
-            <div className="flex gap-3">
-              <a href="/report" className="inline-block rounded-md bg-primary px-4 py-2 text-white">Report an Incident</a>
-              <a href="/diseases" className="inline-block rounded-md border border-input px-4 py-2">Learn More</a>
+            <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">Protecting Communities from Water-Borne Diseases</h1>
+            <p className="text-lg opacity-80 mb-6">AquaWatch is a community-driven platform for reporting, monitoring and learning about water-borne diseases. Help us keep your community safe by reporting suspected cases and staying informed.</p>
+            <div className="flex gap-4">
+              <a href="/report" className="inline-block rounded-md bg-white px-6 py-3 text-black font-medium">Report an Incident</a>
+              <a href="/diseases" className="inline-block rounded-md border border-white px-6 py-3 text-white">Learn More</a>
             </div>
           </div>
-          <div className="h-80 rounded-md overflow-hidden border">
+          <div className="h-80 rounded-md overflow-hidden border border-neutral-700 shadow-lg bg-white">
             <Map position={mapPosition} onPositionChange={(lat, lng) => setMapPosition([lat, lng])} />
           </div>
         </section>
