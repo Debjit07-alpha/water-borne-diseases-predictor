@@ -91,7 +91,7 @@ export default function Home() {
           <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer">
             <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-110 transition-transform duration-300">
               <img 
-                src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=200&h=200&fit=crop&crop=center" 
+                src="/cholerae.jpg" 
                 alt="Cholera bacteria" 
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -107,7 +107,7 @@ export default function Home() {
           <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer">
             <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-110 transition-transform duration-300">
               <img 
-                src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=200&h=200&fit=crop&crop=center" 
+                src="/diarrea.jpg" 
                 alt="Diarrhea symptoms" 
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -123,7 +123,7 @@ export default function Home() {
           <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer">
             <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-110 transition-transform duration-300">
               <img 
-                src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&h=200&fit=crop&crop=center" 
+                src="/hepatitis_A.jpg" 
                 alt="Hepatitis A virus" 
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -139,7 +139,7 @@ export default function Home() {
           <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer">
             <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-110 transition-transform duration-300">
               <img 
-                src="https://images.unsplash.com/photo-1576091160550-2173dba0ef41?w=200&h=200&fit=crop&crop=center" 
+                src="/typhoid.jpg" 
                 alt="Typhoid fever" 
                 className="w-full h-full object-cover"
                 onError={(e) => {
