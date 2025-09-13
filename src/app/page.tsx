@@ -81,6 +81,78 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Diseases Section */}
+      <section className="w-full max-w-6xl mx-auto py-16 px-4">
+        <div className={`transition-all duration-1000 delay-1000 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#0B86FF] mb-8 text-center font-heading-sans">Common Water-Borne Diseases</h2>
+        </div>
+        <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-1000 delay-1100 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
+          {/* Cholera */}
+          <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer">
+            <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-110 transition-transform duration-300">
+              <img 
+                src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=200&h=200&fit=crop&crop=center" 
+                alt="Cholera bacteria" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23ef4444'/%3E%3Ctext x='100' y='100' text-anchor='middle' dy='.3em' fill='white' font-size='16' font-weight='bold'%3ECholera%3C/text%3E%3C/svg%3E";
+                }}
+              />
+            </div>
+            <h3 className="text-lg font-bold text-center group-hover:text-[#0B86FF] transition-colors duration-300">Cholera</h3>
+            <p className="text-sm text-gray-600 text-center mt-2">Severe diarrhea caused by Vibrio cholerae bacteria</p>
+          </div>
+
+          {/* Diarrhea */}
+          <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer">
+            <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-110 transition-transform duration-300">
+              <img 
+                src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=200&h=200&fit=crop&crop=center" 
+                alt="Diarrhea symptoms" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f59e0b'/%3E%3Ctext x='100' y='100' text-anchor='middle' dy='.3em' fill='white' font-size='16' font-weight='bold'%3EDiarrhea%3C/text%3E%3C/svg%3E";
+                }}
+              />
+            </div>
+            <h3 className="text-lg font-bold text-center group-hover:text-[#0B86FF] transition-colors duration-300">Diarrhea</h3>
+            <p className="text-sm text-gray-600 text-center mt-2">Frequent loose, watery stools causing dehydration</p>
+          </div>
+
+          {/* Hepatitis A */}
+          <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer">
+            <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-110 transition-transform duration-300">
+              <img 
+                src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=200&h=200&fit=crop&crop=center" 
+                alt="Hepatitis A virus" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%2310b981'/%3E%3Ctext x='100' y='100' text-anchor='middle' dy='.3em' fill='white' font-size='14' font-weight='bold'%3EHepatitis A%3C/text%3E%3C/svg%3E";
+                }}
+              />
+            </div>
+            <h3 className="text-lg font-bold text-center group-hover:text-[#0B86FF] transition-colors duration-300">Hepatitis A</h3>
+            <p className="text-sm text-gray-600 text-center mt-2">Liver inflammation caused by contaminated water</p>
+          </div>
+
+          {/* Typhoid */}
+          <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer">
+            <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-110 transition-transform duration-300">
+              <img 
+                src="https://images.unsplash.com/photo-1576091160550-2173dba0ef41?w=200&h=200&fit=crop&crop=center" 
+                alt="Typhoid fever" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%238b5cf6'/%3E%3Ctext x='100' y='100' text-anchor='middle' dy='.3em' fill='white' font-size='16' font-weight='bold'%3ETyphoid%3C/text%3E%3C/svg%3E";
+                }}
+              />
+            </div>
+            <h3 className="text-lg font-bold text-center group-hover:text-[#0B86FF] transition-colors duration-300">Typhoid</h3>
+            <p className="text-sm text-gray-600 text-center mt-2">High fever and weakness from Salmonella typhi</p>
+          </div>
+        </div>
+      </section>
+
       {/* Map Section */}
       <section id="map" className="w-full max-w-7xl mx-auto py-12 px-4">
         <div className={`transition-all duration-1000 delay-1200 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
