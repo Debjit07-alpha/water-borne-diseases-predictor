@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import { highRiskZones, HighRiskZone } from "@/lib/high-risk-zones";
 import LocationDetails from "@/components/LocationDetails";
 import { Input } from "@/components/ui/input";
@@ -20,7 +18,6 @@ export default function InteractiveMap() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <Header />
       <main className="flex-1 grid grid-cols-1 md:grid-cols-3">
         <div className="md:col-span-2 h-[calc(100vh-200px)]">
           <Map
@@ -59,7 +56,6 @@ export default function InteractiveMap() {
           )}
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

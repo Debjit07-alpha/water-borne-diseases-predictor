@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Montserrat, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
@@ -7,6 +7,18 @@ import Sidebar from "@/components/Sidebar";
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-montserrat",
+});
+
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-playfair",
 });
 
 export const metadata: Metadata = {
@@ -20,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en" className={`${inter.className} ${montserrat.variable} ${playfairDisplay.variable}`}>
       <body className="bg-[#F5F7FA] text-[#2C3E50]">
         <div className="flex h-screen overflow-hidden">
           <Sidebar />
