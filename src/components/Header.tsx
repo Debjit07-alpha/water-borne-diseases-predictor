@@ -8,7 +8,7 @@ export default function Header() {
         <div className="flex items-center space-x-4">
           <Link href="/" className="flex items-center space-x-2">
             <h1 className="text-lg font-semibold tracking-tight font-heading-sans">
-              AquaWatch
+              River Pulse
               <span className="text-sm font-normal text-foreground/60 ml-2">
                 North-East India
               </span>

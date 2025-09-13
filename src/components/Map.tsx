@@ -137,9 +137,45 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
         .leaflet-control-container, .leaflet-control, .leaflet-bar a, .leaflet-popup-content, .leaflet-tooltip {
           color: #000000 !important;
         }
-        /* Glowing effect for high-risk zone markers */
+        /* Glowing effect with patches for high-risk zone markers */
         .glowing-dot {
-          filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));
+          filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.9)) 
+                  drop-shadow(0 0 12px rgba(255, 69, 0, 0.7))
+                  drop-shadow(0 0 18px rgba(255, 140, 0, 0.5))
+                  drop-shadow(0 0 24px rgba(255, 165, 0, 0.3));
+          animation: glowPatches 3s ease-in-out infinite alternate;
+        }
+        @keyframes glowPatches {
+          0% { 
+            filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.9)) 
+                    drop-shadow(0 0 12px rgba(255, 69, 0, 0.7))
+                    drop-shadow(0 0 18px rgba(255, 140, 0, 0.5))
+                    drop-shadow(0 0 24px rgba(255, 165, 0, 0.3));
+          }
+          25% { 
+            filter: drop-shadow(0 0 8px rgba(255, 69, 0, 0.8)) 
+                    drop-shadow(0 0 14px rgba(255, 140, 0, 0.6))
+                    drop-shadow(0 0 20px rgba(255, 165, 0, 0.4))
+                    drop-shadow(0 0 26px rgba(255, 215, 0, 0.2));
+          }
+          50% { 
+            filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.9)) 
+                    drop-shadow(0 0 16px rgba(255, 165, 0, 0.7))
+                    drop-shadow(0 0 22px rgba(255, 215, 0, 0.5))
+                    drop-shadow(0 0 28px rgba(255, 255, 0, 0.3));
+          }
+          75% { 
+            filter: drop-shadow(0 0 8px rgba(255, 165, 0, 0.8)) 
+                    drop-shadow(0 0 14px rgba(255, 215, 0, 0.6))
+                    drop-shadow(0 0 20px rgba(255, 255, 0, 0.4))
+                    drop-shadow(0 0 26px rgba(255, 140, 0, 0.2));
+          }
+          100% { 
+            filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.9)) 
+                    drop-shadow(0 0 12px rgba(255, 255, 0, 0.7))
+                    drop-shadow(0 0 18px rgba(255, 140, 0, 0.5))
+                    drop-shadow(0 0 24px rgba(255, 69, 0, 0.3));
+          }
         }
         /* Some tile providers render labels as images; prefer a light natural basemap */
       `}</style>

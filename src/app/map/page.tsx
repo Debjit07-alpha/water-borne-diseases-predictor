@@ -30,7 +30,7 @@ export default function InteractiveMap() {
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-br from-[#0B86FF] via-[#F0F9FF] to-[#EFF6FF] text-black">
       <main className="flex-1 w-full max-w-5xl mx-auto px-4 py-10">
-        <h2 className="text-3xl md:text-4xl font-bold text-[#0B86FF] mb-8 text-center font-heading-sans">Interactive Risk Map</h2>
+        <h2 className="text-4xl md:text-6xl font-extrabold text-black drop-shadow-lg mb-8 text-center font-heading-serif">Interactive Risk Monitoring Map</h2>
         <div className="w-full rounded-2xl shadow-2xl border-4 border-white/80 bg-white/60 p-6 mb-10">
           <div className="relative h-96 w-full">
             <Map

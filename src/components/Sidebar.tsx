@@ -24,7 +24,7 @@ export default function Sidebar() {
     >
       <div className="p-4 flex items-center justify-between border-b border-white/20">
         <div className="font-semibold tracking-tight font-heading-sans text-[#0B86FF]">
-          {collapsed ? "AW" : "AquaWatch"}
+          {collapsed ? "RP" : "River Pulse"}
         </div>
         <button 
           onClick={() => setCollapsed(!collapsed)}
