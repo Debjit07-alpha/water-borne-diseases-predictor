@@ -7,7 +7,7 @@ export default async function DiseasesPage() {
 
   return (
     <div className="py-12 max-w-7xl mx-auto px-4">
-      <h1 className="text-4xl font-extrabold text-center">Water-Borne Diseases</h1>
+      <h1 className="text-4xl font-extrabold text-center font-heading-serif">Water-Borne Diseases</h1>
       <p className="text-center mt-2 text-muted-foreground">Learn about common water-borne illnesses, their symptoms, prevention and treatment.</p>
 
       <div className="grid grid-cols-1 gap-6 mt-8 sm:grid-cols-2 lg:grid-cols-3">
