@@ -24,7 +24,7 @@ export default function Home() {
         </p>
         <div className="flex flex-col md:flex-row gap-4 justify-center animate-fade-in delay-200">
           <Button asChild size="lg" className="bg-white text-[#0B86FF] font-bold shadow-lg hover:bg-blue-100 transition">
-            <a href="#map">Explore Map</a>
+            <a href="/map">Explore Map</a>
           </Button>
           <Button asChild size="lg" variant="secondary" className="bg-[#0B86FF] text-white font-bold shadow-lg hover:bg-blue-700 transition">
             <a href="/report">Report an Incident</a>

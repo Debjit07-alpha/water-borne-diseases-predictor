@@ -121,4 +121,94 @@ export const highRiskZones: HighRiskZone[] = [
       firstResponse: ["Immediate rehydration is critical.", "Isolate the patient's waste.", "Alert the district surveillance unit at the first sign of an outbreak."],
     },
   },
+  // Barak Valley, Assam
+  {
+    lat: 24.83,
+    lng: 92.78,
+    name: "Silchar Urban Slum, Barak Valley",
+    description: "A densely populated urban slum in Silchar with poor drainage and frequent waterlogging, leading to high risk of water-borne outbreaks.",
+    primaryWaterSource: "Municipal Tap (often contaminated)",
+    riskAnalysis: {
+      overallRisk: "High",
+      contaminationLevel: "Coliforms: High, Turbidity: High",
+      primaryRiskFactors: [
+        "Overflowing drains during monsoon season.",
+        "Illegal water connections and pipe leakages.",
+        "Limited access to toilets and hygiene facilities.",
+      ],
+    },
+    commonDiseases: ["Cholera", "Hepatitis E", "Diarrhea"],
+    preventionAndCure: {
+      mitigation: [
+        "Promote regular chlorination of water supply.",
+        "Community awareness on boiling water.",
+        "Improve drainage and waste management.",
+      ],
+      firstResponse: [
+        "Immediate ORS for diarrhea cases.",
+        "Report clusters of illness to health authorities.",
+        "Temporary water tankers during outbreaks.",
+      ],
+    },
+  },
+  // Imphal Wetlands, Manipur
+  {
+    lat: 24.82,
+    lng: 93.95,
+    name: "Imphal Wetland Settlement, Manipur",
+    description: "A settlement near Loktak Lake, where seasonal flooding and untreated sewage increase water-borne disease risk.",
+    primaryWaterSource: "Lake and Rainwater Harvesting",
+    riskAnalysis: {
+      overallRisk: "High",
+      contaminationLevel: "Pathogen presence: High, Nitrate: Moderate",
+      primaryRiskFactors: [
+        "Direct use of lake water for drinking.",
+        "Sewage discharge into wetlands.",
+        "Flooding during monsoon months.",
+      ],
+    },
+    commonDiseases: ["Dysentery", "Cholera", "Amoebiasis"],
+    preventionAndCure: {
+      mitigation: [
+        "Promote use of water filters.",
+        "Construct eco-friendly toilets.",
+        "Community clean-up drives.",
+      ],
+      firstResponse: [
+        "Encourage early medical consultation.",
+        "Distribute ORS and water purification tablets.",
+        "Temporary relocation during severe floods.",
+      ],
+    },
+  },
+  // Dhubri Char Islands, Assam
+  {
+    lat: 25.98,
+    lng: 89.97,
+    name: "Dhubri Char Island Community, Assam",
+    description: "A remote island community on the Brahmaputra, isolated during floods and dependent on untreated river water.",
+    primaryWaterSource: "River Water (untreated)",
+    riskAnalysis: {
+      overallRisk: "High",
+      contaminationLevel: "E. coli: High, Turbidity: High",
+      primaryRiskFactors: [
+        "Seasonal isolation due to flooding.",
+        "No access to piped water or sanitation.",
+        "Livestock sharing water sources with humans.",
+      ],
+    },
+    commonDiseases: ["Cholera", "Typhoid", "Dysentery"],
+    preventionAndCure: {
+      mitigation: [
+        "Promote rainwater harvesting.",
+        "Distribute water purification tablets.",
+        "Mobile health camps during monsoon.",
+      ],
+      firstResponse: [
+        "Immediate rehydration for diarrhea.",
+        "Evacuate severe cases to mainland hospitals.",
+        "Alert district authorities for emergency response.",
+      ],
+    },
+  },
 ];

@@ -5,84 +5,148 @@ interface LocationDetailsProps {
 }
 
 const RiskLevelIndicator = ({ level }: { level: "High" | "Moderate" | "Low" }) => {
-  const color = {
-    High: "bg-red-500",
-    Moderate: "bg-yellow-500",
-    Low: "bg-green-500",
+  const colorConfig = {
+    High: { bg: "bg-gradient-to-r from-red-500 to-red-600", text: "text-red-100", border: "border-red-400", shadow: "shadow-red-500/50" },
+    Moderate: { bg: "bg-gradient-to-r from-yellow-500 to-orange-500", text: "text-yellow-100", border: "border-yellow-400", shadow: "shadow-yellow-500/50" },
+    Low: { bg: "bg-gradient-to-r from-green-500 to-green-600", text: "text-green-100", border: "border-green-400", shadow: "shadow-green-500/50" },
   }[level];
 
   return (
-    <div className="flex items-center">
-      <span className={`w-3 h-3 rounded-full ${color} mr-2`}></span>
-      <span>{level}</span>
+    <div className={`inline-flex items-center px-3 py-1 rounded-full ${colorConfig.bg} ${colorConfig.text} border ${colorConfig.border} shadow-lg ${colorConfig.shadow}`}>
+      <span className="w-2 h-2 rounded-full bg-white mr-2 animate-pulse"></span>
+      <span className="font-semibold text-sm">{level} Risk</span>
+    </div>
+  );
+};
+
+const CoolBullet = ({ children, type }: { children: React.ReactNode; type: "location" | "risk" | "diseases" | "prevention" | "emergency" }) => {
+  const config = {
+    location: {
+      color: "bg-gradient-to-r from-blue-500 to-blue-600",
+      icon: "📍",
+      shadow: "shadow-blue-500/50"
+    },
+    risk: {
+      color: "bg-gradient-to-r from-red-500 to-red-600",
+      icon: "⚠️",
+      shadow: "shadow-red-500/50"
+    },
+    diseases: {
+      color: "bg-gradient-to-r from-orange-500 to-orange-600",
+      icon: "🦠",
+      shadow: "shadow-orange-500/50"
+    },
+    prevention: {
+      color: "bg-gradient-to-r from-green-500 to-green-600",
+      icon: "🛡️",
+      shadow: "shadow-green-500/50"
+    },
+    emergency: {
+      color: "bg-gradient-to-r from-purple-500 to-purple-600",
+      icon: "🚑",
+      shadow: "shadow-purple-500/50"
+    }
+  }[type];
+
+  return (
+    <div className="flex items-center space-x-4 py-3">
+      <div className={`w-10 h-10 rounded-full ${config.color} flex items-center justify-center flex-shrink-0 shadow-lg ${config.shadow}`}>
+        <span className="text-white text-lg">{config.icon}</span>
+      </div>
+      <div className="text-gray-700 leading-relaxed font-bold text-xl">{children}</div>
     </div>
   );
 };
 
 export default function LocationDetails({ zone }: LocationDetailsProps) {
   return (
-    <div className="p-4 bg-neutral-800 rounded-lg text-white">
-      <h2 className="text-2xl font-bold mb-4">{zone.name}</h2>
+    <div className="bg-gradient-to-br from-white via-blue-50 to-indigo-100 rounded-2xl shadow-2xl border-4 border-white/80 overflow-hidden transform hover:scale-105 transition-all duration-300">
+      {/* Header with prominent place name */}
+      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 p-8 text-white text-center">
+        <h1 className="text-4xl font-bold mb-3">{zone.name}</h1>
+        <div className="flex justify-center">
+          <RiskLevelIndicator level={zone.riskAnalysis.overallRisk} />
+        </div>
+      </div>
 
-      {/* Section A: Location Elaboration */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold border-b border-neutral-700 pb-2 mb-3">Location Elaboration</h3>
-        <p className="text-muted-foreground mb-3">{zone.description}</p>
-        <p>
-          <strong>Primary Water Source:</strong> {zone.primaryWaterSource}
+      <div className="p-6 space-y-8">
+        {/* Main Headlines with Relevant Bullets */}
+        <div className="space-y-8">
+          <CoolBullet type="location">Location Details</CoolBullet>
+          <div className="ml-14 space-y-4">
+            <p className="text-gray-700 leading-relaxed text-lg">{zone.description}</p>
+            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-blue-400">
+              <p className="font-semibold text-gray-800 text-lg">
+                <span className="text-blue-600">💧 Primary Water Source:</span> {zone.primaryWaterSource}
+              </p>
+            </div>
+          </div>
+
+          <CoolBullet type="risk">Risk Analysis</CoolBullet>
+          <div className="ml-14 space-y-4">
+            <div className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-red-400">
+              <p className="font-semibold text-gray-800 text-lg mb-2">
+                <span className="text-red-600">🔬 Contamination Level:</span>
+              </p>
+              <p className="text-gray-700 text-lg">{zone.riskAnalysis.contaminationLevel}</p>
+            </div>
+            <div>
+              <p className="font-semibold text-gray-800 text-lg mb-3">
+                <span className="text-red-600">🚨 Primary Risk Factors:</span>
+              </p>
+              <div className="space-y-3">
+                {zone.riskAnalysis.primaryRiskFactors.map((factor, i) => (
+                  <div key={i} className="bg-red-50 rounded-lg p-3 border-l-4 border-red-300">
+                    <p className="text-gray-700 text-lg">{factor}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <CoolBullet type="diseases">Common Diseases</CoolBullet>
+          <div className="ml-14">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {zone.commonDiseases.map((disease, i) => (
+                <div key={i} className="bg-white rounded-lg p-4 shadow-sm border-l-4 border-orange-400">
+                  <p className="font-semibold text-gray-800 text-lg flex items-center">
+                    <span className="text-orange-500 mr-3 text-xl">🏥</span>
+                    {disease}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <CoolBullet type="prevention">Prevention Measures</CoolBullet>
+          <div className="ml-14">
+            <div className="space-y-3">
+              {zone.preventionAndCure.mitigation.map((step, i) => (
+                <div key={i} className="bg-green-50 rounded-lg p-4 border-l-4 border-green-300">
+                  <p className="text-gray-700 text-lg">{step}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <CoolBullet type="emergency">Emergency Response</CoolBullet>
+          <div className="ml-14">
+            <div className="space-y-3">
+              {zone.preventionAndCure.firstResponse.map((step, i) => (
+                <div key={i} className="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-300">
+                  <p className="text-gray-700 text-lg">{step}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="bg-gradient-to-r from-gray-100 to-gray-200 px-6 py-4 text-center">
+        <p className="text-lg text-gray-600 font-medium">
+          💡 Click on other red dots to explore different high-risk zones
         </p>
-      </div>
-
-      {/* Section B: Risk & Contamination Analysis */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold border-b border-neutral-700 pb-2 mb-3">Risk & Contamination Analysis</h3>
-        <div className="grid grid-cols-2 gap-4 mb-3">
-          <div>
-            <p className="font-semibold">Overall Risk Level:</p>
-            <RiskLevelIndicator level={zone.riskAnalysis.overallRisk} />
-          </div>
-          <div>
-            <p className="font-semibold">Contamination Level:</p>
-            <p>{zone.riskAnalysis.contaminationLevel}</p>
-          </div>
-        </div>
-        <div>
-          <p className="font-semibold">Primary Risk Factors:</p>
-          <ul className="list-disc list-inside pl-2 mt-1">
-            {zone.riskAnalysis.primaryRiskFactors.map((factor, i) => (
-              <li key={i}>{factor}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      {/* Section: Common Localized Diseases */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold border-b border-neutral-700 pb-2 mb-3">Common Localized Diseases</h3>
-        <ul className="list-disc list-inside pl-2 mt-1">
-          {zone.commonDiseases.map((disease, i) => (
-            <li key={i}>{disease}</li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Section C: Prevention & Cure Protocol */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold border-b border-neutral-700 pb-2 mb-3">How to Mitigate Risk (Prevention)</h3>
-        <ol className="list-decimal list-inside pl-2 space-y-2">
-          {zone.preventionAndCure.mitigation.map((step, i) => (
-            <li key={i}>{step}</li>
-          ))}
-        </ol>
-      </div>
-
-      <div>
-        <h3 className="text-lg font-semibold border-b border-neutral-700 pb-2 mb-3">What to Do if Sick (First Response)</h3>
-        <ol className="list-decimal list-inside pl-2 space-y-2">
-          {zone.preventionAndCure.firstResponse.map((step, i) => (
-            <li key={i}>{step}</li>
-          ))}
-        </ol>
       </div>
     </div>
   );

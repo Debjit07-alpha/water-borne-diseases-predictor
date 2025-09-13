@@ -83,15 +83,29 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
           <CircleMarker
             key={zone.name}
             center={[zone.lat, zone.lng]}
-            radius={5}
-            pathOptions={{ color: "red", fillColor: "red", fillOpacity: 0.8, className: "glowing-dot" }}
+            radius={8}
+            pathOptions={{ 
+              color: "#dc2626", 
+              fillColor: "#ef4444", 
+              fillOpacity: 0.9, 
+              weight: 2,
+              className: "glowing-dot" 
+            }}
             eventHandlers={{
               click: () => {
                 onZoneClick(zone);
               },
             }}
           >
-            <Tooltip>{zone.name}</Tooltip>
+            <Tooltip direction="top" offset={[0, -10]} opacity={1}>
+              <div className="text-sm font-medium">
+                {zone.name}
+                <br />
+                <span className="text-red-600 font-bold">
+                  {zone.riskAnalysis.overallRisk} Risk
+                </span>
+              </div>
+            </Tooltip>
           </CircleMarker>
         ))}
       </>
@@ -111,12 +125,21 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
   }
 
   return (
-    <div style={{ height: "100%", width: "100%", position: "relative" }}>
+    <div style={{ 
+      height: "100%", 
+      width: "100%", 
+      position: "relative",
+      zIndex: 1
+    }}>
       <style>{`
         /* Force map labels and UI text to solid black for maximum readability */
         .leaflet-container { color: #000000 !important; }
         .leaflet-control-container, .leaflet-control, .leaflet-bar a, .leaflet-popup-content, .leaflet-tooltip {
           color: #000000 !important;
+        }
+        /* Glowing effect for high-risk zone markers */
+        .glowing-dot {
+          filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));
         }
         /* Some tile providers render labels as images; prefer a light natural basemap */
       `}</style>
