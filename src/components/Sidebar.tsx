@@ -23,7 +23,7 @@ export default function Sidebar() {
       )}
     >
       <div className="p-4 flex items-center justify-between border-b border-white/10">
-        <div className="font-semibold tracking-tight">
+        <div className="font-semibold tracking-tight font-heading-sans">
           {collapsed ? "AW" : "AquaWatch"}
         </div>
         <button 

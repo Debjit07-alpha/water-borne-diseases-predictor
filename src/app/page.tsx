@@ -31,7 +31,7 @@ export default function Home() {
         <header className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-extrabold text-[#0B3A5E]">Northeast Water-Borne Diseases Dashboard</h1>
+              <h1 className="text-3xl font-extrabold text-[#0B3A5E] font-heading-serif">Northeast Water-Borne Diseases Dashboard</h1>
               <p className="text-sm text-[#134E66] mt-1">Region-focused insights, risks, and practical prevention guidance.</p>
             </div>
             <div className="hidden md:flex items-center gap-4">
@@ -52,7 +52,7 @@ export default function Home() {
           <div className="col-span-2 p-4 rounded-lg bg-white/95 shadow border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold">Regional Overview</h3>
+                <h3 className="text-lg font-semibold font-heading-sans">Regional Overview</h3>
                 <p className="text-sm text-foreground/60 mt-1">Summary of riverine and flood-prone areas, common risk drivers, and seasonal trends.</p>
               </div>
               <div className="text-right">
@@ -82,7 +82,7 @@ export default function Home() {
           </div>
 
           <aside className="p-4 rounded-lg bg-gradient-to-b from-white to-[#F8FAFC] shadow border border-gray-200">
-            <div className="text-sm font-medium text-[#0F172A]">High Risk Zones</div>
+            <div className="text-sm font-medium text-[#0F172A] font-heading-sans">High Risk Zones</div>
             <div className="mt-3 space-y-3 max-h-72 overflow-y-auto">
               {highRiskZones.map((z) => (
                 <button
@@ -104,7 +104,7 @@ export default function Home() {
 
         <section className="grid grid-cols-3 gap-4">
           <div className="col-span-2 p-4 rounded-lg bg-white/95 shadow border border-gray-200">
-            <h3 className="text-lg font-semibold">Recent Incidents</h3>
+            <h3 className="text-lg font-semibold font-heading-sans">Recent Incidents</h3>
             <div className="mt-3 space-y-2">
               {incidents.length === 0 && <div className="text-sm text-foreground/60">No recent incidents available.</div>}
               {incidents.map((inc) => (
@@ -120,7 +120,7 @@ export default function Home() {
           </div>
 
           <div className="p-4 rounded-lg bg-white/95 shadow border border-gray-200">
-            <h3 className="text-lg font-semibold">Quick Actions</h3>
+            <h3 className="text-lg font-semibold font-heading-sans">Quick Actions</h3>
             <div className="mt-3 space-y-2">
               <Button size="sm" className="w-full bg-red-600 hover:bg-red-700 text-white">Start Emergency Response</Button>
               <Button size="sm" variant="secondary" className="w-full bg-[#0B86FF] hover:bg-[#0A74E0] text-white">Export Report</Button>

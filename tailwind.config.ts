@@ -21,6 +21,8 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+        'heading-sans': ['var(--font-montserrat)', 'Montserrat', 'Helvetica', 'Arial', 'ui-sans-serif', 'system-ui'],
+        'heading-serif': ['var(--font-playfair)', 'Playfair Display', 'Georgia', 'serif'],
       },
     },
   },

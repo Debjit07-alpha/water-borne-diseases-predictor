@@ -17,7 +17,7 @@ export default async function DiseasePage({
     <div className="py-12 max-w-4xl mx-auto px-4">
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-4xl font-extrabold">{disease.name}</h1>
+          <h1 className="text-4xl font-extrabold font-heading-serif">{disease.name}</h1>
           <p className="mt-2 text-muted-foreground">{disease.overview}</p>
         </div>
         <div className="text-4xl ml-4" aria-hidden>
@@ -31,7 +31,7 @@ export default async function DiseasePage({
 
       <div className="mt-8 space-y-8">
         <section>
-          <h2 className="text-2xl font-bold">Symptoms</h2>
+          <h2 className="text-2xl font-bold font-heading-sans">Symptoms</h2>
           <ul className="mt-2 ml-6 list-disc text-muted-foreground">
             {disease.symptoms.map((symptom: string) => (
               <li key={symptom}>{symptom}</li>
@@ -40,12 +40,12 @@ export default async function DiseasePage({
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold">Causes & Transmission</h2>
+          <h2 className="text-2xl font-bold font-heading-sans">Causes & Transmission</h2>
           <p className="mt-2 text-muted-foreground">{disease.causes}</p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold">Prevention</h2>
+          <h2 className="text-2xl font-bold font-heading-sans">Prevention</h2>
           <ul className="mt-2 ml-6 list-disc text-muted-foreground">
             {disease.prevention.map((step: string) => (
               <li key={step}>{step}</li>
@@ -54,7 +54,7 @@ export default async function DiseasePage({
         </section>
 
         <section>
-          <h2 className="text-2xl font-bold">Treatment</h2>
+          <h2 className="text-2xl font-bold font-heading-sans">Treatment</h2>
           <p className="mt-2 text-muted-foreground">{disease.treatment}</p>
         </section>
       </div>

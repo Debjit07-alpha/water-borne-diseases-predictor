@@ -59,11 +59,11 @@ export default function ReportPage() {
 
   return (
     <div className="py-12">
-      <h1 className="text-3xl font-bold text-center">Report an Incident</h1>
+      <h1 className="text-3xl font-bold text-center font-heading-serif">Report an Incident</h1>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle>Step 1: Select Disease</CardTitle>
+            <CardTitle className="font-heading-sans">Step 1: Select Disease</CardTitle>
             <CardDescription>
               Choose the suspected water-borne disease.
             </CardDescription>
@@ -88,7 +88,7 @@ export default function ReportPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Step 2: Select Location</CardTitle>
+            <CardTitle className="font-heading-sans">Step 2: Select Location</CardTitle>
             <CardDescription>
               Click on the map to drop a pin or use your device's GPS.
             </CardDescription>
@@ -109,7 +109,7 @@ export default function ReportPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Step 3: Additional Details (Optional)</CardTitle>
+            <CardTitle className="font-heading-sans">Step 3: Additional Details (Optional)</CardTitle>
             <CardDescription>
               Provide any other relevant information.
             </CardDescription>
