@@ -226,8 +226,8 @@ export default function DiseasesPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <CardTitle className="text-xl font-bold group-hover:text-[#0B86FF] transition-colors duration-300">{disease.name}</CardTitle>
-                    <CardDescription className="mt-2 line-clamp-3 text-gray-600">{disease.overview}</CardDescription>
+                    <CardTitle className="text-xl font-bold group-hover:text-[#0B86FF] transition-colors duration-300 font-bookman-old-style">{disease.name}</CardTitle>
+                    <CardDescription className="mt-2 line-clamp-3 text-gray-600 font-bell-mt">{disease.overview}</CardDescription>
                   </div>
                   <div className="ml-4 w-16 h-16 rounded-full overflow-hidden flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
                     <img 

@@ -51,6 +51,29 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
     };
   }, []);
 
+  if (!leafletLoaded || !LeafletComponents) {
+    return <div className="h-full w-full flex items-center justify-center text-[#2C3E50]">Loading map…</div>;
+  }
+
+  const customMapStyles = `
+    <style>
+      /* Force map labels and UI text to solid black for maximum readability */
+      .leaflet-container { color: #2C3E50 !important; }
+      .leaflet-control-container, .leaflet-control, .leaflet-bar a, .leaflet-popup-content, .leaflet-tooltip {
+        color: #2C3E50 !important;
+      }
+      .leaflet-bar a {
+        background: white !important;
+        border-color: #e2e8f0 !important;
+      }
+      .leaflet-bar a:hover {
+        background: #f8fafc !important;
+      }
+    </style>
+  `;
+
+  const { MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip } = LeafletComponents;
+
   // Enhanced color scheme based on risk levels
   const getRiskColor = (riskLevel: string) => {
     switch (riskLevel) {
@@ -83,10 +106,10 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
 
   const getRiskRadius = (riskLevel: string) => {
     switch (riskLevel) {
-      case "High": return 8;
-      case "Moderate": return 7;
-      case "Low": return 6;
-      default: return 7;
+      case "High": return 12;
+      case "Moderate": return 10;
+      case "Low": return 8;
+      default: return 10;
     }
   };
 
@@ -114,37 +137,43 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
               eventHandlers={{
                 click: () => {
                   onZoneClick(zone);
+                },
+                mouseover: (e: any) => {
+                  e.target.setStyle({
+                    fillOpacity: 1,
+                    weight: 4,
+                    radius: radius + 2
+                  });
+                },
+                mouseout: (e: any) => {
+                  e.target.setStyle({
+                    fillOpacity: 0.8,
+                    weight: 3,
+                    radius: radius
+                  });
                 }
               }}
             >
-              <Tooltip direction="bottom" offset={[0, 15]} opacity={1} className="custom-tooltip">
-                <div className="p-2 bg-white rounded-md shadow-lg border max-w-xs z-[9999]">
-                  <h4 className="font-bold text-gray-800 mb-1 text-xs">{zone.name}</h4>
-                  
-                  <div className="space-y-1 mb-2">
-                    <div className="flex items-center">
-                      <strong className="text-xs text-gray-700">Risk:</strong> 
-                      <span className={`ml-1 px-1 py-0.5 rounded text-white text-xs font-bold ${
-                        zone.riskAnalysis.overallRisk === 'High' ? 'bg-red-600' :
-                        zone.riskAnalysis.overallRisk === 'Moderate' ? 'bg-orange-500' : 'bg-green-600'
-                      }`}>
-                        {zone.riskAnalysis.overallRisk}
-                      </span>
-                    </div>
-                    
-                    <div className="text-xs">
-                      <strong className="text-gray-700">Diseases:</strong> 
-                      <span className="text-gray-600 ml-1">{zone.commonDiseases.slice(0, 2).join(", ")}</span>
-                    </div>
-                    
-                    <div className="text-xs">
-                      <strong className="text-gray-700">Source:</strong> 
-                      <span className="text-gray-600 ml-1">{zone.primaryWaterSource}</span>
-                    </div>
+              <Tooltip direction="top" offset={[0, -10]} opacity={1} className="custom-tooltip">
+                <div className="p-3 bg-white rounded-lg shadow-lg border">
+                  <h4 className="font-bold text-gray-800 mb-1">{zone.name}</h4>
+                  <div className="text-sm text-gray-600 mb-2">
+                    <strong>Risk Level:</strong> 
+                    <span className={`ml-1 px-2 py-1 rounded text-white text-xs font-bold ${
+                      zone.riskAnalysis.overallRisk === 'High' ? 'bg-red-600' :
+                      zone.riskAnalysis.overallRisk === 'Moderate' ? 'bg-orange-500' : 'bg-green-600'
+                    }`}>
+                      {zone.riskAnalysis.overallRisk}
+                    </span>
                   </div>
-                  
-                  <div className="text-xs text-blue-600 font-medium">
-                    Click for details
+                  <div className="text-xs text-gray-500">
+                    <strong>Primary Diseases:</strong> {zone.commonDiseases.join(", ")}
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    <strong>Water Source:</strong> {zone.primaryWaterSource}
+                  </div>
+                  <div className="text-xs text-blue-600 mt-2 font-medium">
+                    Click for detailed information
                   </div>
                 </div>
               </Tooltip>
@@ -155,7 +184,20 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
     );
   }
 
-  function Legend() {
+  function MapTitle() {
+    return (
+      <div className="absolute top-4 left-4 right-4 z-[1000] pointer-events-none">
+        <div className="bg-white/95 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-gray-200 max-w-md mx-auto pointer-events-auto">
+          <h2 className="text-lg font-bold text-gray-800 mb-1">
+            Water-Borne Disease Risk Map
+          </h2>
+          <p className="text-sm text-gray-600">
+            Real-time monitoring of high-risk zones across North-East India
+          </p>
+        </div>
+      </div>
+    );
+  }
     return (
       <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-gray-200 max-w-xs">
         <div className="mb-3">
@@ -196,11 +238,20 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
     );
   }
 
-  if (!leafletLoaded || !LeafletComponents) {
-    return <div className="h-full w-full flex items-center justify-center text-[#2C3E50]">Loading map…</div>;
+  function MapTitle() {
+    return (
+      <div className="absolute top-4 left-4 right-4 z-[1000] pointer-events-none">
+        <div className="bg-white/95 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-gray-200 max-w-md mx-auto pointer-events-auto">
+          <h2 className="text-lg font-bold text-gray-800 mb-1">
+            Water-Borne Disease Risk Map
+          </h2>
+          <p className="text-sm text-gray-600">
+            Real-time monitoring of high-risk zones across North-East India
+          </p>
+        </div>
+      </div>
+    );
   }
-
-  const { MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip } = LeafletComponents;
 
   return (
     <div style={{ 
@@ -218,83 +269,71 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
         
         /* Enhanced risk zone styling with better contrast and glow effects */
         .risk-zone {
-          transition: all 0.2s ease-out;
+          transition: all 0.3s ease;
           cursor: pointer;
-          outline: none !important;
         }
         
-        /* Remove black outline/focus box on click */
-        .leaflet-interactive:focus {
-          outline: none !important;
-        }
-        
-        .leaflet-clickable:focus {
-          outline: none !important;
-        }
-        
-        /* Remove any black box or border on active state */
-        .leaflet-interactive:active,
-        .leaflet-clickable:active,
-        .risk-zone:active,
-        .risk-zone:focus {
-          outline: none !important;
-          border: none !important;
-          box-shadow: none !important;
-        }
-        
-        /* High Risk Zones - Flickering Red Glow */
+        /* High Risk Zones - Intense Red Glow */
         .high-risk-glow {
-          filter: drop-shadow(0 0 4px rgba(220, 38, 38, 0.6)) 
-                  drop-shadow(0 0 8px rgba(239, 68, 68, 0.4))
-                  drop-shadow(0 0 12px rgba(248, 113, 113, 0.3));
-          animation: redFlicker 2s ease-in-out infinite;
+          filter: drop-shadow(0 0 8px rgba(220, 38, 38, 0.9)) 
+                  drop-shadow(0 0 16px rgba(239, 68, 68, 0.7))
+                  drop-shadow(0 0 24px rgba(248, 113, 113, 0.5));
+          animation: highRiskPulse 2.5s ease-in-out infinite alternate;
         }
         
-        @keyframes redFlicker {
+        @keyframes highRiskPulse {
           0% { 
-            filter: drop-shadow(0 0 4px rgba(220, 38, 38, 0.6)) 
-                    drop-shadow(0 0 8px rgba(239, 68, 68, 0.4))
-                    drop-shadow(0 0 12px rgba(248, 113, 113, 0.3));
-            opacity: 1;
-          }
-          25% { 
-            filter: drop-shadow(0 0 6px rgba(220, 38, 38, 0.8)) 
-                    drop-shadow(0 0 12px rgba(239, 68, 68, 0.6))
-                    drop-shadow(0 0 16px rgba(248, 113, 113, 0.4));
-            opacity: 0.9;
-          }
-          50% { 
-            filter: drop-shadow(0 0 3px rgba(220, 38, 38, 0.5)) 
-                    drop-shadow(0 0 6px rgba(239, 68, 68, 0.3))
-                    drop-shadow(0 0 10px rgba(248, 113, 113, 0.2));
-            opacity: 0.7;
-          }
-          75% { 
-            filter: drop-shadow(0 0 5px rgba(220, 38, 38, 0.7)) 
-                    drop-shadow(0 0 10px rgba(239, 68, 68, 0.5))
-                    drop-shadow(0 0 14px rgba(248, 113, 113, 0.3));
-            opacity: 0.95;
+            filter: drop-shadow(0 0 8px rgba(220, 38, 38, 0.9)) 
+                    drop-shadow(0 0 16px rgba(239, 68, 68, 0.7))
+                    drop-shadow(0 0 24px rgba(248, 113, 113, 0.5));
           }
           100% { 
-            filter: drop-shadow(0 0 4px rgba(220, 38, 38, 0.6)) 
-                    drop-shadow(0 0 8px rgba(239, 68, 68, 0.4))
-                    drop-shadow(0 0 12px rgba(248, 113, 113, 0.3));
-            opacity: 1;
+            filter: drop-shadow(0 0 12px rgba(220, 38, 38, 1)) 
+                    drop-shadow(0 0 20px rgba(239, 68, 68, 0.8))
+                    drop-shadow(0 0 32px rgba(248, 113, 113, 0.6));
           }
         }
         
-        /* Moderate Risk Zones - Reduced Orange Glow */
+        /* Moderate Risk Zones - Orange Glow */
         .moderate-risk-glow {
-          filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.6)) 
-                  drop-shadow(0 0 6px rgba(251, 191, 36, 0.4))
-                  drop-shadow(0 0 9px rgba(254, 215, 170, 0.2));
+          filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.8)) 
+                  drop-shadow(0 0 12px rgba(251, 191, 36, 0.6))
+                  drop-shadow(0 0 18px rgba(254, 215, 170, 0.4));
+          animation: moderateRiskPulse 3s ease-in-out infinite alternate;
         }
         
-        /* Low Risk Zones - Reduced Green Glow */
+        @keyframes moderateRiskPulse {
+          0% { 
+            filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.8)) 
+                    drop-shadow(0 0 12px rgba(251, 191, 36, 0.6))
+                    drop-shadow(0 0 18px rgba(254, 215, 170, 0.4));
+          }
+          100% { 
+            filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.9)) 
+                    drop-shadow(0 0 16px rgba(251, 191, 36, 0.7))
+                    drop-shadow(0 0 24px rgba(254, 215, 170, 0.5));
+          }
+        }
+        
+        /* Low Risk Zones - Green Glow */
         .low-risk-glow {
-          filter: drop-shadow(0 0 2px rgba(22, 163, 74, 0.5)) 
-                  drop-shadow(0 0 4px rgba(34, 197, 94, 0.3))
-                  drop-shadow(0 0 6px rgba(134, 239, 172, 0.2));
+          filter: drop-shadow(0 0 4px rgba(22, 163, 74, 0.7)) 
+                  drop-shadow(0 0 8px rgba(34, 197, 94, 0.5))
+                  drop-shadow(0 0 12px rgba(134, 239, 172, 0.3));
+          animation: lowRiskPulse 4s ease-in-out infinite alternate;
+        }
+        
+        @keyframes lowRiskPulse {
+          0% { 
+            filter: drop-shadow(0 0 4px rgba(22, 163, 74, 0.7)) 
+                    drop-shadow(0 0 8px rgba(34, 197, 94, 0.5))
+                    drop-shadow(0 0 12px rgba(134, 239, 172, 0.3));
+          }
+          100% { 
+            filter: drop-shadow(0 0 6px rgba(22, 163, 74, 0.8)) 
+                    drop-shadow(0 0 10px rgba(34, 197, 94, 0.6))
+                    drop-shadow(0 0 16px rgba(134, 239, 172, 0.4));
+          }
         }
         
         /* Custom tooltip styling */
@@ -302,24 +341,19 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
           background: white !important;
           border: 1px solid #e5e7eb !important;
           border-radius: 8px !important;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
           color: #374151 !important;
           font-size: 12px !important;
           padding: 0 !important;
-          z-index: 10000 !important;
-          position: relative !important;
-          max-width: 280px !important;
-          white-space: normal !important;
         }
         
         .custom-tooltip .leaflet-tooltip:before {
-          border-bottom-color: #e5e7eb !important;
-          border-top-color: transparent !important;
+          border-top-color: #e5e7eb !important;
         }
         
-        .custom-tooltip .leaflet-tooltip:after {
-          border-bottom-color: white !important;
-          border-top-color: transparent !important;
+        /* Hover effects for risk zones */
+        .risk-zone:hover {
+          transform: scale(1.1);
         }
       `}</style>
 
@@ -340,12 +374,11 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
           attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>'
           opacity={0.3}
         />
-        
-        {position && <Marker position={position} />}
-        <LocationMarker onPositionChange={onPositionChange} />
-        <HighRiskZoneMarkers />
+      {position && <Marker position={position} />}
+      <LocationMarker onPositionChange={onPositionChange} />
+      <HighRiskZoneMarkers />
       </MapContainer>
-      
+      <MapTitle />
       <Legend />
     </div>
   );

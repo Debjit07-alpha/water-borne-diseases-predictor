@@ -25,7 +25,16 @@ const formSchema = z.object({
   details: z.string().optional(),
 });
 
-const diseases = ["Diarrhea", "Cholera", "Typhoid", "Hepatitis A"];
+const diseases = [
+  "Diarrhea", 
+  "Cholera", 
+  "Typhoid", 
+  "Hepatitis A", 
+  "Dysentery", 
+  "Giardiasis", 
+  "Salmonellosis", 
+  "Leptospirosis"
+];
 
 export default function ReportPage() {
   const [position, setPosition] = useState<[number, number] | null>(null);
@@ -78,6 +87,7 @@ export default function ReportPage() {
                     form.watch("disease") === disease ? "default" : "outline"
                   }
                   onClick={() => form.setValue("disease", disease)}
+                  className="font-bookman-old-style text-lg md:text-xl"
                 >
                   {disease}
                 </Button>
