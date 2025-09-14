@@ -140,6 +140,63 @@ const diseases = [
     treatment:
       "Several drugs can be used to treat giardiasis, such as metronidazole. Treatment is usually effective, but it's important to complete the full course of medication as prescribed by a healthcare provider.",
   },
+  {
+    name: "Salmonellosis",
+    slug: "salmonellosis",
+    overview:
+      "Salmonellosis is a bacterial infection caused by Salmonella bacteria. It typically affects the intestinal tract and can cause food poisoning. Most people develop diarrhea, fever, and stomach cramps 6 to 72 hours after infection.",
+    symptoms: [
+      "Diarrhea",
+      "Fever",
+      "Stomach cramps",
+      "Nausea",
+      "Vomiting",
+      "Headache",
+      "Muscle aches",
+    ],
+    causes:
+      "Salmonellosis is caused by consuming food or water contaminated with Salmonella bacteria. Common sources include undercooked eggs, poultry, meat, and contaminated fruits and vegetables. It can also spread through contact with infected animals.",
+    prevention: [
+      "Cook eggs, poultry, and meat thoroughly.",
+      "Avoid eating raw or undercooked eggs and meat.",
+      "Wash hands thoroughly after handling raw meat or eggs.",
+      "Keep raw meat separate from other foods.",
+      "Refrigerate food promptly.",
+      "Wash fruits and vegetables before eating.",
+    ],
+    treatment:
+      "Most people recover without treatment in 4 to 7 days. However, severe dehydration may require hospitalization for IV fluids. Antibiotics are usually not recommended as they can prolong bacterial shedding.",
+  },
+  {
+    name: "Leptospirosis",
+    slug: "leptospirosis",
+    overview:
+      "Leptospirosis is a bacterial infection caused by Leptospira bacteria. It can range from mild flu-like illness to severe disease affecting the kidneys, liver, brain, lungs, or heart. It is transmitted through contact with contaminated water or soil.",
+    symptoms: [
+      "High fever",
+      "Headache",
+      "Chills",
+      "Muscle aches",
+      "Vomiting",
+      "Jaundice (yellow skin and eyes)",
+      "Red eyes",
+      "Abdominal pain",
+      "Diarrhea",
+      "Rash",
+    ],
+    causes:
+      "Leptospirosis is caused by Leptospira bacteria found in contaminated water, soil, or food. It enters the body through cuts or abrasions in the skin, or through mucous membranes of the mouth, nose, and eyes. Common sources include flood water, contaminated rivers, and soil contaminated with animal urine.",
+    prevention: [
+      "Avoid swimming or wading in potentially contaminated water.",
+      "Wear protective clothing when working in high-risk environments.",
+      "Cover cuts and abrasions with waterproof bandages.",
+      "Avoid drinking contaminated water.",
+      "Control rodents in and around the home.",
+      "Wear shoes to avoid walking barefoot in contaminated areas.",
+    ],
+    treatment:
+      "Leptospirosis is treated with antibiotics such as penicillin or doxycycline. Early treatment is important to prevent complications. Severe cases may require hospitalization for IV antibiotics and supportive care.",
+  },
 ];
 
 async function main() {

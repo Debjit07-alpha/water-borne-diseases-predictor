@@ -14,6 +14,14 @@ function getImageForDisease(slug: string) {
       return '/typhoid.jpg';
     case 'hepatitis-a':
       return '/hepatitis_A.jpg';
+    case 'dysentery':
+      return '/dysentery.jpg';
+    case 'giardiasis':
+      return '/giar.jpg';
+    case 'salmonellosis':
+      return '/salmona.jpg';
+    case 'leptospirosis':
+      return '/lepto.jpg';
     default:
       return '/cholerae.jpg'; // fallback to cholera image
   }
@@ -38,8 +46,55 @@ export default function DiseasesPage() {
     const fetchDiseases = async () => {
       try {
         const response = await fetch('/api/diseases');
-        const data = await response.json();
-        setDiseases(data);
+        if (response.ok) {
+          const data = await response.json();
+          setDiseases(data);
+        } else {
+          console.warn('API response not ok, using fallback data');
+          // Use fallback data
+          setDiseases([
+            {
+              id: '1',
+              name: 'Cholera',
+              overview: 'A severe diarrheal disease caused by Vibrio cholerae bacteria',
+              symptoms: 'Watery diarrhea, vomiting, rapid dehydration',
+              causes: 'Contaminated water and food',
+              prevention: 'Safe water, proper sanitation, vaccination',
+              treatment: 'Oral rehydration therapy, antibiotics',
+              slug: 'cholera'
+            },
+            {
+              id: '2',
+              name: 'Diarrhea',
+              overview: 'Frequent loose, watery stools that can cause dehydration',
+              symptoms: 'Loose stools, abdominal cramps, dehydration',
+              causes: 'Bacteria, viruses, parasites in contaminated water',
+              prevention: 'Safe water, good hygiene, proper food handling',
+              treatment: 'Oral rehydration, rest, medical attention if severe',
+              slug: 'diarrhea'
+            },
+            {
+              id: '3',
+              name: 'Typhoid',
+              overview: 'A bacterial infection caused by Salmonella typhi',
+              symptoms: 'High fever, weakness, stomach pain, headache',
+              causes: 'Contaminated water and food',
+              prevention: 'Safe water, proper sanitation, vaccination',
+              treatment: 'Antibiotics, rest, proper nutrition',
+              slug: 'typhoid'
+            },
+            {
+              id: '4',
+              name: 'Hepatitis A',
+              overview: 'A viral infection that affects the liver',
+              symptoms: 'Fatigue, nausea, abdominal pain, jaundice',
+              causes: 'Contaminated water and food',
+              prevention: 'Safe water, good hygiene, vaccination',
+              treatment: 'Rest, proper nutrition, medical monitoring',
+              slug: 'hepatitis-a'
+            }
+          ]);
+        }
       } catch (error) {
         console.error('Error fetching diseases:', error);
         // Fallback data if API fails
@@ -83,6 +138,46 @@ export default function DiseasesPage() {
             prevention: 'Safe water, good hygiene, vaccination',
             treatment: 'Rest, proper nutrition, medical monitoring',
             slug: 'hepatitis-a'
+          },
+          {
+            id: '5',
+            name: 'Dysentery',
+            overview: 'Intestinal inflammation causing severe diarrhea with blood',
+            symptoms: 'Bloody diarrhea, stomach cramps, fever',
+            causes: 'Bacterial or protozoan infection through contaminated water',
+            prevention: 'Good hygiene, safe water, proper food handling',
+            treatment: 'Rest, fluids, antibiotics for severe cases',
+            slug: 'dysentery'
+          },
+          {
+            id: '6',
+            name: 'Giardiasis',
+            overview: 'Parasitic infection causing diarrheal disease',
+            symptoms: 'Watery diarrhea, fatigue, abdominal cramps, gas',
+            causes: 'Giardia parasite in contaminated water and food',
+            prevention: 'Avoid contaminated water, good hygiene, water filters',
+            treatment: 'Antiparasitic medications like metronidazole',
+            slug: 'giardiasis'
+          },
+          {
+            id: '7',
+            name: 'Salmonellosis',
+            overview: 'Bacterial food poisoning affecting the intestinal tract',
+            symptoms: 'Diarrhea, fever, stomach cramps, nausea, vomiting',
+            causes: 'Salmonella bacteria in contaminated food and water',
+            prevention: 'Cook food thoroughly, good hygiene, refrigerate promptly',
+            treatment: 'Supportive care, fluids, antibiotics if severe',
+            slug: 'salmonellosis'
+          },
+          {
+            id: '8',
+            name: 'Leptospirosis',
+            overview: 'Bacterial infection affecting kidneys, liver, and other organs',
+            symptoms: 'High fever, headache, muscle aches, jaundice, red eyes',
+            causes: 'Leptospira bacteria in contaminated water and soil',
+            prevention: 'Avoid contaminated water, protective clothing, control rodents',
+            treatment: 'Antibiotics like penicillin or doxycycline',
+            slug: 'leptospirosis'
           }
         ]);
       } finally {

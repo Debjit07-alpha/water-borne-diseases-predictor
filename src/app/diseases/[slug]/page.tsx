@@ -18,15 +18,27 @@ interface Disease {
 export default function DiseasePage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   const [disease, setDisease] = useState<Disease | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [slug, setSlug] = useState<string>('');
 
   useEffect(() => {
+    const resolveParams = async () => {
+      const resolvedParams = await params;
+      setSlug(resolvedParams.slug);
+    };
+    
+    resolveParams();
+  }, [params]);
+
+  useEffect(() => {
+    if (!slug) return;
+
     const fetchDisease = async () => {
       try {
-        const response = await fetch(`/api/diseases/${params.slug}`);
+        const response = await fetch(`/api/diseases/${slug}`);
         if (response.ok) {
           const data = await response.json();
           setDisease(data);
@@ -42,7 +54,7 @@ export default function DiseasePage({
     };
 
     fetchDisease();
-  }, [params.slug]);
+  }, [slug]);
 
   if (isLoading) {
     return (
@@ -280,6 +292,14 @@ function getImageForDisease(slug: string) {
       return '/typhoid.jpg';
     case 'hepatitis-a':
       return '/hepatitis_A.jpg';
+    case 'dysentery':
+      return '/dysentery.jpg';
+    case 'giardiasis':
+      return '/giar.jpg';
+    case 'salmonellosis':
+      return '/salmona.jpg';
+    case 'leptospirosis':
+      return '/lepto.jpg';
     default:
       return '/cholerae.jpg'; // fallback to cholera image
   }
@@ -295,6 +315,14 @@ function getIncubationPeriod(slug: string) {
       return '6-30 days';
     case 'hepatitis-a':
       return '15-50 days';
+    case 'dysentery':
+      return '1-7 days';
+    case 'giardiasis':
+      return '7-14 days';
+    case 'salmonellosis':
+      return '6-72 hours';
+    case 'leptospirosis':
+      return '2-30 days';
     default:
       return 'Varies';
   }
@@ -310,6 +338,14 @@ function getContagiousPeriod(slug: string) {
       return '2-4 weeks after symptoms';
     case 'hepatitis-a':
       return '2 weeks before to 1 week after symptoms';
+    case 'dysentery':
+      return 'While symptoms persist';
+    case 'giardiasis':
+      return 'Several weeks after symptoms resolve';
+    case 'salmonellosis':
+      return '4-7 days, up to several weeks';
+    case 'leptospirosis':
+      return 'Not person-to-person transmissible';
     default:
       return 'Varies';
   }
@@ -325,6 +361,14 @@ function getSurvivalTime(slug: string) {
       return 'Up to 2 weeks in water';
     case 'hepatitis-a':
       return 'Up to 1 month in water';
+    case 'dysentery':
+      return 'Days to weeks in water';
+    case 'giardiasis':
+      return 'Up to 2 months in cold water';
+    case 'salmonellosis':
+      return 'Weeks in water, longer in soil';
+    case 'leptospirosis':
+      return 'Months in fresh water';
     default:
       return 'Varies by pathogen';
   }
@@ -340,6 +384,14 @@ function getVaccinationInfo(slug: string) {
       return 'Injectable and oral vaccines available, 50-80% effective';
     case 'hepatitis-a':
       return 'Highly effective vaccine, 2 doses, 95% effective';
+    case 'dysentery':
+      return 'No vaccine available, prevention through hygiene';
+    case 'giardiasis':
+      return 'No vaccine available, prevention through water safety';
+    case 'salmonellosis':
+      return 'No vaccine for general population, good hygiene essential';
+    case 'leptospirosis':
+      return 'Limited vaccine availability, prevention through protection';
     default:
       return 'Check with healthcare provider';
   }
@@ -355,6 +407,14 @@ function getRecoveryTime(slug: string) {
       return '2-4 weeks with antibiotic treatment';
     case 'hepatitis-a':
       return '2-6 months for full recovery';
+    case 'dysentery':
+      return '1-2 weeks with proper treatment';
+    case 'giardiasis':
+      return '2-6 weeks with medication';
+    case 'salmonellosis':
+      return '4-7 days, most recover without treatment';
+    case 'leptospirosis':
+      return '1-3 weeks with early antibiotic treatment';
     default:
       return 'Varies by individual';
   }
@@ -370,6 +430,14 @@ function getGlobalImpact(slug: string) {
       return '11-20 million cases annually, 128,000-161,000 deaths globally';
     case 'hepatitis-a':
       return '1.4 million cases annually, 7,134 deaths worldwide';
+    case 'dysentery':
+      return '165 million cases annually, particularly affects children in developing countries';
+    case 'giardiasis':
+      return '280 million cases annually, leading cause of parasitic diarrhea globally';
+    case 'salmonellosis':
+      return '1.35 million cases annually in US alone, 26,500 hospitalizations';
+    case 'leptospirosis':
+      return '1.03 million cases annually, 58,900 deaths, underreported in many regions';
     default:
       return 'Significant global health impact';
   }
@@ -385,6 +453,14 @@ function getAtRiskGroups(slug: string) {
       return 'Children and young adults, travelers to endemic areas, food handlers';
     case 'hepatitis-a':
       return 'Children in developing countries, travelers, men who have sex with men, drug users';
+    case 'dysentery':
+      return 'Children under 5, elderly, immunocompromised, overcrowded communities';
+    case 'giardiasis':
+      return 'Children in daycare, travelers, campers, people with weakened immune systems';
+    case 'salmonellosis':
+      return 'Children under 5, adults over 65, immunocompromised individuals, pet owners';
+    case 'leptospirosis':
+      return 'Agricultural workers, sewer workers, military personnel, flood victims';
     default:
       return 'Varies by disease';
   }
@@ -400,6 +476,14 @@ function getResearchInfo(slug: string) {
       return 'Development of conjugate vaccines, antimicrobial resistance monitoring, and improved diagnostics';
     case 'hepatitis-a':
       return 'Research on universal vaccination programs, improved vaccine formulations, and outbreak prevention';
+    case 'dysentery':
+      return 'Research on antimicrobial resistance, new treatment options, and improved sanitation methods';
+    case 'giardiasis':
+      return 'Development of new antiparasitic drugs, vaccine research, and improved diagnostic methods';
+    case 'salmonellosis':
+      return 'Research on antimicrobial resistance, vaccine development, and food safety interventions';
+    case 'leptospirosis':
+      return 'Vaccine development, rapid diagnostic tests, and climate change impact studies';
     default:
       return 'Active research and development ongoing';
   }
