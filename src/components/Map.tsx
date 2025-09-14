@@ -157,39 +157,33 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
 
   function Legend() {
     return (
-      <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-gray-200 max-w-xs">
-        <div className="mb-3">
-          <h4 className="font-bold text-gray-800 text-sm mb-1">Water-Borne Disease Risk Zones</h4>
-          <p className="text-xs text-gray-600">North-East India Risk Assessment</p>
+      <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm p-2 rounded-md shadow-lg border border-gray-200 max-w-48">
+        <div className="mb-2">
+          <h4 className="font-bold text-gray-800 text-xs mb-0.5">Risk Zones</h4>
+          <p className="text-xs text-gray-600">North-East India</p>
         </div>
         
-        <div className="space-y-2 text-xs">
+        <div className="space-y-1 text-xs">
           <div className="flex items-center">
-            <div className="w-4 h-4 rounded-full bg-red-600 border-2 border-red-800 mr-2 shadow-sm"></div>
-            <span className="text-gray-700"><strong>High Risk</strong> - Immediate attention required</span>
+            <div className="w-3 h-3 rounded-full bg-red-600 border border-red-800 mr-1.5 shadow-sm"></div>
+            <span className="text-gray-700"><strong>High</strong> - Urgent</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-orange-500 border-2 border-orange-700 mr-2 shadow-sm"></div>
-            <span className="text-gray-700"><strong>Moderate Risk</strong> - Enhanced monitoring</span>
+            <div className="w-2.5 h-2.5 rounded-full bg-orange-500 border border-orange-700 mr-1.5 shadow-sm"></div>
+            <span className="text-gray-700"><strong>Moderate</strong> - Monitor</span>
           </div>
           <div className="flex items-center">
-            <div className="w-2 h-2 rounded-full bg-green-600 border-2 border-green-800 mr-2 shadow-sm"></div>
-            <span className="text-gray-700"><strong>Low Risk</strong> - Standard precautions</span>
+            <div className="w-2 h-2 rounded-full bg-green-600 border border-green-800 mr-1.5 shadow-sm"></div>
+            <span className="text-gray-700"><strong>Low</strong> - Standard</span>
           </div>
         </div>
         
-        <div className="mt-3 pt-2 border-t border-gray-200">
+        <div className="mt-2 pt-1 border-t border-gray-200">
           <p className="text-xs text-gray-500">
-            <strong>Data Source:</strong> Regional Health Surveillance
+            <strong>Source:</strong> Health Surveillance
           </p>
           <p className="text-xs text-gray-500">
-            <strong>Last Updated:</strong> September 2025
-          </p>
-        </div>
-        
-        <div className="mt-2">
-          <p className="text-xs text-blue-600 font-medium">
-            💧 Click markers for detailed information
+            <strong>Updated:</strong> Sep 2025
           </p>
         </div>
       </div>
