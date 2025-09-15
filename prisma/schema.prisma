@@ -50,8 +50,10 @@ model WaterQualityReport {
   temperature Float?
   // optional free-form notes
   notes       String?
-  collectedAt DateTime @default(now()) @index
+  collectedAt DateTime @default(now())
   createdAt   DateTime @default(now())
+
+  @@index([collectedAt])
 }
 
 // Aggregated symptom trends (e.g., clinic / telehealth self-reports) per area and day
@@ -60,7 +62,7 @@ model SymptomTrend {
   latitude    Float
   longitude   Float
   // reporting date (truncate time for grouping)
-  date        DateTime @index
+  date        DateTime
   // counts of common water-borne symptoms
   diarrheaCount      Int   @default(0)
   vomitingCount      Int   @default(0)
@@ -68,6 +70,7 @@ model SymptomTrend {
   feverCount         Int   @default(0)
   abdominalPainCount Int   @default(0)
   createdAt   DateTime @default(now())
+  @@index([date])
   @@index([latitude, longitude, date])
 }
 
@@ -76,8 +79,8 @@ model OutbreakPrediction {
   id              String   @id @default(cuid())
   latitude        Float
   longitude       Float
-  generatedAt     DateTime @default(now()) @index
-  targetDate      DateTime @index // date this prediction refers to (e.g., next day/week)
+  generatedAt     DateTime @default(now())
+  targetDate      DateTime // date this prediction refers to (e.g., next day/week)
   modelVersion    String
   // Core risk score (0-1)
   riskScore       Float
@@ -88,6 +91,8 @@ model OutbreakPrediction {
   // Optional explanation text (e.g., top contributing factors)
   explanation     String? @db.Text
   createdAt       DateTime @default(now())
+  @@index([generatedAt])
+  @@index([targetDate])
   @@index([latitude, longitude, targetDate])
   @@index([riskCategory])
 }
