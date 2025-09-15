@@ -159,24 +159,36 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
 
   function Legend() {
     return (
-      <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm p-2 rounded-md shadow-lg border border-gray-200 max-w-48">
-        <div className="mb-2">
-          <h4 className="font-bold text-gray-800 text-xs mb-0.5">Risk Zones</h4>
-          <p className="text-xs text-gray-600">North-East India</p>
+      <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm p-3 rounded-lg shadow-xl border-2 border-gray-200 max-w-52">
+        <div className="mb-3">
+          <h4 className="font-bold text-gray-800 text-sm mb-1">Disease Risk Zones</h4>
+          <p className="text-xs text-gray-600">North-East India (Terrain View)</p>
         </div>
         
-        <div className="space-y-1 text-xs">
+        <div className="space-y-1.5 text-xs">
           <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-red-600 border border-red-800 mr-1.5 shadow-sm"></div>
-            <span className="text-gray-700"><strong>High</strong> - Urgent</span>
+            <div className="w-3.5 h-3.5 rounded-full bg-red-600 border-2 border-red-800 mr-2 shadow-lg" 
+                 style={{filter: 'drop-shadow(0 0 4px rgba(220, 38, 38, 0.6))'}}></div>
+            <span className="text-gray-700"><strong>High Risk</strong> - Immediate Action</span>
           </div>
           <div className="flex items-center">
-            <div className="w-2.5 h-2.5 rounded-full bg-orange-500 border border-orange-700 mr-1.5 shadow-sm"></div>
+            <div className="w-3 h-3 rounded-full bg-orange-500 border-2 border-orange-700 mr-2 shadow-md" 
+                 style={{filter: 'drop-shadow(0 0 3px rgba(245, 158, 11, 0.6))'}}></div>
             <span className="text-gray-700"><strong>Moderate</strong> - Monitor</span>
           </div>
           <div className="flex items-center">
-            <div className="w-2 h-2 rounded-full bg-green-600 border border-green-800 mr-1.5 shadow-sm"></div>
-            <span className="text-gray-700"><strong>Low</strong> - Standard</span>
+            <div className="w-2.5 h-2.5 rounded-full bg-green-600 border-2 border-green-800 mr-2 shadow-sm" 
+                 style={{filter: 'drop-shadow(0 0 2px rgba(22, 163, 74, 0.5))'}}></div>
+            <span className="text-gray-700"><strong>Low Risk</strong> - Standard</span>
+          </div>
+        </div>
+        
+        <div className="mt-3 pt-2 border-t border-gray-200">
+          <div className="text-xs text-gray-500 space-y-0.5">
+            <p><strong>Map Features:</strong></p>
+            <p>🛰️ Satellite imagery</p>
+            <p>🏔️ Terrain & elevation</p>
+            <p>🌊 Rivers & water bodies</p>
           </div>
         </div>
         
@@ -206,29 +218,28 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
       zIndex: 1
     }}>
       <style>{`
-        /* Force map labels and UI text to solid black for maximum readability */
-        .leaflet-container { color: #000000 !important; }
+        /* Enhanced styling for terrain map with better readability */
+        .leaflet-container { 
+          color: #000000 !important; 
+          background-color: #f0f4f7;
+        }
+        
         .leaflet-control-container, .leaflet-control, .leaflet-bar a, .leaflet-popup-content, .leaflet-tooltip {
           color: #000000 !important;
+          text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
         }
         
-        /* Enhanced risk zone styling with better contrast and glow effects */
+        /* Enhanced risk zone styling with better contrast against terrain */
         .risk-zone {
-          transition: all 0.2s ease-out;
+          transition: all 0.3s ease-out;
           cursor: pointer;
           outline: none !important;
+          stroke-width: 4px !important;
         }
         
-        /* Remove black outline/focus box on click */
-        .leaflet-interactive:focus {
-          outline: none !important;
-        }
-        
-        .leaflet-clickable:focus {
-          outline: none !important;
-        }
-        
-        /* Remove any black box or border on active state */
+        /* Remove any unwanted focus effects */
+        .leaflet-interactive:focus,
+        .leaflet-clickable:focus,
         .leaflet-interactive:active,
         .leaflet-clickable:active,
         .risk-zone:active,
@@ -238,74 +249,84 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
           box-shadow: none !important;
         }
         
-        /* High Risk Zones - Flickering Red Glow */
+        /* High Risk Zones - Enhanced for terrain visibility */
         .high-risk-glow {
-          filter: drop-shadow(0 0 4px rgba(220, 38, 38, 0.6)) 
-                  drop-shadow(0 0 8px rgba(239, 68, 68, 0.4))
-                  drop-shadow(0 0 12px rgba(248, 113, 113, 0.3));
+          filter: drop-shadow(0 0 6px rgba(220, 38, 38, 0.8)) 
+                  drop-shadow(0 0 12px rgba(239, 68, 68, 0.6))
+                  drop-shadow(0 0 18px rgba(248, 113, 113, 0.4))
+                  drop-shadow(0 0 24px rgba(255, 255, 255, 0.3));
           animation: redFlicker 2s ease-in-out infinite;
         }
         
         @keyframes redFlicker {
           0% { 
-            filter: drop-shadow(0 0 4px rgba(220, 38, 38, 0.6)) 
-                    drop-shadow(0 0 8px rgba(239, 68, 68, 0.4))
-                    drop-shadow(0 0 12px rgba(248, 113, 113, 0.3));
+            filter: drop-shadow(0 0 6px rgba(220, 38, 38, 0.8)) 
+                    drop-shadow(0 0 12px rgba(239, 68, 68, 0.6))
+                    drop-shadow(0 0 18px rgba(248, 113, 113, 0.4))
+                    drop-shadow(0 0 24px rgba(255, 255, 255, 0.3));
             opacity: 1;
           }
           25% { 
-            filter: drop-shadow(0 0 6px rgba(220, 38, 38, 0.8)) 
-                    drop-shadow(0 0 12px rgba(239, 68, 68, 0.6))
-                    drop-shadow(0 0 16px rgba(248, 113, 113, 0.4));
+            filter: drop-shadow(0 0 8px rgba(220, 38, 38, 1)) 
+                    drop-shadow(0 0 16px rgba(239, 68, 68, 0.8))
+                    drop-shadow(0 0 24px rgba(248, 113, 113, 0.6))
+                    drop-shadow(0 0 32px rgba(255, 255, 255, 0.4));
             opacity: 0.9;
           }
           50% { 
-            filter: drop-shadow(0 0 3px rgba(220, 38, 38, 0.5)) 
-                    drop-shadow(0 0 6px rgba(239, 68, 68, 0.3))
-                    drop-shadow(0 0 10px rgba(248, 113, 113, 0.2));
+            filter: drop-shadow(0 0 4px rgba(220, 38, 38, 0.6)) 
+                    drop-shadow(0 0 8px rgba(239, 68, 68, 0.4))
+                    drop-shadow(0 0 12px rgba(248, 113, 113, 0.3))
+                    drop-shadow(0 0 16px rgba(255, 255, 255, 0.2));
             opacity: 0.7;
           }
           75% { 
-            filter: drop-shadow(0 0 5px rgba(220, 38, 38, 0.7)) 
-                    drop-shadow(0 0 10px rgba(239, 68, 68, 0.5))
-                    drop-shadow(0 0 14px rgba(248, 113, 113, 0.3));
+            filter: drop-shadow(0 0 7px rgba(220, 38, 38, 0.9)) 
+                    drop-shadow(0 0 14px rgba(239, 68, 68, 0.7))
+                    drop-shadow(0 0 21px rgba(248, 113, 113, 0.5))
+                    drop-shadow(0 0 28px rgba(255, 255, 255, 0.3));
             opacity: 0.95;
           }
           100% { 
-            filter: drop-shadow(0 0 4px rgba(220, 38, 38, 0.6)) 
-                    drop-shadow(0 0 8px rgba(239, 68, 68, 0.4))
-                    drop-shadow(0 0 12px rgba(248, 113, 113, 0.3));
+            filter: drop-shadow(0 0 6px rgba(220, 38, 38, 0.8)) 
+                    drop-shadow(0 0 12px rgba(239, 68, 68, 0.6))
+                    drop-shadow(0 0 18px rgba(248, 113, 113, 0.4))
+                    drop-shadow(0 0 24px rgba(255, 255, 255, 0.3));
             opacity: 1;
           }
         }
         
-        /* Moderate Risk Zones - Reduced Orange Glow */
+        /* Moderate Risk Zones - Enhanced visibility on terrain */
         .moderate-risk-glow {
-          filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.6)) 
-                  drop-shadow(0 0 6px rgba(251, 191, 36, 0.4))
-                  drop-shadow(0 0 9px rgba(254, 215, 170, 0.2));
+          filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.8)) 
+                  drop-shadow(0 0 8px rgba(251, 191, 36, 0.6))
+                  drop-shadow(0 0 12px rgba(254, 215, 170, 0.4))
+                  drop-shadow(0 0 16px rgba(255, 255, 255, 0.2));
         }
         
-        /* Low Risk Zones - Reduced Green Glow */
+        /* Low Risk Zones - Enhanced visibility on terrain */
         .low-risk-glow {
-          filter: drop-shadow(0 0 2px rgba(22, 163, 74, 0.5)) 
-                  drop-shadow(0 0 4px rgba(34, 197, 94, 0.3))
-                  drop-shadow(0 0 6px rgba(134, 239, 172, 0.2));
+          filter: drop-shadow(0 0 3px rgba(22, 163, 74, 0.7)) 
+                  drop-shadow(0 0 6px rgba(34, 197, 94, 0.5))
+                  drop-shadow(0 0 9px rgba(134, 239, 172, 0.3))
+                  drop-shadow(0 0 12px rgba(255, 255, 255, 0.2));
         }
         
-        /* Custom tooltip styling */
+        /* Enhanced tooltip styling for terrain background */
         .custom-tooltip .leaflet-tooltip {
-          background: white !important;
-          border: 1px solid #e5e7eb !important;
-          border-radius: 8px !important;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+          background: rgba(255, 255, 255, 0.95) !important;
+          border: 2px solid #e5e7eb !important;
+          border-radius: 12px !important;
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), 
+                      0 5px 15px rgba(0, 0, 0, 0.1) !important;
           color: #374151 !important;
           font-size: 12px !important;
           padding: 0 !important;
           z-index: 10000 !important;
           position: relative !important;
-          max-width: 280px !important;
+          max-width: 300px !important;
           white-space: normal !important;
+          backdrop-filter: blur(10px) !important;
         }
         
         .custom-tooltip .leaflet-tooltip:before {
@@ -314,7 +335,7 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
         }
         
         .custom-tooltip .leaflet-tooltip:after {
-          border-bottom-color: white !important;
+          border-bottom-color: rgba(255, 255, 255, 0.95) !important;
           border-top-color: transparent !important;
         }
       `}</style>
@@ -324,16 +345,30 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
         zoom={position ? 10 : 7}
         style={{ height: "100%", width: "100%" }}
       >
+        {/* Satellite base layer for terrain and natural features */}
         <TileLayer
-          /* Use a darker, muted basemap for better contrast with risk zones */
-          url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
         />
         
-        {/* Add water bodies layer for context */}
+        {/* Terrain layer with elevation and topographic details */}
         <TileLayer
-          url="https://stamen-tiles-{s}.a.ssl.fastly.net/toner-hybrid/{z}/{x}/{y}.png"
-          attribution='Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>'
+          url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+          attribution='Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+          opacity={0.4}
+        />
+        
+        {/* Water bodies and rivers layer - enhanced visibility */}
+        <TileLayer
+          url="https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          opacity={0.6}
+        />
+        
+        {/* Natural Earth style for political boundaries and place names */}
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           opacity={0.3}
         />
         
