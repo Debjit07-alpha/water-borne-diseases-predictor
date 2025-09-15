@@ -112,8 +112,8 @@ export default function Home() {
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23f59e0b'/%3E%3Ctext x='100' y='100' text-anchor='middle' dy='.3em' fill='white' font-size='16' font-weight='bold'%3EDiarrhea%3C/text%3E%3C/svg%3E";
-                }}
-              />
+                }}    
+              /> 
             </div>
             <h3 className="text-lg font-bold text-center group-hover:text-[#0B86FF] transition-colors duration-300">Diarrhea</h3>
             <p className="text-sm text-gray-600 text-center mt-2">Frequent loose, watery stools causing dehydration</p>
