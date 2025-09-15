@@ -109,3 +109,30 @@ pnpm dev
 ```
 
 If your editor flags `@tailwind` or `@apply` as unknown rules, that's the CSS linter — the build will process them correctly when the dev server is running.
+
+## AI Chat Assistant
+
+An AI Health Assistant is available to answer questions about water-borne diseases and can optionally analyze uploaded images.
+
+Features:
+- Floating chat widget (bottom-right) on every page
+- Full-page experience at `/chat`
+- Streaming responses from `/api/chat`
+- Optional image upload (<=10MB, any standard image MIME type)
+
+Usage:
+1. Click the circular chat button (message icon) to open/close the widget.
+2. Type your question or click the image icon to attach an image.
+3. Press Enter or the send icon.
+4. Visit `/chat` for a larger focused view.
+
+Notes:
+- Chat history is in-memory only and resets on reload (can be persisted later via localStorage or a DB table).
+- The assistant is informational only and not a medical professional. Always seek qualified medical advice for diagnosis or treatment.
+
+Future Enhancements (ideas):
+- LocalStorage or server persistence of conversations
+- Auth-based user conversation history
+- Markdown rendering & citations
+- Accessibility focus trap and ARIA live region
+

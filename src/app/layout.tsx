@@ -3,6 +3,7 @@ import { Inter, Montserrat, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
+import FloatingChat from "@/components/FloatingChat";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -43,6 +44,8 @@ export default function RootLayout({
             </main>
           </div>
         </div>
+        {/* Global floating chat assistant */}
+        <FloatingChat />
       </body>
     </html>
   );
