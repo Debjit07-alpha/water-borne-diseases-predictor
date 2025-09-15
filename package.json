@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "dev": "next dev --turbopack",
-  "build": "next build",
+    "dev": "next dev --turbopack",
+    "build": "next build",
     "start": "next start",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
@@ -13,7 +13,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^5.2.1",
-    "@prisma/client": "^6.16.1",
+    "@prisma/client": "6.16.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@types/leaflet": "^1.9.20",
     "class-variance-authority": "^0.7.1",
@@ -35,10 +35,9 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "tailwindcss": "^3.4.1",
     "autoprefixer": "^10.4.20",
-    "postcss":"^8",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
     "typescript": "^5"
-
   }
 }
