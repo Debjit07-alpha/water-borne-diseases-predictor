@@ -13,16 +13,20 @@ export async function POST(req: NextRequest) {
     const modelName = image ? "gemini-1.5-flash" : "gemini-1.5-flash";
     const model = genAI.getGenerativeModel({ model: modelName });
 
-    let prompt = `You are an expert AI health assistant specializing in water-borne diseases and public health for North-East India. 
-    
-Your expertise covers:
-🔬 **Disease Analysis**: Cholera, typhoid, diarrhea, hepatitis A, dysentery, giardiasis, leptospirosis, salmonella
-💧 **Water Quality Assessment**: Visual contamination signs, water sources, treatment methods
-🩺 **Symptom Recognition**: Visual signs of dehydration, skin conditions, eye conditions related to water-borne diseases
-🏥 **Health Recommendations**: Prevention strategies, when to seek medical help, emergency signs
-📍 **Regional Context**: Specific risks and conditions in North-East India
+    let prompt = `You are a medical chatbot designed to identify potential diseases based on user-provided symptoms. Your knowledge base includes a list of pre-defined diseases and their associated symptoms. When a user describes symptoms, you will analyze the input, match it against your knowledge base, and clearly state the most probable disease(s) based solely on the symptoms provided. Do not provide medical advice, treatment recommendations, or any information beyond the possible disease diagnosis. Keep your responses concise and to the point, focusing only on the potential disease(s).
 
-${message ? `User message: ${message}` : ''}`;
+Your disease knowledge base includes:
+- Cholera: Severe watery diarrhea, vomiting, dehydration, muscle cramps
+- Typhoid: High fever, headache, weakness, stomach pain, rose-colored rash
+- Hepatitis A: Jaundice, fatigue, nausea, abdominal pain, dark urine
+- Dysentery: Bloody diarrhea, fever, stomach cramps, nausea
+- Giardiasis: Diarrhea, gas, stomach cramps, nausea, dehydration
+- Leptospirosis: High fever, headache, chills, muscle aches, vomiting, jaundice
+- Salmonella: Diarrhea, fever, stomach cramps, nausea, vomiting
+- Diarrheal diseases: Loose stools, dehydration, stomach pain
+- Gastroenteritis: Vomiting, diarrhea, stomach pain, fever
+
+${message ? `User symptoms: ${message}` : ''}`;
 
     let parts: any[] = [{ text: prompt }];
 
@@ -38,36 +42,18 @@ ${message ? `User message: ${message}` : ''}`;
         }
       });
 
-      // Enhanced prompt for comprehensive image analysis
+      // Enhanced prompt for symptom-focused image analysis
       const imageAnalysisPrompt = `
 
-🖼️ **IMAGE ANALYSIS REQUEST**
-Please provide a detailed analysis of the uploaded image. Focus on:
+IMAGE ANALYSIS FOR DISEASE IDENTIFICATION:
+Analyze the uploaded image for visible symptoms that may indicate specific diseases from your knowledge base. Focus only on:
 
-**If it's a water-related image:**
-- Water clarity, color, and visible contamination
-- Potential sources of contamination
-- Risk assessment for water-borne diseases
-- Recommended treatment or safety measures
+1. Visible symptoms you can observe in the image
+2. Match these symptoms to potential diseases from your knowledge base
+3. State the most probable disease(s) based on visible evidence
+4. Be concise and factual
 
-**If it shows symptoms or health conditions:**
-- Visible signs that might indicate water-borne diseases
-- Severity assessment (mild/moderate/severe)
-- Immediate care recommendations
-- When to seek professional medical help
-
-**If it's environmental/sanitation:**
-- Hygiene risks and contamination sources
-- Disease transmission potential
-- Prevention recommendations
-
-**General approach:**
-- Describe what you observe objectively
-- Explain health implications
-- Provide actionable advice
-- Include relevant warnings or disclaimers
-
-⚠️ **Important**: Always remind users that this is not a substitute for professional medical diagnosis and they should consult healthcare providers for serious concerns.`;
+Do not provide treatment advice, prevention tips, or general health information. Only identify potential diseases based on observable symptoms.`;
 
       prompt += imageAnalysisPrompt;
       parts[0].text = prompt;
