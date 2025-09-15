@@ -6,8 +6,8 @@ import { HighRiskZone, highRiskZones } from "@/lib/high-risk-zones";
 interface MapProps {
   position: [number, number] | null;
   onPositionChange: (lat: number, lng: number) => void;
-  onZoneClick: (zone: HighRiskZone) => void;
-  zones: HighRiskZone[];
+  onZoneClick?: (zone: HighRiskZone) => void;
+  zones?: HighRiskZone[];
 }
 
 export default function Map({ position, onPositionChange, onZoneClick, zones }: MapProps) {
@@ -113,7 +113,9 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
               }}
               eventHandlers={{
                 click: () => {
-                  onZoneClick(zone);
+                  if (onZoneClick) {
+                    onZoneClick(zone);
+                  }
                 }
               }}
             >
