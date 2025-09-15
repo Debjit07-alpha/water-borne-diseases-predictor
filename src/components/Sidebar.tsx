@@ -40,48 +40,76 @@ export default function Sidebar() {
             <Link
               href="/"
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#0B86FF]/10 transition-colors",
+                "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#0B86FF]/10 transition-colors relative group",
                 "text-sm font-medium text-[#0B2545]"
               )}
+              title={collapsed ? "Dashboard" : ""}
             >
               <LayoutDashboard size={18} className="text-[#0B86FF]" />
               {!collapsed && <span>Dashboard</span>}
+              {collapsed && (
+                <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] border border-gray-700">
+                  Dashboard
+                  <div className="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
+                </div>
+              )}
             </Link>
           </li>
           <li>
             <Link
               href="/map"
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#0B86FF]/10 transition-colors",
+                "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#0B86FF]/10 transition-colors relative group",
                 "text-sm font-medium text-[#0B2545]"
               )}
+              title={collapsed ? "Disease Map" : ""}
             >
               <Map size={18} className="text-[#0B86FF]" />
               {!collapsed && <span>Disease Map</span>}
+              {collapsed && (
+                <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] border border-gray-700">
+                  Disease Map
+                  <div className="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
+                </div>
+              )}
             </Link>
           </li>
           <li>
             <Link
               href="/report"
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#0B86FF]/10 transition-colors",
+                "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#0B86FF]/10 transition-colors relative group",
                 "text-sm font-medium text-[#0B2545]"
               )}
+              title={collapsed ? "Report Incident" : ""}
             >
               <AlertCircle size={18} className="text-[#0B86FF]" />
               {!collapsed && <span>Report Incident</span>}
+              {collapsed && (
+                <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] border border-gray-700">
+                  Report Incident
+                  <div className="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
+                </div>
+              )}
             </Link>
           </li>
           <li>
             <Link
               href="/diseases"
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#0B86FF]/10 transition-colors",
+                "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#0B86FF]/10 transition-colors relative group",
                 "text-sm font-medium text-[#0B2545]"
               )}
+              title={collapsed ? "Learn More" : ""}
             >
               <GraduationCap size={18} className="text-[#0B86FF]" />
               {!collapsed && <span>Learn More</span>}
+              {collapsed && (
+                <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] border border-gray-700">
+                  Learn More
+                  <div className="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
+                </div>
+              )}
             </Link>
           </li>
         </ul>

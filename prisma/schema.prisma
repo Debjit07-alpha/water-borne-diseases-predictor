@@ -32,3 +32,62 @@ model Disease {
   treatment      String    @db.Text
   slug           String    @unique
 }
+
+// Water quality reports - could be uploaded daily/weekly per location
+model WaterQualityReport {
+  id          String   @id @default(cuid())
+  latitude    Float
+  longitude   Float
+  // e.g., coliform count per 100ml
+  coliformCFU Int?
+  // turbidity in NTU
+  turbidity   Float?
+  // dissolved oxygen mg/L
+  dissolvedOxygen Float?
+  // pH level
+  ph          Float?
+  // temperature in Celsius
+  temperature Float?
+  // optional free-form notes
+  notes       String?
+  collectedAt DateTime @default(now()) @index
+  createdAt   DateTime @default(now())
+}
+
+// Aggregated symptom trends (e.g., clinic / telehealth self-reports) per area and day
+model SymptomTrend {
+  id          String   @id @default(cuid())
+  latitude    Float
+  longitude   Float
+  // reporting date (truncate time for grouping)
+  date        DateTime @index
+  // counts of common water-borne symptoms
+  diarrheaCount      Int   @default(0)
+  vomitingCount      Int   @default(0)
+  dehydrationCount   Int   @default(0)
+  feverCount         Int   @default(0)
+  abdominalPainCount Int   @default(0)
+  createdAt   DateTime @default(now())
+  @@index([latitude, longitude, date])
+}
+
+// Stored outbreak risk predictions for map visualization & history
+model OutbreakPrediction {
+  id              String   @id @default(cuid())
+  latitude        Float
+  longitude       Float
+  generatedAt     DateTime @default(now()) @index
+  targetDate      DateTime @index // date this prediction refers to (e.g., next day/week)
+  modelVersion    String
+  // Core risk score (0-1)
+  riskScore       Float
+  // Discrete category derived from score (Low/Moderate/High)
+  riskCategory    String
+  // Feature snapshot (JSON stringified for transparency / audit)
+  features        Json
+  // Optional explanation text (e.g., top contributing factors)
+  explanation     String? @db.Text
+  createdAt       DateTime @default(now())
+  @@index([latitude, longitude, targetDate])
+  @@index([riskCategory])
+}

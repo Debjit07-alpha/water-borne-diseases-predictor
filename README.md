@@ -47,6 +47,58 @@ pnpm prisma generate; pnpm prisma migrate dev --name init; pnpm run prisma:seed
 
 The seed script will upsert example diseases: Cholera, Diarrhea, Typhoid and Hepatitis A.
 
+
+## Outbreak Prediction & ML Pipeline
+
+This project includes a two-tier outbreak prediction system:
+
+1. Heuristic Scoring (baseline)
+	- Combines recent symptom trends, water quality normalization, incident rate, and seasonal factor.
+	- Produces `riskScore` (0-1) + category (Low/Moderate/High).
+
+2. Logistic Regression (demo ML model)
+	- Trains on current feature snapshots vs. whether a location had an incident in the last 24h (simplified label).
+	- Stored at `models/logreg-model.json`.
+	- Fallbacks to heuristic if model file missing.
+
+### Key Data Models
+- `WaterQualityReport` – water/sanitation metrics
+- `SymptomTrend` – daily aggregated symptom counts
+- `OutbreakPrediction` – persisted predictions with feature snapshot & explanation
+
+### Generating Predictions
+POST `/api/predictions` body (optional):
+```
+{ "windowDays": 14, "targetOffsetDays": 1 }
+```
+GET `/api/predictions?days=1&limit=100`
+
+### Training the ML Model
+POST `/api/train` (optional body):
+```
+{ "windowDays": 14, "iterations": 400, "learningRate": 0.05 }
+```
+Successful training writes weights file, automatically used on next prediction generation.
+
+### Model File Format (logreg)
+```
+{
+  "weights": [bias, w1, w2, ...],
+  "featureNames": ["incidentRatePerDay","recentSymptomScore","waterQualityScore","seasonalFactor","lastReportAgeFrac"],
+  "modelVersion": "logreg-v1",
+  "trainedAt": "ISO timestamp"
+}
+```
+
+### Next Steps Toward Production ML
+- Introduce outcome labeling table (future incident counts per location)
+- Time-aligned sliding feature windows & lag features
+- Geospatial clustering (H3 or geohash) to reduce sparsity
+- Model monitoring: calibration, drift checks
+- Export endpoint for offline training (Python / notebooks)
+
+### Disclaimer
+Current ML implementation is a minimal demonstration. Not validated for clinical or public health decision making. Replace with a rigorously trained & validated model before real-world use.
 ### Running locally (Tailwind)
 
 This project uses Tailwind CSS (v4) via PostCSS. If styles don't appear, ensure dependencies are installed and run the dev server:

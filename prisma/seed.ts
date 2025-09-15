@@ -200,11 +200,83 @@ const diseases = [
 ];
 
 async function main() {
+  // Seed diseases (idempotent-ish: ignore if exists)
   for (const disease of diseases) {
-    await prisma.disease.create({
-      data: disease,
+    await prisma.disease.upsert({
+      where: { name: disease.name },
+      update: {},
+      create: disease,
     });
   }
+
+  // Sample geo points (simulate different localities)
+  const locations = [
+    { latitude: 26.115, longitude: 91.708 }, // Guwahati
+    { latitude: 25.675, longitude: 94.108 }, // Dimapur
+    { latitude: 27.475, longitude: 95.000 }, // Dibrugarh region
+  ];
+
+  // Seed incidents randomly
+  for (const loc of locations) {
+    const incidentCount = Math.floor(Math.random() * 4) + 2; // 2-5
+    for (let i = 0; i < incidentCount; i++) {
+      const disease = diseases[Math.floor(Math.random() * diseases.length)].name;
+      const createdAt = new Date(Date.now() - Math.random() * 10 * 24 * 60 * 60 * 1000);
+      await prisma.incident.create({
+        data: {
+          latitude: loc.latitude,
+          longitude: loc.longitude,
+            disease,
+            details: `Auto seeded incident for ${disease}`,
+            createdAt,
+        },
+      });
+    }
+  }
+
+  // Seed water quality reports
+  for (const loc of locations) {
+    const reportCount = 3;
+    for (let i = 0; i < reportCount; i++) {
+      const collectedAt = new Date(Date.now() - i * 3 * 24 * 60 * 60 * 1000);
+      await prisma.waterQualityReport.create({
+        data: {
+          latitude: loc.latitude,
+          longitude: loc.longitude,
+          coliformCFU: 100 + Math.floor(Math.random() * 400),
+          turbidity: parseFloat((Math.random() * 5 + 1).toFixed(2)),
+          dissolvedOxygen: parseFloat((Math.random() * 4 + 4).toFixed(2)),
+          ph: parseFloat((6 + Math.random() * 2.5).toFixed(2)),
+          temperature: parseFloat((24 + Math.random() * 8).toFixed(1)),
+          collectedAt,
+          notes: 'Seeded sample water report',
+        },
+      });
+    }
+  }
+
+  // Seed symptom trends last 7 days
+  for (const loc of locations) {
+    for (let day = 0; day < 7; day++) {
+      const date = new Date();
+      date.setDate(date.getDate() - day);
+      date.setHours(0,0,0,0);
+      await prisma.symptomTrend.create({
+        data: {
+          latitude: loc.latitude,
+          longitude: loc.longitude,
+          date,
+          diarrheaCount: Math.floor(Math.random() * 10),
+          vomitingCount: Math.floor(Math.random() * 6),
+          dehydrationCount: Math.floor(Math.random() * 5),
+          feverCount: Math.floor(Math.random() * 8),
+          abdominalPainCount: Math.floor(Math.random() * 4),
+        },
+      });
+    }
+  }
+
+  console.log('Seed complete: diseases, incidents, water quality, symptom trends');
 }
 
 main()
