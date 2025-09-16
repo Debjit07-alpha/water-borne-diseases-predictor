@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import LocationSearch from "@/components/LocationSearch";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
@@ -38,6 +39,56 @@ const diseases = [
 
 export default function ReportPage() {
   const [position, setPosition] = useState<[number, number] | null>(null);
+  const [selectedAddress, setSelectedAddress] = useState<string>("");
+  const [isLoadingAddress, setIsLoadingAddress] = useState(false);
+
+  // Reverse geocoding function
+  const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?` +
+        `format=json&` +
+        `lat=${lat}&` +
+        `lon=${lng}&` +
+        `addressdetails=1&` +
+        `accept-language=en`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+      }
+    } catch (error) {
+      console.error('Error getting address:', error);
+    }
+    return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  };
+
+  // Handle map click with reverse geocoding
+  const handleMapClick = async (lat: number, lng: number) => {
+    setPosition([lat, lng]);
+    setIsLoadingAddress(true);
+    
+    try {
+      const address = await reverseGeocode(lat, lng);
+      setSelectedAddress(address);
+    } catch (error) {
+      setSelectedAddress(`${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+    } finally {
+      setIsLoadingAddress(false);
+    }
+    
+    form.setValue("latitude", lat);
+    form.setValue("longitude", lng);
+  };
+
+  // Handle location search selection (allows further editing)
+  const handleLocationSearchSelect = (lat: number, lng: number, address: string) => {
+    setPosition([lat, lng]);
+    setSelectedAddress(address);
+    form.setValue("latitude", lat);
+    form.setValue("longitude", lng);
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -61,6 +112,8 @@ export default function ReportPage() {
       alert("Incident reported successfully!");
       form.reset();
       setPosition(null);
+      setSelectedAddress("");
+      setIsLoadingAddress(false);
     } else {
       alert("Failed to report incident.");
     }
@@ -100,20 +153,60 @@ export default function ReportPage() {
           <CardHeader>
             <CardTitle className="font-heading-sans">Step 2: Select Location</CardTitle>
             <CardDescription>
-              Click on the map to drop a pin or use your device's GPS.
+              Search for a location or click on the map to drop a pin.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="h-96">
-              <Map
-                position={position}
-                onPositionChange={(lat, lng) => {
-                  setPosition([lat, lng]);
-                  form.setValue("latitude", lat);
-                  form.setValue("longitude", lng);
-                }}
+          <CardContent className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Search Location
+              </label>
+              <LocationSearch
+                onLocationSelect={handleLocationSearchSelect}
+                placeholder="Type location: city, area, landmark, hospital..."
               />
             </div>
+            
+            <div className="text-sm text-gray-500 text-center py-2">
+              OR
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Click on Map
+              </label>
+              <div className="h-96 border rounded-lg overflow-hidden">
+                <Map
+                  position={position}
+                  onPositionChange={handleMapClick}
+                />
+              </div>
+            </div>
+            
+            {position && (
+              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-800">
+                  <strong>Selected Location:</strong>
+                </p>
+                {isLoadingAddress ? (
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-sm text-green-600">Getting location details...</span>
+                  </div>
+                ) : (
+                  <>
+                    {selectedAddress && (
+                      <p className="text-sm text-green-700 mt-1 leading-relaxed">
+                        📍 {selectedAddress}
+                      </p>
+                    )}
+                    <p className="text-xs text-green-600 mt-2">
+                      Coordinates: {position[0].toFixed(6)}, {position[1].toFixed(6)}
+                    </p>
+                  </>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
