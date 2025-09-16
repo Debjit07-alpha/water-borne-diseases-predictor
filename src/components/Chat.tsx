@@ -32,7 +32,7 @@ export default function Chat() {
       setMessages([{
         id: Date.now().toString(),
         role: "assistant",
-        content: "🩺 **Disease Identifier**\n\nDescribe your symptoms and I'll identify potential diseases.\n\n**Supported Diseases:**\nCholera • Typhoid • Hepatitis A • Dysentery • Giardiasis • Leptospirosis • Salmonella\n\n📸 **Upload images** showing symptoms\n\n⚠️ **Note:** Disease identification only - consult medical professionals",
+        content: "🩺 Curevo\n\nDescribe your symptoms and I'll identify potential diseases.\n\n• Supported diseases:\nCHOLERA • TYPHOID • HEPATITIS A • DYSENTERY • GIARDIASIS • LEPTOSPIROSIS • SALMONELLA\n\n• Upload images showing symptoms 📸\n\n• Note: Disease identification only - consult medical professionals ⚠️",
         timestamp: new Date()
       }]);
     }
@@ -234,7 +234,7 @@ export default function Chat() {
       <div className="bg-primary text-primary-foreground p-3 rounded-t-lg">
         <h2 className="text-base font-medium flex items-center gap-2">
           <MessageCircle className="h-4 w-4" />
-          Disease Identifier
+          Curevo
         </h2>
       </div>
       
@@ -279,7 +279,7 @@ export default function Chat() {
                   <p className="text-xs opacity-60 mt-1">📷 Click to enlarge</p>
                 </div>
               )}
-              <div className="text-xs whitespace-pre-wrap">{msg.content}</div>
+              <div className="text-xs whitespace-pre-wrap" style={{ fontFamily: 'Cinzel, "Bell MT", Georgia, serif' }}>{msg.content}</div>
               <div className="text-xs opacity-70 mt-1">
                 {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </div>

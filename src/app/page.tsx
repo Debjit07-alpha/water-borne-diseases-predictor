@@ -46,10 +46,10 @@ export default function Home() {
         </div>
         <div className={`transition-all duration-1000 delay-400 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-white text-[#0B86FF] font-bold shadow-lg hover:bg-blue-100 hover:scale-105 transition-all duration-300 transform">
+            <Button asChild size="lg" className="bg-white text-[#0B86FF] font-bold shadow-lg">
               <a href="/map">Explore Map</a>
             </Button>
-            <Button asChild size="lg" variant="secondary" className="bg-[#0B86FF] text-white font-bold shadow-lg hover:bg-blue-700 hover:scale-105 transition-all duration-300 transform">
+            <Button asChild size="lg" variant="secondary" className="bg-[#0B86FF] text-white font-bold shadow-lg">
               <a href="/report">Report an Incident</a>
             </Button>
           </div>
@@ -58,25 +58,25 @@ export default function Home() {
 
       {/* Features/PAQ Section */}
       <section className="w-full max-w-6xl mx-auto py-16 px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8" id="features">
-        <div className={`bg-white/80 rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`} style={{ transitionDelay: '600ms' }}>
-          <div className="group-hover:scale-110 transition-transform duration-300">
+        <div className={`bg-white/80 rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center group cursor-pointer ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`} style={{ transitionDelay: '600ms' }}>
+          <div>
             <svg width="48" height="48" fill="none" viewBox="0 0 48 48"><circle cx="24" cy="24" r="24" fill="#0B86FF" opacity="0.1"/><path d="M24 8C16 8 10 14 10 21.5C10 34 24 44 24 44s14-10 14-22.5C38 14 32 8 24 8z" fill="#0B86FF"/></svg>
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold mt-4 mb-2 group-hover:text-[#0B86FF] transition-colors duration-300 font-book-antiqua">High-Risk Zones</h3>
+          <h3 className="text-2xl md:text-3xl font-bold mt-4 mb-2 font-book-antiqua">High-Risk Zones</h3>
           <p className="text-lg md:text-xl text-gray-700 text-center font-bell-mt">Interactive map of flood-prone, riverine, and remote communities at risk for water-borne diseases.</p>
         </div>
-        <div className={`bg-white/80 rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`} style={{ transitionDelay: '800ms' }}>
-          <div className="group-hover:scale-110 transition-transform duration-300">
+        <div className={`bg-white/80 rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center group cursor-pointer ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`} style={{ transitionDelay: '800ms' }}>
+          <div>
             <svg width="48" height="48" fill="none" viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="8" fill="#0B86FF" opacity="0.1"/><rect x="16" y="16" width="16" height="16" rx="4" fill="#0B86FF"/></svg>
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold mt-4 mb-2 group-hover:text-[#0B86FF] transition-colors duration-300 font-book-antiqua">Real-Time Incidents</h3>
+          <h3 className="text-2xl md:text-3xl font-bold mt-4 mb-2 font-book-antiqua">Real-Time Incidents</h3>
           <p className="text-lg md:text-xl text-gray-700 text-center font-bell-mt">See recent outbreaks, case numbers, and trends. Stay informed and prepared for seasonal peaks.</p>
         </div>
-        <div className={`bg-white/80 rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer sm:col-span-2 lg:col-span-1 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`} style={{ transitionDelay: '1000ms' }}>
-          <div className="group-hover:scale-110 transition-transform duration-300">
+        <div className={`bg-white/80 rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center group cursor-pointer sm:col-span-2 lg:col-span-1 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`} style={{ transitionDelay: '1000ms' }}>
+          <div>
             <svg width="48" height="48" fill="none" viewBox="0 0 48 48"><rect x="0" y="0" width="48" height="48" rx="24" fill="#0B86FF" opacity="0.1"/><path d="M24 14a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16zm-1 3v6l5 3" fill="#0B86FF"/></svg>
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold mt-4 mb-2 group-hover:text-[#0B86FF] transition-colors duration-300 font-book-antiqua">Prevention & Response</h3>
+          <h3 className="text-2xl md:text-3xl font-bold mt-4 mb-2 font-book-antiqua">Prevention & Response</h3>
           <p className="text-lg md:text-xl text-gray-700 text-center font-bell-mt">Guidance for communities: how to prevent, respond, and recover from water-borne disease outbreaks.</p>
         </div>
       </section>
@@ -84,12 +84,12 @@ export default function Home() {
       {/* Diseases Section */}
       <section className="w-full max-w-6xl mx-auto py-16 px-4">
         <div className={`transition-all duration-1000 delay-1000 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
-          <h2 className="text-3xl md:text-4xl font-bold text-black mb-8 text-center font-comic-sans">Common Water-Borne Diseases</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-black mb-8 text-center font-bookman-old-style">Common Water-Borne Diseases</h2>
         </div>
         <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 transition-all duration-1000 delay-1100 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
           {/* Cholera */}
-          <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer">
-            <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-110 transition-transform duration-300">
+          <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center group cursor-pointer">
+            <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
               <img 
                 src="/cholerae.jpg" 
                 alt="Cholera bacteria" 
@@ -99,13 +99,13 @@ export default function Home() {
                 }}
               />
             </div>
-            <h3 className="text-lg font-bold text-center group-hover:text-[#0B86FF] transition-colors duration-300">Cholera</h3>
+            <h3 className="text-lg font-bold text-center">Cholera</h3>
             <p className="text-sm text-gray-600 text-center mt-2">Severe diarrhea caused by Vibrio cholerae bacteria</p>
           </div>
 
           {/* Diarrhea */}
-          <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer">
-            <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-110 transition-transform duration-300">
+          <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center group cursor-pointer">
+            <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
               <img 
                 src="/diarrea.jpg" 
                 alt="Diarrhea symptoms" 
@@ -115,13 +115,13 @@ export default function Home() {
                 }}    
               /> 
             </div>
-            <h3 className="text-lg font-bold text-center group-hover:text-[#0B86FF] transition-colors duration-300">Diarrhea</h3>
+            <h3 className="text-lg font-bold text-center">Diarrhea</h3>
             <p className="text-sm text-gray-600 text-center mt-2">Frequent loose, watery stools causing dehydration</p>
           </div>
 
           {/* Hepatitis A */}
-          <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer">
-            <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-110 transition-transform duration-300">
+          <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center group cursor-pointer">
+            <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
               <img 
                 src="/hepatitis_A.jpg" 
                 alt="Hepatitis A virus" 
@@ -131,13 +131,13 @@ export default function Home() {
                 }}
               />
             </div>
-            <h3 className="text-lg font-bold text-center group-hover:text-[#0B86FF] transition-colors duration-300">Hepatitis A</h3>
+            <h3 className="text-lg font-bold text-center">Hepatitis A</h3>
             <p className="text-sm text-gray-600 text-center mt-2">Liver inflammation caused by contaminated water</p>
           </div>
 
           {/* Typhoid */}
-          <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center hover:scale-105 hover:shadow-2xl transition-all duration-300 transform group cursor-pointer">
-            <div className="w-24 h-24 rounded-full overflow-hidden mb-4 group-hover:scale-110 transition-transform duration-300">
+          <div className="bg-white/80 rounded-xl shadow-lg p-6 flex flex-col items-center group cursor-pointer">
+            <div className="w-24 h-24 rounded-full overflow-hidden mb-4">
               <img 
                 src="/typhoid.jpg" 
                 alt="Typhoid fever" 
@@ -147,7 +147,7 @@ export default function Home() {
                 }}
               />
             </div>
-            <h3 className="text-lg font-bold text-center group-hover:text-[#0B86FF] transition-colors duration-300">Typhoid</h3>
+            <h3 className="text-lg font-bold text-center">Typhoid</h3>
             <p className="text-sm text-gray-600 text-center mt-2">High fever and weakness from Salmonella typhi</p>
           </div>
         </div>
@@ -156,7 +156,7 @@ export default function Home() {
       {/* Map Section */}
       <section id="map" className="w-full max-w-7xl mx-auto py-12 px-4">
         <div className={`transition-all duration-1000 delay-1200 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
-          <h2 className="text-3xl md:text-4xl font-bold text-black mb-6 text-center font-comic-sans">Interactive Risk Map</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-black mb-6 text-center font-bookman-old-style">Interactive Risk Map</h2>
         </div>
         <div className={`w-full h-[50vh] sm:h-[60vh] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/80 bg-white/60 relative transition-all duration-1000 delay-1400 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
           {!isMapLoaded ? (
@@ -181,25 +181,25 @@ export default function Home() {
       {/* FAQ/PAQ Section */}
       <section className="w-full max-w-5xl mx-auto py-16 px-4" id="faq">
         <div className={`transition-all duration-1000 delay-1600 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
-          <h2 className="text-2xl md:text-3xl font-bold text-black mb-8 text-center font-comic-sans">Frequently Asked Questions</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-black mb-8 text-center font-bookman-old-style">Frequently Asked Questions</h2>
         </div>
         <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 transition-all duration-1000 delay-1800 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
           <div className="space-y-6">
-            <div className="bg-white/60 rounded-lg p-6 hover:bg-white/80 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+            <div className="bg-white/60 rounded-lg p-6">
               <h4 className="font-semibold mb-2 text-xl md:text-2xl font-book-antiqua">What are water-borne diseases?</h4>
               <p className="text-gray-700 text-lg md:text-xl font-bell-mt">Diseases caused by microorganisms in contaminated water, such as cholera, dysentery, and typhoid. They spread through drinking or using unsafe water.</p>
             </div>
-            <div className="bg-white/60 rounded-lg p-6 hover:bg-white/80 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+            <div className="bg-white/60 rounded-lg p-6">
               <h4 className="font-semibold mb-2 text-xl md:text-2xl font-book-antiqua">How can I protect my family?</h4>
               <p className="text-gray-700 text-lg md:text-xl font-bell-mt">Boil or treat water before use, practice good hygiene, and avoid open defecation near water sources. Follow local health advisories.</p>
             </div>
           </div>
           <div className="space-y-6">
-            <div className="bg-white/60 rounded-lg p-6 hover:bg-white/80 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+            <div className="bg-white/60 rounded-lg p-6">
               <h4 className="font-semibold mb-2 text-xl md:text-2xl font-book-antiqua">What should I do if someone gets sick?</h4>
               <p className="text-gray-700 text-lg md:text-xl font-bell-mt">Start oral rehydration immediately for diarrhea. Seek medical help for severe symptoms like high fever or blood in stool.</p>
             </div>
-            <div className="bg-white/60 rounded-lg p-6 hover:bg-white/80 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+            <div className="bg-white/60 rounded-lg p-6">
               <h4 className="font-semibold mb-2 text-xl md:text-2xl font-book-antiqua">Where can I report an outbreak?</h4>
               <p className="text-gray-700 text-lg md:text-xl font-bell-mt">Use the "Report an Incident" button above or contact your local health authorities. Your report helps protect the community.</p>
             </div>

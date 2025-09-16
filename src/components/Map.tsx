@@ -360,9 +360,9 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
         
         {/* Water bodies and rivers layer - enhanced visibility */}
         <TileLayer
-          url="https://tiles.stadiamaps.com/tiles/stamen_terrain/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          opacity={0.6}
+          url="https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png"
+          attribution='&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          opacity={0.4}
         />
         
         {/* Natural Earth style for political boundaries and place names */}
