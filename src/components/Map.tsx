@@ -17,13 +17,32 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const [{ MapContainer, TileLayer, Marker, useMapEvents, useMap, CircleMarker, Tooltip }] = await Promise.all([
+      const [{ MapContainer, TileLayer, Marker, useMapEvents, useMap, CircleMarker, Tooltip }, L] = await Promise.all([
         import("react-leaflet"),
+        import("leaflet"),
         // @ts-ignore - importing CSS dynamically; types for CSS files are not available
         import("leaflet/dist/leaflet.css"),
       ]);
 
       if (!mounted) return;
+
+      // Fix Leaflet default marker icon issue
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: '/marker-icon-2x.png',
+        iconUrl: '/marker-icon.png',
+        shadowUrl: '/marker-shadow.png',
+      });
+
+      // Create custom pin emoji icon
+      const createPinIcon = () => {
+        return L.divIcon({
+          html: '<div style="font-size: 24px; text-align: center; line-height: 1;">📍</div>',
+          className: 'custom-pin-icon',
+          iconSize: [30, 30],
+          iconAnchor: [15, 30],
+          popupAnchor: [0, -30]
+        });
+      };
 
       // Create a small wrapper for LocationMarker that uses the imported useMapEvents
       function LocationMarker({ onPositionChange }: { onPositionChange: (lat: number, lng: number) => void }) {
@@ -42,7 +61,22 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
         return null;
       }
 
-      setLeafletComponents({ MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip });
+      // Component to center map on position changes
+      function MapCenterController({ position }: { position: [number, number] | null }) {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const map = useMap();
+        
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+          if (position) {
+            map.flyTo(position, 13); // Zoom level 13 for good detail
+          }
+        }, [position, map]);
+
+        return null;
+      }
+
+      setLeafletComponents({ MapContainer, TileLayer, Marker, LocationMarker, MapCenterController, useMap, CircleMarker, Tooltip, L, createPinIcon });
       setLeafletLoaded(true);
     })();
 
@@ -159,32 +193,32 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
 
   function Legend() {
     return (
-      <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm p-3 rounded-lg shadow-xl border-2 border-gray-200 max-w-52">
-        <div className="mb-3">
-          <h4 className="font-bold text-gray-800 text-sm mb-1">Disease Risk Zones</h4>
-          <p className="text-xs text-gray-600">North-East India (Terrain View)</p>
+      <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm p-2 rounded-md shadow-lg border border-gray-200 max-w-40">
+        <div className="mb-2">
+          <h4 className="font-bold text-gray-800 text-xs mb-0.5">Disease Risk Zones</h4>
+          <p className="text-[10px] text-gray-600">North-East India (Terrain View)</p>
         </div>
         
-        <div className="space-y-1.5 text-xs">
+        <div className="space-y-1 text-[10px]">
           <div className="flex items-center">
-            <div className="w-3.5 h-3.5 rounded-full bg-red-600 border-2 border-red-800 mr-2 shadow-lg" 
-                 style={{filter: 'drop-shadow(0 0 4px rgba(220, 38, 38, 0.6))'}}></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-red-600 border border-red-800 mr-1.5 shadow-sm" 
+                 style={{filter: 'drop-shadow(0 0 2px rgba(220, 38, 38, 0.4))'}}></div>
             <span className="text-gray-700"><strong>High Risk</strong> - Immediate Action</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-orange-500 border-2 border-orange-700 mr-2 shadow-md" 
-                 style={{filter: 'drop-shadow(0 0 3px rgba(245, 158, 11, 0.6))'}}></div>
+            <div className="w-2 h-2 rounded-full bg-orange-500 border border-orange-700 mr-1.5 shadow-sm" 
+                 style={{filter: 'drop-shadow(0 0 2px rgba(245, 158, 11, 0.4))'}}></div>
             <span className="text-gray-700"><strong>Moderate</strong> - Monitor</span>
           </div>
           <div className="flex items-center">
-            <div className="w-2.5 h-2.5 rounded-full bg-green-600 border-2 border-green-800 mr-2 shadow-sm" 
-                 style={{filter: 'drop-shadow(0 0 2px rgba(22, 163, 74, 0.5))'}}></div>
+            <div className="w-2 h-2 rounded-full bg-green-600 border border-green-800 mr-1.5 shadow-sm" 
+                 style={{filter: 'drop-shadow(0 0 1px rgba(22, 163, 74, 0.4))'}}></div>
             <span className="text-gray-700"><strong>Low Risk</strong> - Standard</span>
           </div>
         </div>
         
-        <div className="mt-3 pt-2 border-t border-gray-200">
-          <div className="text-xs text-gray-500 space-y-0.5">
+        <div className="mt-2 pt-1.5 border-t border-gray-200">
+          <div className="text-[10px] text-gray-500 space-y-0">
             <p><strong>Map Features:</strong></p>
             <p>🛰️ Satellite imagery</p>
             <p>🏔️ Terrain & elevation</p>
@@ -192,11 +226,11 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
           </div>
         </div>
         
-        <div className="mt-2 pt-1 border-t border-gray-200">
-          <p className="text-xs text-gray-500">
+        <div className="mt-1.5 pt-1 border-t border-gray-200">
+          <p className="text-[10px] text-gray-500">
             <strong>Source:</strong> Health Surveillance
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="text-[10px] text-gray-500">
             <strong>Updated:</strong> Sep 2025
           </p>
         </div>
@@ -208,7 +242,7 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
     return <div className="h-full w-full flex items-center justify-center text-[#2C3E50]">Loading map…</div>;
   }
 
-  const { MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip } = LeafletComponents;
+  const { MapContainer, TileLayer, Marker, LocationMarker, MapCenterController, useMap, CircleMarker, Tooltip, createPinIcon } = LeafletComponents;
 
   return (
     <div style={{ 
@@ -338,6 +372,46 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
           border-bottom-color: rgba(255, 255, 255, 0.95) !important;
           border-top-color: transparent !important;
         }
+        
+        /* Custom pin icon styling */
+        .custom-pin-icon {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+        
+        .custom-pin-icon div {
+          filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3))
+                  drop-shadow(0 0 8px rgba(220, 38, 38, 0.8))
+                  drop-shadow(0 0 16px rgba(239, 68, 68, 0.6))
+                  drop-shadow(0 0 24px rgba(248, 113, 113, 0.4));
+          transform: scale(1.2);
+          animation: pinGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pinGlow {
+          0% {
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3))
+                    drop-shadow(0 0 8px rgba(220, 38, 38, 0.8))
+                    drop-shadow(0 0 16px rgba(239, 68, 68, 0.6))
+                    drop-shadow(0 0 24px rgba(248, 113, 113, 0.4));
+            transform: scale(1.2);
+          }
+          50% {
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3))
+                    drop-shadow(0 0 12px rgba(220, 38, 38, 1))
+                    drop-shadow(0 0 24px rgba(239, 68, 68, 0.8))
+                    drop-shadow(0 0 36px rgba(248, 113, 113, 0.6));
+            transform: scale(1.25);
+          }
+          100% {
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3))
+                    drop-shadow(0 0 6px rgba(220, 38, 38, 0.6))
+                    drop-shadow(0 0 12px rgba(239, 68, 68, 0.4))
+                    drop-shadow(0 0 18px rgba(248, 113, 113, 0.3));
+            transform: scale(1.15);
+          }
+        }
       `}</style>
 
       <MapContainer
@@ -372,7 +446,22 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
           opacity={0.3}
         />
         
-        {position && <Marker position={position} />}
+        {position && (
+          <Marker
+            position={position}
+            icon={createPinIcon()}
+          >
+            <Tooltip direction="bottom" offset={[0, 15]} opacity={1} className="custom-tooltip">
+              <div className="p-2 bg-white rounded-md shadow-lg border max-w-xs z-[9999]">
+                <h4 className="font-bold text-red-800 mb-1 text-xs">📍 Selected Location</h4>
+                <div className="text-xs text-gray-600">
+                  📍 {position[0].toFixed(6)}, {position[1].toFixed(6)}
+                </div>
+              </div>
+            </Tooltip>
+          </Marker>
+        )}
+        <MapCenterController position={position} />
         <LocationMarker onPositionChange={onPositionChange} />
         <HighRiskZoneMarkers />
       </MapContainer>

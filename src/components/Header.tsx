@@ -17,6 +17,9 @@ export default function Header() {
         </div>
         <div className="flex items-center space-x-4">
           <nav className="flex items-center space-x-2">
+            <Link href="/incidents">
+              <Button variant="ghost" size="sm">Recent Incidents</Button>
+            </Link>
             <Link href="/report">
               <Button variant="secondary" size="sm">Report an Incident</Button>
             </Link>

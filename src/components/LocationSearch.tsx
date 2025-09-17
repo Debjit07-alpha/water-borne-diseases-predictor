@@ -470,18 +470,6 @@ export default function LocationSearch({
               <X className="h-3 w-3" />
             </Button>
           )}
-          
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={getCurrentLocation}
-            disabled={isLoading}
-            className="h-6 w-6 p-0 text-blue-500 hover:text-blue-600"
-            title="Use current location"
-          >
-            <Navigation className="h-3 w-3" />
-          </Button>
         </div>
       </div>
 
@@ -500,30 +488,49 @@ export default function LocationSearch({
             </div>
           )}
 
-          {!isLoading && query.length < 2 && recentSearches.length > 0 && (
+          {!isLoading && query.length < 2 && (
             <div className="p-2">
-              <div className="text-xs font-medium text-gray-500 mb-2 px-3">Recent Searches</div>
-              {recentSearches.map((recent, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setQuery(recent);
-                    setIsOpen(false);
-                    // Keep focus and cursor after selecting recent search
-                    setTimeout(() => {
-                      if (inputRef.current) {
-                        inputRef.current.focus();
-                        const length = recent.length;
-                        inputRef.current.setSelectionRange(length, length);
-                      }
-                    }, 100);
-                  }}
-                  className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-md flex items-center gap-2 text-sm"
-                >
-                  <MapPin className="h-4 w-4 text-gray-400" />
-                  <span className="truncate">{recent}</span>
-                </button>
-              ))}
+              {/* Auto Detect Location Button */}
+              <button
+                onClick={getCurrentLocation}
+                disabled={isLoading}
+                className="w-full text-left px-3 py-3 hover:bg-blue-50 rounded-md flex items-center gap-3 text-sm border-b border-gray-100 mb-2"
+              >
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Navigation className="h-4 w-4 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <div className="font-medium text-blue-700">📍 Auto Detect Location</div>
+                  <div className="text-xs text-blue-600">Use your current location</div>
+                </div>
+              </button>
+              
+              {recentSearches.length > 0 && (
+                <>
+                  <div className="text-xs font-medium text-gray-500 mb-2 px-3">Recent Searches</div>
+                  {recentSearches.map((recent, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setQuery(recent);
+                        setIsOpen(false);
+                        // Keep focus and cursor after selecting recent search
+                        setTimeout(() => {
+                          if (inputRef.current) {
+                            inputRef.current.focus();
+                            const length = recent.length;
+                            inputRef.current.setSelectionRange(length, length);
+                          }
+                        }, 100);
+                      }}
+                      className="w-full text-left px-3 py-2 hover:bg-gray-50 rounded-md flex items-center gap-2 text-sm"
+                    >
+                      <MapPin className="h-4 w-4 text-gray-400" />
+                      <span className="truncate">{recent}</span>
+                    </button>
+                  ))}
+                </>
+              )}
             </div>
           )}
 
