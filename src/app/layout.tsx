@@ -23,7 +23,7 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "AquaWatch: North-East India — Smart Health Surveillance",
+  title: "The River Pulse: North-East India — Smart Health Surveillance",
   description: "A comprehensive platform for monitoring, reporting, and analyzing water-borne diseases in North-East India",
 };
 
