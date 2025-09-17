@@ -41,6 +41,7 @@ export default function ReportPage() {
   const [position, setPosition] = useState<[number, number] | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<string>("");
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Reverse geocoding function
   const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
@@ -100,28 +101,57 @@ export default function ReportPage() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const response = await fetch("/api/incidents", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    console.log('Form submission started with values:', values);
+    setIsSubmitting(true);
+    
+    // Validate that required fields are filled
+    if (!values.disease) {
+      alert("Please select a disease");
+      setIsSubmitting(false);
+      return;
+    }
+    
+    if (!values.latitude || !values.longitude || values.latitude === 0 || values.longitude === 0) {
+      alert("Please select a location on the map or using the search");
+      setIsSubmitting(false);
+      return;
+    }
+    
+    try {
+      console.log('Sending POST request to /api/incidents');
+      const response = await fetch("/api/incidents", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
-    if (response.ok) {
-      alert("Incident reported successfully!");
-      form.reset();
-      setPosition(null);
-      setSelectedAddress("");
-      setIsLoadingAddress(false);
-    } else {
-      alert("Failed to report incident.");
+      console.log('Response status:', response.status);
+      const responseData = await response.text();
+      console.log('Response data:', responseData);
+
+      if (response.ok) {
+        alert("Incident reported successfully!");
+        form.reset();
+        setPosition(null);
+        setSelectedAddress("");
+        setIsLoadingAddress(false);
+      } else {
+        console.error('API Error:', responseData);
+        alert(`Failed to report incident: ${responseData}`);
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      alert(`Network error: ${error}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="py-12">
-      <h1 className="text-3xl font-bold text-center font-heading-serif">Report an Incident</h1>
+      <h1 className="text-3xl font-bold text-center font-heading-serif">Report an Incident (for ASHA/Community Volunteers/Local Clinic workers only)</h1>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-8">
         <Card>
           <CardHeader>
@@ -222,8 +252,15 @@ export default function ReportPage() {
           </CardContent>
         </Card>
 
-        <Button type="submit" size="lg" className="w-full">
-          Submit Report
+        <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Submitting Report...
+            </div>
+          ) : (
+            'Submit Report'
+          )}
         </Button>
       </form>
     </div>

@@ -50,11 +50,11 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
         const map = useMapEvents({
           click(e: any) {
             onPositionChange(e.latlng.lat, e.latlng.lng);
-            map.flyTo(e.latlng, map.getZoom());
+            map.setView(e.latlng, map.getZoom()); // Direct jump without animation
           },
           locationfound(e: any) {
             onPositionChange(e.latlng.lat, e.latlng.lng);
-            map.flyTo(e.latlng, map.getZoom());
+            map.setView(e.latlng, map.getZoom()); // Direct jump without animation
           },
         });
 
@@ -69,7 +69,7 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
         // eslint-disable-next-line react-hooks/rules-of-hooks
         useEffect(() => {
           if (position) {
-            map.flyTo(position, 13); // Zoom level 13 for good detail
+            map.setView(position, 13); // Direct jump to position without animation
           }
         }, [position, map]);
 
