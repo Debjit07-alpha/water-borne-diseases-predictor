@@ -198,26 +198,29 @@ export default function LocationSearch({
       </div>
 
       <div className="mt-2">
-        <Button
+        <button
           type="button"
-          variant="outline"
-          size="sm"
           onClick={getCurrentLocation}
           disabled={isAutoDetecting}
-          className="w-full bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 hover:border-blue-300 font-medium"
+          className={`w-full px-4 py-3 rounded-lg flex items-center justify-center gap-3 text-sm font-medium transition-all ${
+            isAutoDetecting 
+              ? 'bg-blue-100 text-blue-400 cursor-not-allowed' 
+              : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white cursor-pointer shadow-sm hover:shadow-md'
+          }`}
+          style={{ WebkitTapHighlightColor: 'rgba(59, 130, 246, 0.3)' }}
         >
-          {isAutoDetecting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Detecting Location...
-            </>
-          ) : (
-            <>
-              <MapPin className="mr-2 h-4 w-4" />
-              Auto Detect Location
-            </>
-          )}
-        </Button>
+          <div className="w-5 h-5 flex items-center justify-center">
+            {isAutoDetecting ? (
+              <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <MapPin className="h-4 w-4" />
+            )}
+          </div>
+          <span className="flex-1 text-center">
+            {isAutoDetecting ? 'Detecting Location...' : '📍 Auto Detect Location'}
+          </span>
+          <div className="w-5 h-5"> {/* Spacer for centering */}</div>
+        </button>
       </div>
 
       {showDropdown && (

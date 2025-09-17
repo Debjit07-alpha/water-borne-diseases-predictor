@@ -27,6 +27,7 @@ export default {
         'book-antiqua': ['Book Antiqua', 'serif'],
         'bell-mt': ['Bell MT', 'serif'],
         'bookman-old-style': ['Bookman Old Style', 'serif'],
+        'baskerville': ['"Baskerville Old Face"', 'Baskerville', 'Georgia', 'serif'],
       },
     },
   },

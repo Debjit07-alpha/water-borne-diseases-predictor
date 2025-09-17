@@ -39,6 +39,57 @@ const diseases = [
 
 export default function ReportPage() {
   const [position, setPosition] = useState<[number, number] | null>(null);
+  const [selectedAddress, setSelectedAddress] = useState<string>("");
+  const [isLoadingAddress, setIsLoadingAddress] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Reverse geocoding function
+  const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?` +
+        `format=json&` +
+        `lat=${lat}&` +
+        `lon=${lng}&` +
+        `addressdetails=1&` +
+        `accept-language=en`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+      }
+    } catch (error) {
+      console.error('Error getting address:', error);
+    }
+    return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+  };
+
+  // Handle map click with reverse geocoding
+  const handleMapClick = async (lat: number, lng: number) => {
+    setPosition([lat, lng]);
+    setIsLoadingAddress(true);
+    
+    try {
+      const address = await reverseGeocode(lat, lng);
+      setSelectedAddress(address);
+    } catch (error) {
+      setSelectedAddress(`${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+    } finally {
+      setIsLoadingAddress(false);
+    }
+    
+    form.setValue("latitude", lat);
+    form.setValue("longitude", lng);
+  };
+
+  // Handle location search selection (allows further editing)
+  const handleLocationSearchSelect = (lat: number, lng: number, address?: string) => {
+    setPosition([lat, lng]);
+    setSelectedAddress(address || `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+    form.setValue("latitude", lat);
+    form.setValue("longitude", lng);
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -67,11 +118,13 @@ export default function ReportPage() {
       body: JSON.stringify(values),
     });
 
-    if (response.ok) {
-      alert("Incident reported successfully!");
-      form.reset();
-      setPosition(null);
-    } else {
+      if (response.ok) {
+        alert("Incident reported successfully!");
+        form.reset();
+        setPosition(null);
+        setSelectedAddress("");
+        setIsLoadingAddress(false);
+      } else {
       let msg = "Failed to report incident.";
       try {
         const data = await response.json();
@@ -127,11 +180,7 @@ export default function ReportPage() {
                 Search for Location
               </label>
               <LocationSearch
-                onLocationSelect={(lat, lng, address) => {
-                  setPosition([lat, lng]);
-                  form.setValue("latitude", lat);
-                  form.setValue("longitude", lng);
-                }}
+                onLocationSelect={handleLocationSearchSelect}
                 placeholder="Search for incident location..."
                 className="mb-4"
               />
@@ -145,11 +194,8 @@ export default function ReportPage() {
               <div className="h-96 rounded-lg overflow-hidden border border-gray-200">
                 <Map
                   position={position}
-                  onPositionChange={(lat, lng) => {
-                    setPosition([lat, lng]);
-                    form.setValue("latitude", lat);
-                    form.setValue("longitude", lng);
-                  }}
+                  onPositionChange={handleMapClick}
+                  selectedAddress={selectedAddress}
                 />
               </div>
             </div>
@@ -157,12 +203,26 @@ export default function ReportPage() {
             {/* Location Info */}
             {position && (
               <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <div className="flex items-center text-green-800">
-                  <span className="mr-2">📍</span>
-                  <span className="text-sm">
-                    Location selected: {position[0].toFixed(6)}, {position[1].toFixed(6)}
-                  </span>
-                </div>
+                <p className="text-sm text-green-800">
+                  <strong>Selected Location:</strong>
+                </p>
+                {isLoadingAddress ? (
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-sm text-green-600">Getting location details...</span>
+                  </div>
+                ) : (
+                  <>
+                    {selectedAddress && (
+                      <p className="text-sm text-green-700 mt-1 leading-relaxed">
+                        📍 {selectedAddress}
+                      </p>
+                    )}
+                    <p className="text-xs text-green-600 mt-2">
+                      Coordinates: {position[0].toFixed(6)}, {position[1].toFixed(6)}
+                    </p>
+                  </>
+                )}
               </div>
             )}
           </CardContent>

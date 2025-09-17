@@ -238,7 +238,7 @@ export default function Chat() {
   return (
     <div className="flex flex-col h-full">
       <div className="bg-primary text-primary-foreground p-3 rounded-t-lg">
-        <h2 className="text-base font-medium flex items-center gap-2">
+        <h2 className="text-base font-medium flex items-center gap-2 font-baskerville">
           <MessageCircle className="h-4 w-4" />
           Curevo
         </h2>
@@ -285,7 +285,13 @@ export default function Chat() {
                   <p className="text-xs opacity-60 mt-1">📷 Click to enlarge</p>
                 </div>
               )}
-              <div className="text-xs whitespace-pre-wrap" style={{ fontFamily: 'Cinzel, "Bell MT", Georgia, serif' }}>{msg.content}</div>
+              <div className="text-xs whitespace-pre-wrap font-baskerville" style={{ 
+                fontFeatureSettings: '"kern" 1, "liga" 1', 
+                textRendering: 'optimizeLegibility',
+                letterSpacing: '0.01em'
+              }}>
+                {msg.content}
+              </div>
               <div className="text-xs opacity-70 mt-1">
                 {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </div>
@@ -356,7 +362,11 @@ export default function Chat() {
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="Describe your symptoms..."
-              className="flex-1 text-sm"
+              className="flex-1 text-sm font-baskerville"
+              style={{ 
+                fontFeatureSettings: '"kern" 1, "liga" 1', 
+                textRendering: 'optimizeLegibility' 
+              }}
               disabled={isLoading}
             />
           </div>
