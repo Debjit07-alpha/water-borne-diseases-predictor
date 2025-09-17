@@ -32,7 +32,7 @@ export default function Chat() {
       setMessages([{
         id: Date.now().toString(),
         role: "assistant",
-        content: "🩺 Curevo\n\nDescribe your symptoms and I'll identify potential diseases.\n\n• Supported diseases:\nCHOLERA • TYPHOID • HEPATITIS A • DYSENTERY • GIARDIASIS • LEPTOSPIROSIS • SALMONELLA\n\n• Upload images showing symptoms 📸\n\n• Note: Disease identification only - consult medical professionals ⚠️",
+        content: "🩺 **Curevo** - Disease Identifier\n\nDescribe your symptoms and I'll identify the disease.\n\n**Available diseases:**\nCholera • Typhoid • Hepatitis A • Dysentery • Giardiasis • Leptospirosis • Salmonellosis • Diarrhea\n\n**Tips:**\n• Be specific about symptoms\n• Upload images if helpful\n• I'll ask questions if needed\n\n⚠️ For medical advice, consult a doctor.",
         timestamp: new Date()
       }]);
     }
@@ -361,7 +361,7 @@ export default function Chat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Describe your symptoms..."
+              placeholder="List your symptoms..."
               className="flex-1 text-sm font-baskerville"
               style={{ 
                 fontFeatureSettings: '"kern" 1, "liga" 1', 
@@ -380,7 +380,7 @@ export default function Chat() {
         </div>
         
         <p className="mt-2 text-xs text-muted-foreground">
-          💡 <strong>Identifies diseases from symptoms</strong> • 📸 <strong>Upload images</strong> • ⚠️ <strong>Medical consultation recommended</strong>
+          💡 <strong>Disease identification</strong> • 📸 <strong>Image analysis</strong> • ⚠️ <strong>Consult doctor for treatment</strong>
         </p>
       </div>
     </div>

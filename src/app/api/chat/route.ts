@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { prisma } from "@/lib/prisma";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
 
@@ -29,42 +30,51 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Fetch disease symptoms from database
+    let diseaseData = "";
+    try {
+      const diseases = await prisma.disease.findMany({
+        select: {
+          name: true,
+          symptoms: true,
+        }
+      });
+      
+      diseaseData = diseases.map(disease => 
+        `${disease.name}: ${Array.isArray(disease.symptoms) ? disease.symptoms.join(', ') : disease.symptoms}`
+      ).join('\n');
+    } catch (dbError) {
+      console.error("Database error:", dbError);
+      // Fallback disease data
+      diseaseData = `Cholera: Severe watery diarrhea, vomiting, dehydration, muscle cramps
+Typhoid: High fever, headache, weakness, stomach pain, rose-colored rash
+Hepatitis A: Jaundice, fatigue, nausea, abdominal pain, dark urine
+Dysentery: Bloody diarrhea, fever, stomach cramps, nausea
+Giardiasis: Diarrhea, gas, stomach cramps, nausea, dehydration
+Leptospirosis: High fever, headache, chills, muscle aches, vomiting, jaundice
+Salmonellosis: Diarrhea, fever, stomach cramps, nausea, vomiting
+Diarrhea: Loose stools, dehydration, stomach pain`;
+    }
+
     // Choose model based on whether we have an image
     const modelName = image ? "gemini-1.5-flash" : "gemini-1.5-flash";
     const model = genAI.getGenerativeModel({ model: modelName });
 
-    let prompt = `You are a medical chatbot designed to identify potential diseases based on user-provided symptoms. Your approach should be careful and considerate to avoid causing unnecessary anxiety.
+    let prompt = `You are Curevo, a direct medical assistant for identifying water-borne diseases. Be concise and helpful.
 
-IMPORTANT GUIDELINES:
-1. If the user provides only ONE general symptom (like "fever", "headache", "nausea" alone), DO NOT list multiple diseases
-2. Instead, ask for MORE SPECIFIC information to narrow down possibilities
-3. Only provide disease identification when you have SUFFICIENT specific symptoms
-4. Be supportive and avoid creating anxiety with multiple disease possibilities for vague symptoms
+DISEASE DATABASE:
+${diseaseData}
 
-RESPONSE STRATEGY:
-- For insufficient/vague symptoms: Ask clarifying questions like:
-  * "Can you describe any additional symptoms you're experiencing?"
-  * "How long have you had this symptom?"
-  * "Can you provide more details about [specific symptom]?"
-  * "Are there any other symptoms accompanying the [mentioned symptom]?"
+RESPONSE RULES:
+1. If symptoms clearly match a disease - state the disease name directly
+2. If symptoms are too vague (like only "fever" or "headache") - ask 1-2 specific questions
+3. Do NOT list multiple diseases unless symptoms strongly suggest multiple possibilities
+4. Keep responses short and focused
+5. Always recommend medical consultation for serious symptoms
 
-- For sufficient specific symptoms: Provide the most likely disease match from your knowledge base
-
-Your disease knowledge base includes:
-- Cholera: Severe watery diarrhea, vomiting, dehydration, muscle cramps
-- Typhoid: High fever, headache, weakness, stomach pain, rose-colored rash
-- Hepatitis A: Jaundice, fatigue, nausea, abdominal pain, dark urine
-- Dysentery: Bloody diarrhea, fever, stomach cramps, nausea
-- Giardiasis: Diarrhea, gas, stomach cramps, nausea, dehydration
-- Leptospirosis: High fever, headache, chills, muscle aches, vomiting, jaundice
-- Salmonella: Diarrhea, fever, stomach cramps, nausea, vomiting
-- Diarrheal diseases: Loose stools, dehydration, stomach pain
-- Gastroenteritis: Vomiting, diarrhea, stomach pain, fever
-
-EXAMPLES OF APPROPRIATE RESPONSES:
-- For "I have fever": Ask for more symptoms rather than listing diseases
-- For "High fever, headache, and stomach pain": Can suggest potential matches like Typhoid
-- For "Severe watery diarrhea and vomiting": Can suggest Cholera
+RESPONSE FORMAT:
+- For clear match: "Based on your symptoms (list symptoms), this appears to be [DISEASE NAME]. [Brief explanation]. Please consult a doctor for proper diagnosis and treatment."
+- For unclear symptoms: "I need more information. [Ask 1-2 specific questions about symptoms]"
 
 ${message ? `User symptoms: ${message}` : ''}`;
 
@@ -86,20 +96,15 @@ ${message ? `User symptoms: ${message}` : ''}`;
         // Enhanced prompt for symptom-focused image analysis
         const imageAnalysisPrompt = `
 
-IMAGE ANALYSIS FOR DISEASE IDENTIFICATION:
-Analyze the uploaded image carefully and responsibly. Follow these guidelines:
-
-1. Look for CLEAR, SPECIFIC visible symptoms in the image
-2. If you can identify multiple specific symptoms, match them to diseases from your knowledge base
-3. If the image shows only general or unclear symptoms, ask for more information instead of listing multiple diseases
-4. Be conservative in your assessment to avoid unnecessary anxiety
+IMAGE ANALYSIS:
+Analyze the image for visible symptoms. Match clear symptoms to diseases from the database above.
 
 RESPONSE APPROACH:
-- For clear, specific symptoms visible in image: Provide the most likely disease match
-- For unclear or general symptoms: Ask for additional information or text description of symptoms
-- Always be supportive and avoid causing anxiety with multiple disease possibilities
+- Clear symptoms visible: State the most likely disease directly
+- Unclear symptoms: Ask for text description of what you're experiencing
+- Be direct and concise
 
-Focus only on disease identification based on observable symptoms. Do not provide treatment advice or general health information.`;
+Focus only on disease identification. Do not provide treatment advice.`;
 
         prompt += imageAnalysisPrompt;
         parts[0].text = prompt;
