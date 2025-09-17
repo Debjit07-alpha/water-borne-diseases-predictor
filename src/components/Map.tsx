@@ -8,16 +8,18 @@ interface MapProps {
   onPositionChange: (lat: number, lng: number) => void;
   onZoneClick?: (zone: HighRiskZone) => void;
   zones?: HighRiskZone[];
+  selectedAddress?: string; // Add address prop
 }
 
-export default function Map({ position, onPositionChange, onZoneClick, zones }: MapProps) {
+export default function Map({ position, onPositionChange, onZoneClick, zones, selectedAddress }: MapProps) {
   const [leafletLoaded, setLeafletLoaded] = useState(false);
   const [LeafletComponents, setLeafletComponents] = useState<any>(null);
 
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const [{ MapContainer, TileLayer, Marker, useMapEvents, useMap, CircleMarker, Tooltip }, L] = await Promise.all([
+      // Import Popup component as well
+      const [{ MapContainer, TileLayer, Marker, useMapEvents, useMap, CircleMarker, Tooltip, Popup }, L] = await Promise.all([
         import("react-leaflet"),
         import("leaflet"),
         // @ts-ignore - importing CSS dynamically; types for CSS files are not available
@@ -33,19 +35,16 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
         shadowUrl: '/marker-shadow.png',
       });
 
-      // Create custom pin emoji icon
+      // Create custom red pin icon for location markers
       const createPinIcon = () => {
-        // Use a fixed-size wrapper so anchor aligns precisely at bottom-center
-        const html = `
-          <div style="width:32px;height:32px;display:flex;align-items:flex-end;justify-content:center;">
-            <span style="font-size:24px;line-height:1;color:#DC143C;">📍</span>
-          </div>`;
-        return L.divIcon({
-          html,
-          className: 'leaflet-div-icon custom-pin-icon',
-          iconSize: [32, 32],
-          iconAnchor: [16, 32],
-          popupAnchor: [0, -32]
+        return L.icon({
+          iconUrl: '/red-pin.svg',
+          shadowUrl: '/marker-shadow.png',
+          iconSize: [40, 48], // Updated size to match new glowing pin dimensions
+          iconAnchor: [20, 40], // Point of the icon which will correspond to marker's location
+          popupAnchor: [0, -40], // Point from which the popup should open relative to the iconAnchor
+          shadowSize: [41, 41],
+          shadowAnchor: [13, 41]
         });
       };
 
@@ -81,7 +80,7 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
         return null;
       }
 
-      setLeafletComponents({ MapContainer, TileLayer, Marker, LocationMarker, MapCenterController, useMap, CircleMarker, Tooltip, L, createPinIcon });
+      setLeafletComponents({ MapContainer, TileLayer, Marker, LocationMarker, MapCenterController, useMap, CircleMarker, Tooltip, Popup, L, createPinIcon });
       setLeafletLoaded(true);
     })();
 
@@ -247,7 +246,7 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
     return <div className="h-full w-full flex items-center justify-center text-[#2C3E50]">Loading map…</div>;
   }
 
-  const { MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip, createPinIcon, MapCenterController } = LeafletComponents;
+  const { MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip, Popup, createPinIcon, MapCenterController } = LeafletComponents;
 
   return (
     <div style={{ 
@@ -457,7 +456,23 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
           opacity={0.3}
         />
         
-  {position && <Marker position={position} icon={createPinIcon()} zIndexOffset={1000} />}
+        {position && (
+          <Marker position={position} icon={createPinIcon()} zIndexOffset={1000}>
+            <Popup>
+              <div className="text-sm">
+                <div className="font-semibold text-gray-800 mb-1">📍 Selected Location</div>
+                {selectedAddress ? (
+                  <div className="text-gray-700 mb-2">{selectedAddress}</div>
+                ) : (
+                  <div className="text-gray-600 mb-2">Location selected</div>
+                )}
+                <div className="text-xs text-gray-500">
+                  Coordinates: {position[0].toFixed(6)}, {position[1].toFixed(6)}
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        )}
         <LocationMarker onPositionChange={onPositionChange} />
         <MapCenterController position={position} />
         <HighRiskZoneMarkers />
