@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import InfoPanel from "@/components/InfoPanel";
 import { highRiskZones, type HighRiskZone } from "@/lib/high-risk-zones";
@@ -46,12 +47,23 @@ export default function Home() {
         </div>
         <div className={`transition-all duration-1000 delay-400 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="bg-white text-[#0B86FF] font-bold shadow-lg">
-              <a href="/map">Explore Map</a>
-            </Button>
-            <Button asChild size="lg" variant="secondary" className="bg-[#0B86FF] text-white font-bold shadow-lg">
-              <a href="/report">Report an Incident</a>
-            </Button>
+            <Link href="/map">
+              <Button 
+                size="lg" 
+                className="bg-white text-[#0B86FF] font-bold shadow-lg hover:bg-gray-50 hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer"
+              >
+                Explore Map
+              </Button>
+            </Link>
+            <Link href="/report">
+              <Button 
+                size="lg" 
+                variant="secondary" 
+                className="bg-[#0B86FF] text-white font-bold shadow-lg hover:bg-[#0967D2] hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer"
+              >
+                Report an Incident
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
