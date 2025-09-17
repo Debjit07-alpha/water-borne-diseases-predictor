@@ -12,6 +12,32 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Custom Incident Report Icon Component
+const IncidentReportIcon = ({ size = 18, className = "" }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    {/* Document/Form */}
+    <rect x="2" y="2" width="12" height="16" rx="1" fill="currentColor" />
+    <rect x="4" y="5" width="2" height="1.5" rx="0.5" fill="white" />
+    <rect x="7" y="5" width="5" height="1" rx="0.5" fill="white" />
+    <rect x="4" y="8" width="2" height="1.5" rx="0.5" fill="white" />
+    <rect x="7" y="8" width="5" height="1" rx="0.5" fill="white" />
+    <rect x="4" y="11" width="2" height="1.5" rx="0.5" fill="white" />
+    <rect x="7" y="11" width="3" height="1" rx="0.5" fill="white" />
+    
+    {/* Warning Triangle */}
+    <path d="M15 10 L21 20 L9 20 Z" fill="currentColor" />
+    <circle cx="15" cy="17" r="0.8" fill="white" />
+    <rect x="14.6" y="13" width="0.8" height="3" rx="0.4" fill="white" />
+  </svg>
+);
+
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(true); // Closed by default
 
@@ -83,7 +109,7 @@ export default function Sidebar() {
               )}
               title={collapsed ? "Report Incident" : ""}
             >
-              <AlertCircle size={18} className="text-[#0B86FF]" />
+              <IncidentReportIcon size={18} className="text-[#0B86FF]" />
               {!collapsed && <span>Report Incident</span>}
               {collapsed && (
                 <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] border border-gray-700">
