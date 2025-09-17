@@ -92,6 +92,46 @@ export default function DiseasesPage() {
               prevention: 'Safe water, good hygiene, vaccination',
               treatment: 'Rest, proper nutrition, medical monitoring',
               slug: 'hepatitis-a'
+            },
+            {
+              id: '5',
+              name: 'Dysentery',
+              overview: 'Intestinal inflammation causing severe diarrhea with blood',
+              symptoms: 'Bloody diarrhea, stomach cramps, fever',
+              causes: 'Bacterial or protozoan infection through contaminated water',
+              prevention: 'Good hygiene, safe water, proper food handling',
+              treatment: 'Rest, fluids, antibiotics for severe cases',
+              slug: 'dysentery'
+            },
+            {
+              id: '6',
+              name: 'Giardiasis',
+              overview: 'Parasitic infection causing diarrheal disease',
+              symptoms: 'Watery diarrhea, fatigue, abdominal cramps, gas',
+              causes: 'Giardia parasite in contaminated water and food',
+              prevention: 'Avoid contaminated water, good hygiene, water filters',
+              treatment: 'Antiparasitic medications like metronidazole',
+              slug: 'giardiasis'
+            },
+            {
+              id: '7',
+              name: 'Salmonellosis',
+              overview: 'Bacterial food poisoning affecting the intestinal tract',
+              symptoms: 'Diarrhea, fever, stomach cramps, nausea, vomiting',
+              causes: 'Salmonella bacteria in contaminated food and water',
+              prevention: 'Cook food thoroughly, good hygiene, refrigerate promptly',
+              treatment: 'Supportive care, fluids, antibiotics if severe',
+              slug: 'salmonellosis'
+            },
+            {
+              id: '8',
+              name: 'Leptospirosis',
+              overview: 'Bacterial infection affecting kidneys, liver, and other organs',
+              symptoms: 'High fever, headache, muscle aches, jaundice, red eyes',
+              causes: 'Leptospira bacteria in contaminated water and soil',
+              prevention: 'Avoid contaminated water, protective clothing, control rodents',
+              treatment: 'Antibiotics like penicillin or doxycycline',
+              slug: 'leptospirosis'
             }
           ]);
         }
