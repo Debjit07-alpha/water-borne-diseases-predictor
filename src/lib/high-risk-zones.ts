@@ -85,6 +85,44 @@ export const highRiskZones: HighRiskZone[] = [
     },
   },
 
+  // New Moderate Risk Area - Dibrugarh University Area
+  {
+    lat: 27.48,
+    lng: 94.91,
+    name: "Dibrugarh University Campus Area, Assam",
+    description: "A semi-urban educational hub with mixed water sources, where poor waste management during monsoon increases contamination risks.",
+    primaryWaterSource: "Bore Wells and Municipal Supply",
+    riskAnalysis: {
+      overallRisk: "Moderate",
+      contaminationLevel: "Coliforms: Moderate, Nitrate: Low",
+      primaryRiskFactors: ["Seasonal waterlogging in low-lying areas.", "Cross-contamination from septic tanks during floods.", "Inconsistent municipal water quality monitoring."],
+    },
+    commonDiseases: ["Hepatitis A", "Gastroenteritis", "Typhoid Fever"],
+    preventionAndCure: {
+      mitigation: ["Regular water quality testing of bore wells.", "Improved drainage systems around campus.", "Health awareness programs for students and staff."],
+      firstResponse: ["Immediate medical consultation for persistent symptoms.", "Use boiled or bottled water during monsoon season.", "Report waterborne illness clusters to campus health center."],
+    },
+  },
+
+  // New Moderate Risk Area - Shillong Peri-Urban
+  {
+    lat: 25.57,
+    lng: 91.88,
+    name: "Shillong Peri-Urban Settlement, Meghalaya",
+    description: "A rapidly growing peri-urban area around Shillong with mixed infrastructure, where groundwater contamination from unregulated development poses moderate risks.",
+    primaryWaterSource: "Groundwater and Protected Springs",
+    riskAnalysis: {
+      overallRisk: "Moderate",
+      contaminationLevel: "Bacteriological: Moderate, Chemical: Low",
+      primaryRiskFactors: ["Unregulated construction affecting groundwater.", "Proximity to solid waste dumping sites.", "Seasonal variation in water quality."],
+    },
+    commonDiseases: ["Diarrhea", "Gastroenteritis", "Skin infections"],
+    preventionAndCure: {
+      mitigation: ["Community-based water quality monitoring.", "Proper solid waste management systems.", "Protection of spring water sources."],
+      firstResponse: ["Early treatment for gastrointestinal symptoms.", "Use water purification methods during peak contamination periods.", "Seek medical advice for persistent or severe symptoms."],
+    },
+  },
+
   // Hilly and Remote Areas
   {
     lat: 23.3,

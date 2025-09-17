@@ -217,18 +217,25 @@ export default function LocationSearch({
 
   // Get user's current location
   const getCurrentLocation = () => {
+    console.log('getCurrentLocation called');
+    
     if (!navigator.geolocation) {
+      console.log('Geolocation not supported');
       alert('Geolocation is not supported by this browser.');
       return;
     }
 
+    console.log('Starting geolocation request...');
     setIsLoading(true);
+    
     navigator.geolocation.getCurrentPosition(
       async (position) => {
+        console.log('Position obtained:', position.coords);
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         
         try {
+          console.log('Making reverse geocoding request...');
           // Reverse geocoding to get address
           const response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?` +
@@ -242,8 +249,12 @@ export default function LocationSearch({
           if (response.ok) {
             const data = await response.json();
             const address = data.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+            console.log('Address obtained:', address);
+            
+            // Set the location data
             setQuery(address);
             saveRecentSearch(address);
+            setIsOpen(false); // Close dropdown
             onLocationSelect(lat, lng, address);
             
             // Keep focus and cursor
@@ -259,6 +270,7 @@ export default function LocationSearch({
           console.error('Error getting address:', error);
           const address = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
           setQuery(address);
+          setIsOpen(false); // Close dropdown
           onLocationSelect(lat, lng, address);
           
           // Keep focus and cursor
@@ -270,17 +282,39 @@ export default function LocationSearch({
             }
           }, 100);
         } finally {
+          console.log('Geolocation request completed');
           setIsLoading(false);
         }
       },
       (error) => {
         setIsLoading(false);
-        alert('Unable to get your current location. Please search manually.');
         console.error('Geolocation error:', error);
+        let errorMessage = 'Unable to get your current location. ';
+        
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage += 'Permission denied. Please allow location access and try again.';
+            console.log('Location permission denied');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage += 'Location information is unavailable.';
+            console.log('Location unavailable');
+            break;
+          case error.TIMEOUT:
+            errorMessage += 'Location request timed out.';
+            console.log('Location timeout');
+            break;
+          default:
+            errorMessage += 'An unknown error occurred.';
+            console.log('Unknown location error');
+            break;
+        }
+        
+        alert(errorMessage);
       },
       {
         enableHighAccuracy: true,
-        timeout: 10000,
+        timeout: 15000,  // Increased timeout
         maximumAge: 60000
       }
     );
@@ -479,6 +513,35 @@ export default function LocationSearch({
           ref={suggestionsRef}
           className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto"
         >
+          {/* Auto Detect Location Button - Always visible at top */}
+          <div className="p-2 border-b border-gray-100">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Auto-detect button clicked!');
+                getCurrentLocation();
+              }}
+              disabled={isLoading}
+              className={`w-full text-left px-3 py-3 hover:bg-blue-50 active:bg-blue-100 rounded-md flex items-center gap-3 text-sm transition-colors cursor-pointer ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-sm'}`}
+              style={{ WebkitTapHighlightColor: 'rgba(59, 130, 246, 0.1)' }}
+            >
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                {isLoading ? (
+                  <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <Navigation className="h-4 w-4 text-blue-600" />
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="font-medium text-blue-700">📍 Auto Detect Location</div>
+                <div className="text-xs text-blue-600">
+                  {isLoading ? 'Getting your location...' : 'Use your current location'}
+                </div>
+              </div>
+            </button>
+          </div>
+
           {isLoading && (
             <div className="p-4 text-center text-gray-500">
               <div className="inline-flex items-center gap-2">
@@ -488,24 +551,9 @@ export default function LocationSearch({
             </div>
           )}
 
-          {!isLoading && query.length < 2 && (
+          {!isLoading && (
             <div className="p-2">
-              {/* Auto Detect Location Button */}
-              <button
-                onClick={getCurrentLocation}
-                disabled={isLoading}
-                className="w-full text-left px-3 py-3 hover:bg-blue-50 rounded-md flex items-center gap-3 text-sm border-b border-gray-100 mb-2"
-              >
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Navigation className="h-4 w-4 text-blue-600" />
-                </div>
-                <div className="flex-1">
-                  <div className="font-medium text-blue-700">📍 Auto Detect Location</div>
-                  <div className="text-xs text-blue-600">Use your current location</div>
-                </div>
-              </button>
-              
-              {recentSearches.length > 0 && (
+              {query.length < 2 && recentSearches.length > 0 && (
                 <>
                   <div className="text-xs font-medium text-gray-500 mb-2 px-3">Recent Searches</div>
                   {recentSearches.map((recent, index) => (
@@ -531,6 +579,13 @@ export default function LocationSearch({
                   ))}
                 </>
               )}
+            </div>
+          )}
+
+          {!isLoading && query.length < 2 && recentSearches.length === 0 && (
+            <div className="p-4 text-center text-gray-500">
+              <div className="text-sm">Start typing to search locations</div>
+              <div className="text-xs text-gray-400 mt-1">Or use auto-detect above</div>
             </div>
           )}
 
@@ -581,6 +636,36 @@ export default function LocationSearch({
           )}
         </div>
       )}
+      
+      {/* Standalone Auto-Detect Button - Always Visible */}
+      <div className="mt-2">
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Standalone auto-detect button clicked!');
+            getCurrentLocation();
+          }}
+          disabled={isLoading}
+          className={`w-full px-4 py-3 rounded-lg flex items-center justify-center gap-3 text-sm font-medium transition-all ${
+            isLoading 
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+              : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white cursor-pointer shadow-sm hover:shadow-md'
+          }`}
+          style={{ WebkitTapHighlightColor: 'rgba(59, 130, 246, 0.3)' }}
+        >
+          <div className="w-5 h-5 flex items-center justify-center">
+            {isLoading ? (
+              <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <Navigation className="h-4 w-4" />
+            )}
+          </div>
+          <span>
+            {isLoading ? 'Getting your location...' : '📍 Use My Current Location'}
+          </span>
+        </button>
+      </div>
     </div>
   );
 }
