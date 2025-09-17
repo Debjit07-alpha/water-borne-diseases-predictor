@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import InfoPanel from "@/components/InfoPanel";
 import { highRiskZones, type HighRiskZone } from "@/lib/high-risk-zones";
 import { Button } from "@/components/ui/button";
@@ -48,19 +48,12 @@ export default function Home() {
         <div className={`transition-all duration-1000 delay-400 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <Link href="/map">
-              <Button 
-                size="lg" 
-                className="bg-white text-[#0B86FF] font-bold shadow-lg hover:bg-gray-50 hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer"
-              >
+              <Button size="lg" className="bg-white text-[#0B86FF] font-bold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200">
                 Explore Map
               </Button>
             </Link>
             <Link href="/report">
-              <Button 
-                size="lg" 
-                variant="secondary" 
-                className="bg-[#0B86FF] text-white font-bold shadow-lg hover:bg-[#0967D2] hover:shadow-xl transform hover:scale-105 transition-all duration-200 cursor-pointer"
-              >
+              <Button size="lg" variant="secondary" className="bg-[#0B86FF] text-white font-bold shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-200">
                 Report an Incident
               </Button>
             </Link>

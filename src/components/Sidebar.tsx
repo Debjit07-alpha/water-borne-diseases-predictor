@@ -5,6 +5,7 @@ import { useState } from "react";
 import { 
   LayoutDashboard, 
   AlertCircle, 
+  AlertTriangle, 
   GraduationCap, 
   Map, 
   ChevronLeft, 
@@ -69,6 +70,25 @@ export default function Sidebar() {
               {collapsed && (
                 <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] border border-gray-700">
                   Disease Map
+                  <div className="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
+                </div>
+              )}
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/incidents"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#0B86FF]/10 transition-colors relative group",
+                "text-sm font-medium text-[#0B2545]"
+              )}
+              title={collapsed ? "Recent Incidents" : ""}
+            >
+              <AlertTriangle size={18} className="text-[#0B86FF]" />
+              {!collapsed && <span>Recent Incidents</span>}
+              {collapsed && (
+                <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] border border-gray-700">
+                  Recent Incidents
                   <div className="absolute right-full top-1/2 transform -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900"></div>
                 </div>
               )}

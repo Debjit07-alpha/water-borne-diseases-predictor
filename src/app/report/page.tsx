@@ -39,57 +39,6 @@ const diseases = [
 
 export default function ReportPage() {
   const [position, setPosition] = useState<[number, number] | null>(null);
-  const [selectedAddress, setSelectedAddress] = useState<string>("");
-  const [isLoadingAddress, setIsLoadingAddress] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Reverse geocoding function
-  const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?` +
-        `format=json&` +
-        `lat=${lat}&` +
-        `lon=${lng}&` +
-        `addressdetails=1&` +
-        `accept-language=en`
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        return data.display_name || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-      }
-    } catch (error) {
-      console.error('Error getting address:', error);
-    }
-    return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-  };
-
-  // Handle map click with reverse geocoding
-  const handleMapClick = async (lat: number, lng: number) => {
-    setPosition([lat, lng]);
-    setIsLoadingAddress(true);
-    
-    try {
-      const address = await reverseGeocode(lat, lng);
-      setSelectedAddress(address);
-    } catch (error) {
-      setSelectedAddress(`${lat.toFixed(6)}, ${lng.toFixed(6)}`);
-    } finally {
-      setIsLoadingAddress(false);
-    }
-    
-    form.setValue("latitude", lat);
-    form.setValue("longitude", lng);
-  };
-
-  // Handle location search selection (allows further editing)
-  const handleLocationSearchSelect = (lat: number, lng: number, address: string) => {
-    setPosition([lat, lng]);
-    setSelectedAddress(address);
-    form.setValue("latitude", lat);
-    form.setValue("longitude", lng);
-  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -101,57 +50,26 @@ export default function ReportPage() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log('Form submission started with values:', values);
-    setIsSubmitting(true);
-    
-    // Validate that required fields are filled
-    if (!values.disease) {
-      alert("Please select a disease");
-      setIsSubmitting(false);
-      return;
-    }
-    
-    if (!values.latitude || !values.longitude || values.latitude === 0 || values.longitude === 0) {
-      alert("Please select a location on the map or using the search");
-      setIsSubmitting(false);
-      return;
-    }
-    
-    try {
-      console.log('Sending POST request to /api/incidents');
-      const response = await fetch("/api/incidents", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+    const response = await fetch("/api/incidents", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
 
-      console.log('Response status:', response.status);
-      const responseData = await response.text();
-      console.log('Response data:', responseData);
-
-      if (response.ok) {
-        alert("Incident reported successfully!");
-        form.reset();
-        setPosition(null);
-        setSelectedAddress("");
-        setIsLoadingAddress(false);
-      } else {
-        console.error('API Error:', responseData);
-        alert(`Failed to report incident: ${responseData}`);
-      }
-    } catch (error) {
-      console.error('Network error:', error);
-      alert(`Network error: ${error}`);
-    } finally {
-      setIsSubmitting(false);
+    if (response.ok) {
+      alert("Incident reported successfully!");
+      form.reset();
+      setPosition(null);
+    } else {
+      alert("Failed to report incident.");
     }
   };
 
   return (
     <div className="py-12">
-      <h1 className="text-3xl font-bold text-center font-heading-serif">Report an Incident (for ASHA/Community Volunteers/Local Clinic workers only)</h1>
+      <h1 className="text-3xl font-bold text-center font-heading-serif">Report an Incident</h1>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-8">
         <Card>
           <CardHeader>
@@ -183,58 +101,52 @@ export default function ReportPage() {
           <CardHeader>
             <CardTitle className="font-heading-sans">Step 2: Select Location</CardTitle>
             <CardDescription>
-              Search for a location or click on the map to drop a pin.
+              Search for a location, use auto-detect, or click on the map to drop a pin.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Location Search */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Search Location
+                Search for Location
               </label>
               <LocationSearch
-                onLocationSelect={handleLocationSearchSelect}
-                placeholder="Type location: city, area, landmark, hospital..."
+                onLocationSelect={(lat, lng, address) => {
+                  setPosition([lat, lng]);
+                  form.setValue("latitude", lat);
+                  form.setValue("longitude", lng);
+                }}
+                placeholder="Search for incident location..."
+                className="mb-4"
               />
             </div>
             
-            <div className="text-sm text-gray-500 text-center py-2">
-              OR
-            </div>
-            
+            {/* Map */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Click on Map
+                Or Click on Map
               </label>
-              <div className="h-96 border rounded-lg overflow-hidden">
+              <div className="h-96 rounded-lg overflow-hidden border border-gray-200">
                 <Map
                   position={position}
-                  onPositionChange={handleMapClick}
+                  onPositionChange={(lat, lng) => {
+                    setPosition([lat, lng]);
+                    form.setValue("latitude", lat);
+                    form.setValue("longitude", lng);
+                  }}
                 />
               </div>
             </div>
             
+            {/* Location Info */}
             {position && (
               <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-sm text-green-800">
-                  <strong>Selected Location:</strong>
-                </p>
-                {isLoadingAddress ? (
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-sm text-green-600">Getting location details...</span>
-                  </div>
-                ) : (
-                  <>
-                    {selectedAddress && (
-                      <p className="text-sm text-green-700 mt-1 leading-relaxed">
-                        📍 {selectedAddress}
-                      </p>
-                    )}
-                    <p className="text-xs text-green-600 mt-2">
-                      Coordinates: {position[0].toFixed(6)}, {position[1].toFixed(6)}
-                    </p>
-                  </>
-                )}
+                <div className="flex items-center text-green-800">
+                  <span className="mr-2">📍</span>
+                  <span className="text-sm">
+                    Location selected: {position[0].toFixed(6)}, {position[1].toFixed(6)}
+                  </span>
+                </div>
               </div>
             )}
           </CardContent>
@@ -252,15 +164,8 @@ export default function ReportPage() {
           </CardContent>
         </Card>
 
-        <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? (
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              Submitting Report...
-            </div>
-          ) : (
-            'Submit Report'
-          )}
+        <Button type="submit" size="lg" className="w-full">
+          Submit Report
         </Button>
       </form>
     </div>
