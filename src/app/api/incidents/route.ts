@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import * as z from "zod";
 
+// Ensure Prisma runs in Node runtime (not Edge)
+export const runtime = 'nodejs';
+
 const incidentSchema = z.object({
   disease: z.string(),
   latitude: z.number(),
@@ -11,6 +14,12 @@ const incidentSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json(
+        { error: "DATABASE_URL is not configured. Please set it in .env and run migrations." },
+        { status: 503 }
+      );
+    }
     const body = await req.json();
     const { disease, latitude, longitude, details } = incidentSchema.parse(body);
 
@@ -28,7 +37,8 @@ export async function POST(req: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues }, { status: 400 });
     }
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 

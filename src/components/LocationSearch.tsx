@@ -74,64 +74,97 @@ export default function LocationSearch({
 
   const getCurrentLocation = () => {
     setIsAutoDetecting(true);
-    
+
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by this browser.");
       setIsAutoDetecting(false);
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-        
-        try {
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
-          );
-          const data = await response.json();
-          const address = data.display_name || "Current Location";
-          
-          setSelectedAddress(address);
-          setQuery(address);
-          onLocationSelect(latitude, longitude, address);
-          setShowDropdown(false);
-        } catch (error) {
-          console.error("Error getting address:", error);
-          setSelectedAddress("Current Location");
-          setQuery("Current Location");
-          onLocationSelect(latitude, longitude, "Current Location");
-          setShowDropdown(false);
-        } finally {
-          setIsAutoDetecting(false);
-        }
-      },
-      (error) => {
-        console.error("Error getting location:", error);
-        let errorMessage = "Unable to detect location. ";
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            errorMessage += "Location access denied by user.";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMessage += "Location information unavailable.";
-            break;
-          case error.TIMEOUT:
-            errorMessage += "Location request timed out.";
-            break;
-          default:
-            errorMessage += "Unknown error occurred.";
-            break;
-        }
-        alert(errorMessage);
-        setIsAutoDetecting(false);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000
+    let watchId: number | null = null;
+    let timeoutId: number | null = null;
+    let best: { lat: number; lng: number; accuracy: number } | null = null;
+
+    const stopWatching = () => {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
       }
-    );
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+    };
+
+    const finalize = async () => {
+      if (!best) {
+        setIsAutoDetecting(false);
+        return;
+      }
+      const { lat, lng } = best;
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`
+        );
+        const data = await response.json();
+        const address = data.display_name || "Current Location";
+
+        setSelectedAddress(address);
+        setQuery(address);
+        onLocationSelect(lat, lng, address);
+        setShowDropdown(false);
+      } catch (error) {
+        console.error("Error getting address:", error);
+        setSelectedAddress("Current Location");
+        setQuery("Current Location");
+        onLocationSelect(lat, lng, "Current Location");
+        setShowDropdown(false);
+      } finally {
+        setIsAutoDetecting(false);
+      }
+    };
+
+    try {
+      watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          const { latitude, longitude, accuracy } = pos.coords;
+          if (!best || accuracy < best.accuracy) {
+            best = { lat: latitude, lng: longitude, accuracy: accuracy || Number.POSITIVE_INFINITY };
+          }
+          // If accuracy is good enough, stop early
+          if (best.accuracy <= 30) {
+            stopWatching();
+            finalize();
+          }
+        },
+        (error) => {
+          console.error("Error watching location:", error);
+          // Fall back to single reading
+          navigator.geolocation.getCurrentPosition(
+            (single) => {
+              const { latitude, longitude, accuracy } = single.coords;
+              best = { lat: latitude, lng: longitude, accuracy: accuracy || 1000 };
+              finalize();
+            },
+            () => {
+              alert("Unable to detect location.");
+              setIsAutoDetecting(false);
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+          );
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+      );
+
+      // Safety timeout: finalize with best fix after 6 seconds
+      timeoutId = window.setTimeout(() => {
+        stopWatching();
+        finalize();
+      }, 6000);
+    } catch (e) {
+      console.error(e);
+      setIsAutoDetecting(false);
+    }
   };
 
   const handleLocationSelect = (result: LocationResult) => {

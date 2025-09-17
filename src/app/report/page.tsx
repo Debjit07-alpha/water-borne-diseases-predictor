@@ -50,6 +50,15 @@ export default function ReportPage() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!values.disease) {
+      alert("Please select a disease.");
+      return;
+    }
+    if (!position) {
+      alert("Please select a location on the map or use Auto Detect.");
+      return;
+    }
+
     const response = await fetch("/api/incidents", {
       method: "POST",
       headers: {
@@ -63,13 +72,20 @@ export default function ReportPage() {
       form.reset();
       setPosition(null);
     } else {
-      alert("Failed to report incident.");
+      let msg = "Failed to report incident.";
+      try {
+        const data = await response.json();
+        if (data?.error) {
+          msg += `\n${typeof data.error === 'string' ? data.error : JSON.stringify(data.error)}`;
+        }
+      } catch {}
+      alert(msg);
     }
   };
 
   return (
     <div className="py-12">
-      <h1 className="text-3xl font-bold text-center font-heading-serif">Report an Incident</h1>
+      <h1 className="text-3xl font-bold text-center font-heading-serif">Report an Incident (for ASHA/Community Volunteers/Local Clinic workers only)</h1>
       <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-8">
         <Card>
           <CardHeader>
@@ -164,7 +180,7 @@ export default function ReportPage() {
           </CardContent>
         </Card>
 
-        <Button type="submit" size="lg" className="w-full">
+        <Button type="submit" size="lg" className="w-full" disabled={!form.watch("disease") || !position}>
           Submit Report
         </Button>
       </form>

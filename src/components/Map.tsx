@@ -35,12 +35,17 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
 
       // Create custom pin emoji icon
       const createPinIcon = () => {
+        // Use a fixed-size wrapper so anchor aligns precisely at bottom-center
+        const html = `
+          <div style="width:32px;height:32px;display:flex;align-items:flex-end;justify-content:center;">
+            <span style="font-size:24px;line-height:1;color:#DC143C;">📍</span>
+          </div>`;
         return L.divIcon({
-          html: '<div style="font-size: 24px; text-align: center; line-height: 1;">📍</div>',
-          className: 'custom-pin-icon',
-          iconSize: [30, 30],
-          iconAnchor: [15, 30],
-          popupAnchor: [0, -30]
+          html,
+          className: 'leaflet-div-icon custom-pin-icon',
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+          popupAnchor: [0, -32]
         });
       };
 
@@ -62,14 +67,14 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
       }
 
       // Component to center map on position changes
-      function MapCenterController({ position }: { position: [number, number] | null }) {
+  function MapCenterController({ position }: { position: [number, number] | null }) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const map = useMap();
         
         // eslint-disable-next-line react-hooks/rules-of-hooks
         useEffect(() => {
           if (position) {
-            map.setView(position, 13); // Direct jump to position without animation
+            map.setView(position, 16); // Closer zoom for precise view
           }
         }, [position, map]);
 
@@ -242,7 +247,7 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
     return <div className="h-full w-full flex items-center justify-center text-[#2C3E50]">Loading map…</div>;
   }
 
-  const { MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip } = LeafletComponents;
+  const { MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip, createPinIcon, MapCenterController } = LeafletComponents;
 
   return (
     <div style={{ 
@@ -422,39 +427,39 @@ export default function Map({ position, onPositionChange, onZoneClick, zones }: 
 
       <MapContainer
         center={position || [25.5, 93.0]}
-        zoom={position ? 10 : 7}
+        zoom={position ? 16 : 7}
         style={{ height: "100%", width: "100%" }}
       >
         {/* Satellite base layer for terrain and natural features */}
         <TileLayer
           url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-          attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+          attribution='Leaflet | © Esri, © OpenTopoMap, © OpenStreetMap'
         />
         
         {/* Terrain layer with elevation and topographic details */}
         <TileLayer
           url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-          attribution='Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+          attribution='Leaflet | © Esri, © OpenTopoMap, © OpenStreetMap'
           opacity={0.4}
         />
         
         {/* Water bodies and rivers layer - enhanced visibility */}
         <TileLayer
           url="https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png"
-          attribution='&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          attribution='Leaflet | © Esri, © OpenTopoMap, © OpenStreetMap'
           opacity={0.4}
         />
         
         {/* Natural Earth style for political boundaries and place names */}
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          attribution='Leaflet | © Esri, © OpenTopoMap, © OpenStreetMap'
           opacity={0.3}
         />
         
-        {position && <Marker position={position} icon={LeafletComponents.createPinIcon()} />}
+  {position && <Marker position={position} icon={createPinIcon()} zIndexOffset={1000} />}
         <LocationMarker onPositionChange={onPositionChange} />
-        <LeafletComponents.MapCenterController position={position} />
+        <MapCenterController position={position} />
         <HighRiskZoneMarkers />
       </MapContainer>
       
