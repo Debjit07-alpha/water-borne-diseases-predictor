@@ -201,7 +201,13 @@ export default function Chat() {
       let errorMessage = "I'm experiencing technical difficulties. Please try again.";
       
       if (error instanceof Error) {
-        if (error.message.includes('404')) {
+        if (error.message.includes('503') || error.message.includes('Service Unavailable')) {
+          errorMessage = "🔧 AI service is temporarily unavailable. This might be due to:\n\n• API configuration issues\n• Service maintenance\n• Network connectivity problems\n\n✅ **Solution**: Please check the setup instructions in CHAT_SETUP.md or contact the administrator.";
+        } else if (error.message.includes('API key') || error.message.includes('configuration')) {
+          errorMessage = "🔑 AI service configuration issue detected.\n\n✅ **Solution**: Please set up the Google AI API key in the environment configuration.";
+        } else if (error.message.includes('quota') || error.message.includes('429')) {
+          errorMessage = "⏳ AI service quota exceeded. Please try again in a few minutes.";
+        } else if (error.message.includes('404')) {
           errorMessage = "Chat service temporarily unavailable. Please try again later.";
         } else if (error.message.includes('413')) {
           errorMessage = "Image too large. Please try a smaller image (under 10MB).";

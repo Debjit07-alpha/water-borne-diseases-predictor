@@ -6,11 +6,14 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
 export async function POST(req: NextRequest) {
   try {
     // Check if API key is available
-    if (!process.env.GOOGLE_AI_API_KEY) {
-      console.error("Google AI API key is missing");
+    if (!process.env.GOOGLE_AI_API_KEY || process.env.GOOGLE_AI_API_KEY === 'your_google_ai_api_key_here') {
+      console.error("Google AI API key is missing or not configured");
       return NextResponse.json(
-        { error: "AI service configuration error" },
-        { status: 500 }
+        { 
+          error: "AI service is not configured. Please set up the GOOGLE_AI_API_KEY environment variable.",
+          details: "Contact the administrator to configure the Google AI API key." 
+        },
+        { status: 503 }
       );
     }
 
@@ -109,10 +112,11 @@ Focus only on disease identification based on observable symptoms. Do not provid
       }
     }
 
-    const result = await model.generateContentStream(parts);
+    try {
+      const result = await model.generateContentStream(parts);
 
-    // Create a streaming response
-    const stream = new ReadableStream({
+      // Create a streaming response
+      const stream = new ReadableStream({
       async start(controller) {
         try {
           for await (const chunk of result.stream) {
@@ -124,8 +128,21 @@ Focus only on disease identification based on observable symptoms. Do not provid
           controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ done: true })}\n\n`));
         } catch (streamError) {
           console.error("Streaming error:", streamError);
+          
+          // Handle specific API errors
+          let errorMessage = "AI service temporarily unavailable. Please try again.";
+          if (streamError instanceof Error) {
+            if (streamError.message.includes('API_KEY_INVALID')) {
+              errorMessage = "AI service configuration issue. Please contact support.";
+            } else if (streamError.message.includes('QUOTA_EXCEEDED')) {
+              errorMessage = "AI service quota exceeded. Please try again later.";
+            } else if (streamError.message.includes('MODEL_NOT_FOUND')) {
+              errorMessage = "AI model not available. Please try again.";
+            }
+          }
+          
           controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify({ 
-            error: "AI service temporarily unavailable. Please try again." 
+            error: errorMessage 
           })}\n\n`));
         } finally {
           controller.close();
@@ -133,15 +150,38 @@ Focus only on disease identification based on observable symptoms. Do not provid
       },
     });
 
-    return new Response(stream, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-      },
-    });
-
-  } catch (error) {
+      return new Response(stream, {
+        headers: {
+          "Content-Type": "text/event-stream",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+        },
+      });
+    } catch (modelError) {
+      console.error("Model generation error:", modelError);
+      
+      // Handle specific model errors
+      let errorMessage = "AI service is temporarily unavailable. Please try again.";
+      let statusCode = 503;
+      
+      if (modelError instanceof Error) {
+        if (modelError.message.includes('API_KEY_INVALID') || modelError.message.includes('API key not valid')) {
+          errorMessage = "AI service configuration issue. Please contact support.";
+          statusCode = 500;
+        } else if (modelError.message.includes('QUOTA_EXCEEDED') || modelError.message.includes('quota')) {
+          errorMessage = "AI service quota exceeded. Please try again later.";
+          statusCode = 429;
+        } else if (modelError.message.includes('MODEL_NOT_FOUND')) {
+          errorMessage = "AI model not available. Please try again.";
+          statusCode = 503;
+        }
+      }
+      
+      return NextResponse.json(
+        { error: errorMessage },
+        { status: statusCode }
+      );
+    }  } catch (error) {
     console.error("Chat API error:", error);
     
     // Provide more specific error messages based on error type

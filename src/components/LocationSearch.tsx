@@ -40,7 +40,7 @@ export default function LocationSearch({
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -70,6 +70,14 @@ export default function LocationSearch({
     }
   }, []);
 
+  // Auto-resize textarea when query changes
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+      inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 100) + 'px';
+    }
+  }, [query]);
+
   // Save recent searches
   const saveRecentSearch = (location: string) => {
     const updated = [location, ...recentSearches.filter(item => item !== location)].slice(0, 5);
@@ -92,7 +100,7 @@ export default function LocationSearch({
         `https://nominatim.openstreetmap.org/search?` +
         `format=json&` +
         `q=${encodeURIComponent(searchQuery)}&` +
-        `limit=10&` +
+        `limit=15&` +
         `addressdetails=1&` +
         `countrycodes=in&` + // Focus on India
         `accept-language=en&` +
@@ -123,6 +131,12 @@ export default function LocationSearch({
     setSelectedIndex(-1);
     setIsOpen(true);
 
+    // Auto-resize textarea
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+      inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 100) + 'px';
+    }
+
     // Clear previous timeout
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
@@ -131,7 +145,7 @@ export default function LocationSearch({
     // Set new timeout for debounced search
     debounceRef.current = setTimeout(() => {
       searchLocations(value);
-    }, 500); // Increased debounce time for better typing experience
+    }, 300); // Reduced debounce time for faster response
   };
 
   // Handle manual text editing (when user types in the field)
@@ -140,6 +154,12 @@ export default function LocationSearch({
     setSelectedIndex(-1);
     setIsOpen(true);
 
+    // Auto-resize textarea
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+      inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 100) + 'px';
+    }
+
     // Clear previous timeout
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
@@ -148,7 +168,7 @@ export default function LocationSearch({
     // Set new timeout for debounced search
     debounceRef.current = setTimeout(() => {
       searchLocations(value);
-    }, 500);
+    }, 300);
   };
 
   // Handle location selection
@@ -323,9 +343,9 @@ export default function LocationSearch({
 
   const formatAddress = (suggestion: LocationSuggestion) => {
     const parts = suggestion.display_name.split(',');
-    // Return first 2-3 parts for cleaner display
-    if (parts.length > 3) {
-      return parts.slice(0, 3).join(', ').trim();
+    // Return first 4-5 parts for more detailed display
+    if (parts.length > 5) {
+      return parts.slice(0, 5).join(', ').trim();
     }
     return suggestion.display_name.trim();
   };
@@ -361,9 +381,8 @@ export default function LocationSearch({
           <Search className="h-4 w-4" />
         </div>
         
-        <Input
-          ref={inputRef}
-          type="text"
+        <textarea
+          ref={inputRef as any}
           value={query}
           onChange={(e) => handleManualEdit(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -407,19 +426,22 @@ export default function LocationSearch({
             setTimeout(() => setIsOpen(false), 150);
           }}
           placeholder={placeholder}
-          className="pl-10 pr-20 text-sm min-h-[45px] py-3 leading-relaxed cursor-text focus:cursor-text focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="pl-10 pr-20 text-sm min-h-[50px] max-h-[100px] py-3 leading-relaxed cursor-text focus:cursor-text focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none w-full border border-gray-300 rounded-md overflow-y-auto"
           disabled={isLoading}
           maxLength={1000}
           autoComplete="off"
           spellCheck={false}
           tabIndex={0}
           readOnly={false}
+          rows={1}
           style={{
             caretColor: '#000',
             userSelect: 'text',
             pointerEvents: 'auto',
             WebkitUserSelect: 'text',
-            MozUserSelect: 'text'
+            MozUserSelect: 'text',
+            wordWrap: 'break-word',
+            whiteSpace: 'pre-wrap'
           }}
         />
 
@@ -467,7 +489,7 @@ export default function LocationSearch({
       {isOpen && (
         <div
           ref={suggestionsRef}
-          className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-96 overflow-y-auto"
+          className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-80 overflow-y-auto"
         >
           {isLoading && (
             <div className="p-4 text-center text-gray-500">
@@ -514,24 +536,24 @@ export default function LocationSearch({
                 <button
                   key={suggestion.id || index}
                   onClick={() => handleLocationSelect(suggestion)}
-                  className={`w-full text-left px-3 py-3 rounded-md flex items-start gap-3 text-sm transition-colors ${
+                  className={`w-full text-left px-3 py-4 rounded-md flex items-start gap-3 text-sm transition-colors ${
                     selectedIndex === index
                       ? 'bg-blue-50 border-blue-200'
                       : 'hover:bg-gray-50'
                   }`}
                 >
-                  <span className="text-lg mt-0.5 flex-shrink-0">
+                  <span className="text-lg mt-1 flex-shrink-0">
                     {getLocationIcon(suggestion)}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-gray-900 truncate">
-                      {formatAddress(suggestion)}
-                    </div>
-                    <div className="text-xs text-gray-500 truncate mt-1">
+                    <div className="font-medium text-gray-900 leading-relaxed text-wrap break-words">
                       {formatFullAddress(suggestion)}
                     </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      📍 Click to select this location
+                    </div>
                   </div>
-                  <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                  <MapPin className="h-4 w-4 text-gray-400 flex-shrink-0 mt-1" />
                 </button>
               ))}
             </div>
