@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { HighRiskZone, highRiskZones } from "@/lib/high-risk-zones";
+import { Hospital, hospitals } from "@/lib/hospitals";
 
 interface MapProps {
   position: [number, number] | null;
@@ -48,6 +49,31 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
         });
       };
 
+      const createHospitalIcon = () => {
+        return L.divIcon({
+          html: `
+            <div style="
+              background: #10b981;
+              border: 3px solid white;
+              border-radius: 50%;
+              width: 30px;
+              height: 30px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+              font-size: 18px;
+              font-weight: bold;
+              color: white;
+            ">+</div>
+          `,
+          iconSize: [30, 30],
+          iconAnchor: [15, 15],
+          popupAnchor: [0, -15],
+          className: 'hospital-marker'
+        });
+      };
+
       // Create a small wrapper for LocationMarker that uses the imported useMapEvents
       function LocationMarker({ onPositionChange }: { onPositionChange: (lat: number, lng: number) => void }) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -80,7 +106,7 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
         return null;
       }
 
-      setLeafletComponents({ MapContainer, TileLayer, Marker, LocationMarker, MapCenterController, useMap, CircleMarker, Tooltip, Popup, L, createPinIcon });
+      setLeafletComponents({ MapContainer, TileLayer, Marker, LocationMarker, MapCenterController, useMap, CircleMarker, Tooltip, Popup, L, createPinIcon, createHospitalIcon });
       setLeafletLoaded(true);
     })();
 
@@ -195,48 +221,102 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
     );
   }
 
+  function HospitalMarkers() {
+    return (
+      <>
+        {hospitals.map((hospital) => (
+          <Marker
+            key={hospital.id}
+            position={[hospital.lat, hospital.lng]}
+            icon={createHospitalIcon()}
+            zIndexOffset={2000}
+          >
+            <Popup className="hospital-popup">
+              <div className="p-3 max-w-xs">
+                <div className="flex items-center mb-2">
+                  <div className="bg-green-600 text-white p-1 rounded-full mr-2">
+                    <span className="text-sm font-bold">+</span>
+                  </div>
+                  <h3 className="font-bold text-gray-800 text-sm">{hospital.name}</h3>
+                </div>
+                
+                <div className="space-y-2 text-xs">
+                  <div>
+                    <strong className="text-gray-700">Type:</strong>
+                    <span className={`ml-1 px-2 py-0.5 rounded text-white text-xs font-medium ${
+                      hospital.type === 'government' ? 'bg-blue-600' :
+                      hospital.type === 'private' ? 'bg-purple-600' : 'bg-orange-600'
+                    }`}>
+                      {hospital.type.charAt(0).toUpperCase() + hospital.type.slice(1)}
+                    </span>
+                  </div>
+                  
+                  <div>
+                    <strong className="text-gray-700">Address:</strong>
+                    <p className="text-gray-600 mt-1">{hospital.address}</p>
+                  </div>
+                  
+                  <div>
+                    <strong className="text-gray-700">Phone:</strong>
+                    <span className="text-blue-600 ml-1">{hospital.phone}</span>
+                  </div>
+                  
+                  <div>
+                    <strong className="text-gray-700">Website:</strong>
+                    <a 
+                      href={hospital.website} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 ml-1 underline"
+                    >
+                      Visit Website
+                    </a>
+                  </div>
+                </div>
+                
+                <div className="mt-3 pt-2 border-t border-gray-200">
+                  <div className="text-xs text-green-700 font-medium">
+                    🏥 Emergency Medical Services Available
+                  </div>
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </>
+    );
+  }
+
   function Legend() {
     return (
-      <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm p-3 rounded-lg shadow-xl border-2 border-gray-200 max-w-52">
-        <div className="mb-3">
-          <h4 className="font-bold text-gray-800 text-sm mb-1">Disease Risk Zones</h4>
-          <p className="text-xs text-gray-600">North-East India (Terrain View)</p>
+      <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm p-2 rounded-lg shadow-xl border-2 border-gray-200 max-w-44">
+        <div className="mb-2">
+          <h4 className="font-bold text-gray-800 text-xs mb-1">Risk Zones</h4>
         </div>
         
-        <div className="space-y-1.5 text-xs">
+        <div className="space-y-1 text-xs">
           <div className="flex items-center">
-            <div className="w-3.5 h-3.5 rounded-full bg-red-600 border-2 border-red-800 mr-2 shadow-lg" 
-                 style={{filter: 'drop-shadow(0 0 4px rgba(220, 38, 38, 0.6))'}}></div>
-            <span className="text-gray-700"><strong>High Risk</strong> - Immediate Action</span>
+            <div className="w-2.5 h-2.5 rounded-full bg-red-600 border border-red-800 mr-1.5 shadow-sm" 
+                 style={{filter: 'drop-shadow(0 0 2px rgba(220, 38, 38, 0.6))'}}></div>
+            <span className="text-gray-700 text-xs"><strong>High</strong> - Action</span>
           </div>
           <div className="flex items-center">
-            <div className="w-3 h-3 rounded-full bg-orange-500 border-2 border-orange-700 mr-2 shadow-md" 
-                 style={{filter: 'drop-shadow(0 0 3px rgba(245, 158, 11, 0.6))'}}></div>
-            <span className="text-gray-700"><strong>Moderate</strong> - Monitor</span>
+            <div className="w-2.5 h-2.5 rounded-full bg-orange-500 border border-orange-700 mr-1.5 shadow-sm" 
+                 style={{filter: 'drop-shadow(0 0 2px rgba(245, 158, 11, 0.6))'}}></div>
+            <span className="text-gray-700 text-xs"><strong>Moderate</strong> - Monitor</span>
           </div>
           <div className="flex items-center">
-            <div className="w-2.5 h-2.5 rounded-full bg-green-600 border-2 border-green-800 mr-2 shadow-sm" 
+            <div className="w-2.5 h-2.5 rounded-full bg-green-600 border border-green-800 mr-1.5 shadow-sm" 
                  style={{filter: 'drop-shadow(0 0 2px rgba(22, 163, 74, 0.5))'}}></div>
-            <span className="text-gray-700"><strong>Low Risk</strong> - Standard</span>
+            <span className="text-gray-700 text-xs"><strong>Low</strong> - Standard</span>
           </div>
-        </div>
-        
-        <div className="mt-3 pt-2 border-t border-gray-200">
-          <div className="text-xs text-gray-500 space-y-0.5">
-            <p><strong>Map Features:</strong></p>
-            <p>🛰️ Satellite imagery</p>
-            <p>🏔️ Terrain & elevation</p>
-            <p>🌊 Rivers & water bodies</p>
+          <div className="flex items-center mt-1.5 pt-1 border-t border-gray-200">
+            <div className="w-3 h-3 rounded-full bg-green-600 border border-white mr-1.5 shadow-sm flex items-center justify-center" 
+                 style={{filter: 'drop-shadow(0 0 2px rgba(16, 185, 129, 0.6))'}}>
+              <span className="text-white text-xs font-bold">+</span>
+            </div>
+            <span className="text-gray-700 text-xs"><strong>Hospitals</strong></span>
           </div>
-        </div>
-        
-        <div className="mt-2 pt-1 border-t border-gray-200">
-          <p className="text-xs text-gray-500">
-            <strong>Source:</strong> Health Surveillance
-          </p>
-          <p className="text-xs text-gray-500">
-            <strong>Updated:</strong> Sep 2025
-          </p>
         </div>
       </div>
     );
@@ -246,7 +326,7 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
     return <div className="h-full w-full flex items-center justify-center text-[#2C3E50]">Loading map…</div>;
   }
 
-  const { MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip, Popup, createPinIcon, MapCenterController } = LeafletComponents;
+  const { MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip, Popup, createPinIcon, createHospitalIcon, MapCenterController } = LeafletComponents;
 
   return (
     <div style={{ 
@@ -422,6 +502,28 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
           border-bottom-color: rgba(255, 255, 255, 0.95) !important;
           border-top-color: transparent !important;
         }
+        
+        .hospital-marker {
+          transition: transform 0.2s ease;
+        }
+        
+        .hospital-marker:hover {
+          transform: scale(1.1);
+        }
+        
+        .hospital-popup .leaflet-popup-content-wrapper {
+          background: rgba(255, 255, 255, 0.98) !important;
+          border-radius: 12px !important;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+          border: 2px solid #10b981 !important;
+        }
+        
+        .hospital-popup .leaflet-popup-tip {
+          background: rgba(255, 255, 255, 0.98) !important;
+          border: 2px solid #10b981 !important;
+          border-top: none !important;
+          border-right: none !important;
+        }
       `}</style>
 
       <MapContainer
@@ -476,6 +578,7 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
         <LocationMarker onPositionChange={onPositionChange} />
         <MapCenterController position={position} />
         <HighRiskZoneMarkers />
+        <HospitalMarkers />
       </MapContainer>
       
       <Legend />

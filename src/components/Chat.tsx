@@ -32,7 +32,7 @@ export default function Chat() {
       setMessages([{
         id: Date.now().toString(),
         role: "assistant",
-        content: "🩺 **River Pulse** - Disease Identifier\n\nDescribe your symptoms and I'll identify the disease.\n\n**Available diseases:**\nCholera • Typhoid • Hepatitis A • Dysentery • Giardiasis • Leptospirosis • Salmonellosis • Diarrhea\n\n**Tips:**\n• Be specific about symptoms\n• Upload images if helpful\n• I'll ask questions if needed\n\n⚠️ For medical advice, consult a doctor.",
+        content: "👋 **Hello! I'm Curevo - Your AI Medical Assistant\n\n🩺 **I specialize in water-borne diseases and can help you:**\n• Identify diseases from symptoms\n• Analyze symptom photos\n• Answer disease-related questions\n• Connect symptoms to medical conditions\n\n💬 **Try these:**\n• \"Hi\" or \"Hello\" - I'll greet you properly!\n• \"I have diarrhea and fever\" - Symptom analysis\n• \"What is cholera?\" - Disease information\n• \"Help\" - Full instructions\n\n⚠️ **Medical Disclaimer**: I provide disease identification guidance only. Always consult healthcare professionals for diagnosis and treatment.\n\n**Ready to help! How are you feeling today?** 😊",
         timestamp: new Date()
       }]);
     }
@@ -147,6 +147,21 @@ export default function Chat() {
         throw new Error("HTTP error! status: " + response.status);
       }
 
+      // Check if it's a JSON response (greetings, help, disease info)
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+        setMessages(prev => 
+          prev.map(msg => 
+            msg.id === assistantMessageId 
+              ? { ...msg, content: data.response }
+              : msg
+          )
+        );
+        return;
+      }
+
+      // Handle streaming response (AI analysis)
       const reader = response.body?.getReader();
       if (!reader) throw new Error("No response stream available");
 
@@ -361,7 +376,7 @@ export default function Chat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="List your symptoms..."
+              placeholder="Type 'hi' or describe your symptoms..."
               className="flex-1 text-sm font-baskerville"
               style={{ 
                 fontFeatureSettings: '"kern" 1, "liga" 1', 
@@ -380,7 +395,7 @@ export default function Chat() {
         </div>
         
         <p className="mt-2 text-xs text-muted-foreground">
-          💡 <strong>Disease identification</strong> • 📸 <strong>Image analysis</strong> • ⚠️ <strong>Consult doctor for treatment</strong>
+          � <strong>Say "hi" to start</strong> • 🩺 <strong>Describe symptoms</strong> • 📸 <strong>Upload images</strong> • ❓ <strong>Ask about diseases</strong>
         </p>
       </div>
     </div>
