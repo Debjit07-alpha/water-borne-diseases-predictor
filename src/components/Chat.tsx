@@ -32,7 +32,7 @@ export default function Chat() {
       setMessages([{
         id: Date.now().toString(),
         role: "assistant",
-        content: "🩺 **Curevo** - Disease Identifier\n\nDescribe your symptoms and I'll identify the disease.\n\n**Available diseases:**\nCholera • Typhoid • Hepatitis A • Dysentery • Giardiasis • Leptospirosis • Salmonellosis • Diarrhea\n\n**Tips:**\n• Be specific about symptoms\n• Upload images if helpful\n• I'll ask questions if needed\n\n⚠️ For medical advice, consult a doctor.",
+        content: "🩺 **River Pulse** - Disease Identifier\n\nDescribe your symptoms and I'll identify the disease.\n\n**Available diseases:**\nCholera • Typhoid • Hepatitis A • Dysentery • Giardiasis • Leptospirosis • Salmonellosis • Diarrhea\n\n**Tips:**\n• Be specific about symptoms\n• Upload images if helpful\n• I'll ask questions if needed\n\n⚠️ For medical advice, consult a doctor.",
         timestamp: new Date()
       }]);
     }
@@ -240,7 +240,7 @@ export default function Chat() {
       <div className="bg-primary text-primary-foreground p-3 rounded-t-lg">
         <h2 className="text-base font-medium flex items-center gap-2 font-baskerville">
           <MessageCircle className="h-4 w-4" />
-          Curevo
+          River Pulse
         </h2>
       </div>
       

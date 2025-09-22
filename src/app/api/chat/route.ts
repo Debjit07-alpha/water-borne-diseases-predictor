@@ -60,7 +60,7 @@ Diarrhea: Loose stools, dehydration, stomach pain`;
     const modelName = image ? "gemini-1.5-flash" : "gemini-1.5-flash";
     const model = genAI.getGenerativeModel({ model: modelName });
 
-    let prompt = `You are Curevo, a direct medical assistant for identifying water-borne diseases. Be concise and helpful.
+    let prompt = `You are River Pulse, a direct medical assistant for identifying water-borne diseases. Be concise and helpful.
 
 DISEASE DATABASE:
 ${diseaseData}

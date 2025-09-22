@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import { 
   LayoutDashboard, 
   AlertCircle, 
@@ -11,6 +10,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSidebar } from "@/contexts/SidebarContext";
 
 // Custom Incident Report Icon Component
 const IncidentReportIcon = ({ size = 18, className = "" }) => (
@@ -39,12 +39,12 @@ const IncidentReportIcon = ({ size = 18, className = "" }) => (
 );
 
 export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(true); // Closed by default
+  const { collapsed, setCollapsed } = useSidebar();
 
   return (
     <aside 
       className={cn(
-        "h-full bg-white/70 backdrop-blur-lg shadow-2xl border-r border-white/30 transition-all duration-300",
+        "h-screen bg-white/70 backdrop-blur-lg shadow-2xl border-r border-white/30 transition-all duration-300 fixed left-0 top-0 z-40",
         collapsed ? "w-16" : "w-56"
       )}
     >

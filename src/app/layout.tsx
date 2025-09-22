@@ -3,7 +3,10 @@ import { Inter, Montserrat, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
+import Footer from "@/components/Footer";
 import FloatingChat from "@/components/FloatingChat";
+import LayoutWrapper from "@/components/LayoutWrapper";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,8 +26,8 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "The River Pulse: North-East India — Smart Health Surveillance",
-  description: "A comprehensive platform for monitoring, reporting, and analyzing water-borne diseases in North-East India",
+  title: "River Pulse — Water-Borne Disease Prevention & Monitoring Platform",
+  description: "AI-powered disease identification, risk mapping, and community health surveillance for water-borne diseases including Cholera, Typhoid, Hepatitis A, and more.",
 };
 
 export default function RootLayout({
@@ -35,17 +38,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.className} ${montserrat.variable} ${playfairDisplay.variable}`}>
       <body className="bg-[#F5F7FA] text-[#2C3E50]">
-        <div className="flex h-screen overflow-hidden">
+        <SidebarProvider>
           <Sidebar />
-          <div className="flex-1 flex flex-col min-h-screen">
+          <LayoutWrapper>
             <Header />
-            <main className="flex-1 overflow-auto">
+            <main className="flex-1 p-4">
               {children}
             </main>
-          </div>
-        </div>
-        {/* Global floating chat assistant */}
-        <FloatingChat />
+            <Footer />
+          </LayoutWrapper>
+          {/* Global floating chat assistant */}
+          <FloatingChat />
+        </SidebarProvider>
       </body>
     </html>
   );
