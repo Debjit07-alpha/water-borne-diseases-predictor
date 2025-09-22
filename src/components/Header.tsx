@@ -1,26 +1,43 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "./ui/button";
+import ThemeToggle from "./ThemeToggle";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   return (
-    <header className="h-14 border-b bg-white/50 backdrop-blur-sm">
-      <div className="flex h-full items-center justify-between px-4">
+    <header className="h-16 bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg">
+      <div className="flex h-full items-center justify-between px-6">
         <div className="flex items-center space-x-4">
-          <Link href="/" className="flex items-center space-x-2">
-            <h1 className="text-lg font-semibold tracking-tight font-heading-sans">
+          <Link href="/" className="text-white">
+            <div className="text-xs font-medium opacity-90">A Digital India Initiative</div>
+            <h1 className="text-xl font-bold tracking-tight">
               River Pulse
-              <span className="text-sm font-normal text-foreground/60 ml-2">
-                North-East India
+              <span className="text-sm font-normal opacity-80 ml-2">
+                Water-Borne Disease Prevention Platform
               </span>
             </h1>
           </Link>
         </div>
+        
         <div className="flex items-center space-x-4">
-          <nav className="flex items-center space-x-2">
-            <Link href="/diseases">
-              <Button variant="ghost" size="sm">Learn More</Button>
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link href="/" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
+              HOME
+            </Link>
+            <Link href="/map" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
+              DISEASE MAP
+            </Link>
+            <Link href="/diseases" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
+              LEARN MORE
+            </Link>
+            <Link href="/report" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
+              REPORT
             </Link>
           </nav>
+          
+          <ThemeToggle />
         </div>
       </div>
     </header>

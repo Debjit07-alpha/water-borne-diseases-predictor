@@ -2,11 +2,9 @@ import type { Metadata } from "next";
 import { Inter, Montserrat, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import FloatingChat from "@/components/FloatingChat";
-import LayoutWrapper from "@/components/LayoutWrapper";
-import { SidebarProvider } from "@/contexts/SidebarContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,19 +35,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.className} ${montserrat.variable} ${playfairDisplay.variable}`}>
-      <body className="bg-[#F5F7FA] text-[#2C3E50]">
-        <SidebarProvider>
-          <Sidebar />
-          <LayoutWrapper>
+      <body className="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
+        <ThemeProvider>
+          <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="flex-1 p-4">
+            <main className="flex-1 p-6">
               {children}
             </main>
             <Footer />
-          </LayoutWrapper>
+          </div>
           {/* Global floating chat assistant */}
           <FloatingChat />
-        </SidebarProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

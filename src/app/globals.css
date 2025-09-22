@@ -4,11 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root {
-  /* Color System */
-  --background: #F5F7FA;
-  --foreground: #2C3E50;
+  /* Light theme colors */
+  --background: #ffffff;
+  --foreground: #0b1220;
   --accent: #DC143C;
   --accent-glow: rgba(220, 20, 60, 0.7);
   --sidebar-bg: rgba(44, 62, 80, 0.95);
@@ -27,11 +26,31 @@
   --transition-fast: 0.15s ease-in-out;
 }
 
+.dark {
+  /* Dark theme colors */
+  --background: #0b1220;
+  --foreground: #f8fafc;
+  --accent: #ff4444;
+  --accent-glow: rgba(255, 68, 68, 0.7);
+  --sidebar-bg: rgba(15, 23, 42, 0.95);
+  --card-bg: rgba(30, 41, 59, 0.95);
+  --glass-bg: rgba(30, 41, 59, 0.8);
+  --glass-border: rgba(148, 163, 184, 0.2);
+  --glass-shadow: rgba(0, 0, 0, 0.3);
+}
+
 @layer base {
   html {
     font-family: var(--font-sans);
+  }
+
+  body {
     background-color: var(--background);
     color: var(--foreground);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1 {
@@ -140,27 +159,6 @@
   animation: fade-in-up 1s cubic-bezier(0.4,0,0.2,1) both;
 }
 
-body, html {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0B86FF 0%, #F0F9FF 50%, #EFF6FF 100%);
-  background-attachment: fixed;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #ffffff;
-    --foreground: #0b1220;
-  }
-}
-
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  @apply font-sans;
-}
-
 .container {
   @apply max-w-6xl mx-auto px-4;
 }
@@ -187,6 +185,18 @@ body {
   background: #cbd5e1;
   border-radius: 8px;
   border: 2px solid #f9fafb;
+}
+
+/* Dark mode scrollbar */
+.dark .custom-scrollbar {
+  scrollbar-color: #475569 #1e293b;
+}
+.dark .custom-scrollbar::-webkit-scrollbar {
+  background: #1e293b;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-color: #1e293b;
 }
 
 /* Custom Pin Icon Styles */
@@ -218,4 +228,3 @@ body {
   transform: scale(1.2);
   filter: drop-shadow(0 0 15px rgba(220, 20, 60, 1));
 }
-
