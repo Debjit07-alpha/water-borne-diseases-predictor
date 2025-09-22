@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import FloatingChatWidget from "@/components/FloatingChatWidget";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import { SidebarProvider } from "@/contexts/SidebarContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -38,16 +39,18 @@ export default function RootLayout({
     <html lang="en" className={`${inter.className} ${montserrat.variable} ${playfairDisplay.variable}`}>
       <body className="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
         <ThemeProvider>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-1 p-6">
-              {children}
-            </main>
-            <Footer />
-          </div>
-          {/* Global floating chat assistant */}
-          <FloatingChatWidget />
-        </SidebarProvider>
+          <SidebarProvider>
+            <LayoutWrapper>
+              <Header />
+              <main className="flex-1 p-6">
+                {children}
+              </main>
+              <Footer />
+            </LayoutWrapper>
+            {/* Global floating chat assistant */}
+            <FloatingChatWidget />
+          </SidebarProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
