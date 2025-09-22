@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter, Montserrat, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
-import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
 import FloatingChatWidget from "@/components/FloatingChatWidget";
 import LayoutWrapper from "@/components/LayoutWrapper";
@@ -37,16 +36,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.className} ${montserrat.variable} ${playfairDisplay.variable}`}>
-      <body className="bg-[#F5F7FA] text-[#2C3E50]">
-        <SidebarProvider>
-          <Sidebar />
-          <LayoutWrapper>
+      <body className="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
+        <ThemeProvider>
+          <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="flex-1 p-4">
+            <main className="flex-1 p-6">
               {children}
             </main>
             <Footer />
-          </LayoutWrapper>
+          </div>
           {/* Global floating chat assistant */}
           <FloatingChatWidget />
         </SidebarProvider>

@@ -78,7 +78,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-600 mt-8 pt-6">
+        <div className="mt-8 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-gray-300">
               Copyright © 2024 - 2025. All Rights Reserved | River Pulse - Water-Borne Disease Prevention Platform
@@ -89,7 +89,7 @@ export default function Footer() {
           </div>
           
           {/* Health Disclaimer */}
-          <div className="mt-4 p-3 bg-red-900/30 border border-red-700 rounded">
+          <div className="mt-4 p-3 bg-red-900/30 rounded">
             <p className="text-sm text-red-200">
               <strong>⚠️ Medical Disclaimer:</strong> This platform provides educational information only. 
               Always consult qualified healthcare professionals for medical diagnosis and treatment. 
