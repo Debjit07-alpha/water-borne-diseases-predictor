@@ -11,6 +11,9 @@ export default function FloatingChatWidget() {
   const [currentName, setCurrentName] = useState("");
   const [chatStage, setChatStage] = useState<'name' | 'welcome' | 'chat'>('name');
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [messages, setMessages] = useState<Array<{id: string, text: string, sender: 'user' | 'bot', timestamp: Date}>>([]);
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     // Show the popup after 3 seconds
@@ -62,13 +65,51 @@ export default function FloatingChatWidget() {
       setTimeout(() => {
         speakText(welcomeMessage);
         setChatStage('chat');
+        // Add initial bot message
+        setMessages([{
+          id: '1',
+          text: `Hello ${currentName.trim()}! 👋 Welcome to Curevo Health Assistant. I'm here to help you with your medical questions and water-borne disease concerns. How can I assist you today?`,
+          sender: 'bot',
+          timestamp: new Date()
+        }]);
       }, 1000);
     }
   };
 
+  const handleSendMessage = async () => {
+    if (!currentMessage.trim()) return;
+
+    const userMessage = {
+      id: Date.now().toString(),
+      text: currentMessage.trim(),
+      sender: 'user' as const,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setCurrentMessage("");
+    setIsTyping(true);
+
+    // Simulate bot response (you can replace this with actual API call)
+    setTimeout(() => {
+      const botResponse = {
+        id: (Date.now() + 1).toString(),
+        text: "Thank you for your message! I'm processing your request and will provide assistance with your health concerns shortly.",
+        sender: 'bot' as const,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, botResponse]);
+      setIsTyping(false);
+    }, 1500);
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleNameSubmit();
+      if (chatStage === 'name') {
+        handleNameSubmit();
+      } else if (chatStage === 'chat') {
+        handleSendMessage();
+      }
     }
   };
 
@@ -270,32 +311,65 @@ export default function FloatingChatWidget() {
                   </div>
 
                   {/* Messages Area */}
-                  <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="bg-white p-3 rounded-lg shadow-sm mb-4"
-                    >
-                      <p className="text-sm text-gray-700">
-                        Hello {userName}! 👋 Welcome to Curevo Health Assistant. I'm here to help you with your medical questions and water-borne disease concerns. How can I assist you today?
-                      </p>
-                    </motion.div>
-                    
-                    {/* Quick Action Buttons */}
-                    <div className="space-y-2">
-                      <button className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 p-3 rounded-lg text-left text-sm transition-colors">
-                        🤒 I have symptoms to report
-                      </button>
-                      <button className="w-full bg-green-50 hover:bg-green-100 text-green-700 p-3 rounded-lg text-left text-sm transition-colors">
-                        📄 Upload medical document
-                      </button>
-                      <button className="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 p-3 rounded-lg text-left text-sm transition-colors">
-                        🏥 Find nearby medical centers
-                      </button>
-                      <button className="w-full bg-orange-50 hover:bg-orange-100 text-orange-700 p-3 rounded-lg text-left text-sm transition-colors">
-                        💧 Water-borne disease info
-                      </button>
+                  <div className="flex-1 p-4 overflow-y-auto bg-gray-50 max-h-64">
+                    {/* Display actual messages */}
+                    <div className="space-y-3">
+                      {messages.map((message) => (
+                        <motion.div
+                          key={message.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`p-3 rounded-lg shadow-sm max-w-[80%] ${
+                            message.sender === 'user'
+                              ? 'bg-blue-600 text-white ml-auto'
+                              : 'bg-white text-gray-700'
+                          }`}
+                        >
+                          <p className="text-sm">{message.text}</p>
+                          <p className={`text-xs mt-1 ${
+                            message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
+                          }`}>
+                            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </motion.div>
+                      ))}
+                      
+                      {/* Typing indicator */}
+                      {isTyping && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="bg-white p-3 rounded-lg shadow-sm max-w-[80%]"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="flex gap-1">
+                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                            </div>
+                            <span className="text-xs text-gray-500">Curevo is typing...</span>
+                          </div>
+                        </motion.div>
+                      )}
                     </div>
+                    
+                    {/* Quick Action Buttons - show only if no messages */}
+                    {messages.length === 1 && (
+                      <div className="space-y-2 mt-4">
+                        <button className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 p-3 rounded-lg text-left text-sm transition-colors">
+                          🤒 I have symptoms to report
+                        </button>
+                        <button className="w-full bg-green-50 hover:bg-green-100 text-green-700 p-3 rounded-lg text-left text-sm transition-colors">
+                          📄 Upload medical document
+                        </button>
+                        <button className="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 p-3 rounded-lg text-left text-sm transition-colors">
+                          🏥 Find nearby medical centers
+                        </button>
+                        <button className="w-full bg-orange-50 hover:bg-orange-100 text-orange-700 p-3 rounded-lg text-left text-sm transition-colors">
+                          💧 Water-borne disease info
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Input Area */}
@@ -303,10 +377,18 @@ export default function FloatingChatWidget() {
                     <div className="flex gap-2">
                       <input
                         type="text"
+                        value={currentMessage}
+                        onChange={(e) => setCurrentMessage(e.target.value)}
+                        onKeyPress={handleKeyPress}
                         placeholder={`Type your message, ${userName}...`}
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        disabled={isTyping}
                       />
-                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                      <button 
+                        onClick={handleSendMessage}
+                        disabled={!currentMessage.trim() || isTyping}
+                        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-colors"
+                      >
                         <Send size={16} />
                       </button>
                     </div>
