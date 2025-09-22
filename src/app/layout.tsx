@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import Footer from "@/components/Footer";
-import FloatingChat from "@/components/FloatingChat";
+import FloatingChatWidget from "@/components/FloatingChatWidget";
 import LayoutWrapper from "@/components/LayoutWrapper";
 import { SidebarProvider } from "@/contexts/SidebarContext";
 
@@ -48,7 +48,7 @@ export default function RootLayout({
             <Footer />
           </LayoutWrapper>
           {/* Global floating chat assistant */}
-          <FloatingChat />
+          <FloatingChatWidget />
         </SidebarProvider>
       </body>
     </html>
