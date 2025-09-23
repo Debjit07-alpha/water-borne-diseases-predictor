@@ -35,6 +35,9 @@ export default function Header() {
             <Link href="/report" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
               REPORT
             </Link>
+            <Link href="/admin" className="text-red-300 hover:text-red-100 text-sm font-medium transition-colors">
+              ADMIN
+            </Link>
           </nav>
           
           <ThemeToggle />
