@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from 'next/navigation';
 import { MessageCircle, X, Send, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -12,8 +13,45 @@ export default function FloatingChatWidget() {
   const [chatStage, setChatStage] = useState<'name' | 'welcome' | 'chat'>('name');
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentMessage, setCurrentMessage] = useState("");
-  const [messages, setMessages] = useState<Array<{id: string, text: string, sender: 'user' | 'bot', timestamp: Date}>>([]);
+  const [messages, setMessages] = useState<Array<{id: string, text: string, sender: 'user' | 'bot', timestamp: Date, imageUrl?: string}>>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const router = useRouter();
+
+  // For selected image before sending
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
+
+  // Helper to remove markdown and stray asterisks for clean display
+  const sanitizeText = (text: string) => {
+    if (!text) return text;
+    let t = text;
+
+    // Convert markdown links [text](url) -> text
+    t = t.replace(/\[([^\]]+)\]\((?:https?:\/\/)?[^\)]+\)/g, '$1');
+
+    // Remove bold **text** and __text__
+    t = t.replace(/\*\*([^*]+)\*\*/g, '$1');
+    t = t.replace(/__([^_]+)__/g, '$1');
+
+    // Remove italic *text* and _text_
+    t = t.replace(/\*([^*]+)\*/g, '$1');
+    t = t.replace(/_([^_]+)_/g, '$1');
+
+    // Remove inline code `code`
+    t = t.replace(/`([^`]+)`/g, '$1');
+
+    // Remove any remaining stray asterisks or backticks
+    t = t.replace(/\*+/g, '');
+    t = t.replace(/`+/g, '');
+
+    // Collapse multiple spaces and trim
+    t = t.replace(/\s{2,}/g, ' ').trim();
+
+    return t;
+  };
 
   useEffect(() => {
     // Show the popup after 3 seconds
@@ -23,6 +61,11 @@ export default function FloatingChatWidget() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isTyping]);
 
   // Text-to-Speech function
   const speakText = (text: string) => {
@@ -38,8 +81,7 @@ export default function FloatingChatWidget() {
       const femaleVoice = voices.find(voice => 
         voice.name.toLowerCase().includes('female') || 
         voice.name.toLowerCase().includes('zira') ||
-        voice.name.toLowerCase().includes('samantha') ||
-        voice.gender === 'female'
+        voice.name.toLowerCase().includes('samantha')
       );
       
       if (femaleVoice) {
@@ -76,31 +118,116 @@ export default function FloatingChatWidget() {
     }
   };
 
+  // Helper to send FormData to API and stream response (returns accumulated text)
+  const sendToApi = async (formData: FormData) => {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to get response');
+    }
+
+    const reader = response.body?.getReader();
+    let accumulatedText = '';
+
+    if (reader) {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = new TextDecoder().decode(value);
+        const lines = chunk.split('\n\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              if (data.text) {
+                accumulatedText += data.text;
+              } else if (data.error) {
+                throw new Error(data.error);
+              }
+            } catch (parseError) {
+              // Ignore parse errors for incomplete chunks
+            }
+          }
+        }
+      }
+    }
+
+    return accumulatedText;
+  };
+
   const handleSendMessage = async () => {
-    if (!currentMessage.trim()) return;
+    if (!currentMessage.trim() && !selectedImage) return;
 
     const userMessage = {
       id: Date.now().toString(),
       text: currentMessage.trim(),
       sender: 'user' as const,
-      timestamp: new Date()
+      timestamp: new Date(),
+      imageUrl: selectedImageUrl || undefined
     };
 
     setMessages(prev => [...prev, userMessage]);
     setCurrentMessage("");
     setIsTyping(true);
 
-    // Simulate bot response (you can replace this with actual API call)
-    setTimeout(() => {
+    try {
+      const formData = new FormData();
+      formData.append('message', userMessage.text);
+      
+      // If an image is selected and user pressed send, include it
+      if (selectedImage) {
+        formData.append('image', selectedImage);
+      }
+
+      const accumulatedText = await sendToApi(formData);
+
       const botResponse = {
         id: (Date.now() + 1).toString(),
-        text: "Thank you for your message! I'm processing your request and will provide assistance with your health concerns shortly.",
+        text: sanitizeText(accumulatedText),
         sender: 'bot' as const,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, botResponse]);
+      // clear selected image after send
+      if (selectedImage) {
+        setSelectedImage(null);
+        setSelectedImageUrl(null);
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      const errorResponse = {
+        id: (Date.now() + 1).toString(),
+        text: sanitizeText(error instanceof Error ? `Sorry, ${error.message}` : "Sorry, I'm having trouble responding right now. Please try again."),
+        sender: 'bot' as const,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
+  };
+
+  // Handle file selection: set preview and let user add a caption before sending
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    if (!file) return;
+
+    // store selected file and preview URL, but do not upload yet
+    const imageUrl = URL.createObjectURL(file);
+    setSelectedImage(file);
+    setSelectedImageUrl(imageUrl);
+
+    // prefill message placeholder if empty
+    if (!currentMessage.trim()) {
+      setCurrentMessage('');
+    }
+
+    // focus input so user can write caption
+    setTimeout(() => inputRef.current?.focus(), 100);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -122,6 +249,8 @@ export default function FloatingChatWidget() {
       setChatStage('name');
       setCurrentName('');
     }
+    // focus input when opening chat panel
+    setTimeout(() => inputRef.current?.focus(), 200);
   };
 
   const hidePopup = () => {
@@ -201,7 +330,7 @@ export default function FloatingChatWidget() {
             exit={{ opacity: 0, y: 20, scale: 0.9 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
-            <div className="w-80 h-96 bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
+            <div className="w-96 h-[500px] bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col overflow-hidden">
               
               {/* Name Input Stage */}
               {chatStage === 'name' && (
@@ -311,7 +440,7 @@ export default function FloatingChatWidget() {
                   </div>
 
                   {/* Messages Area */}
-                  <div className="flex-1 p-4 overflow-y-auto bg-gray-50 max-h-64">
+                  <div className="flex-1 p-4 overflow-y-auto bg-gray-50 max-h-80">
                     {/* Display actual messages */}
                     <div className="space-y-3">
                       {messages.map((message) => (
@@ -326,6 +455,15 @@ export default function FloatingChatWidget() {
                           }`}
                         >
                           <p className="text-sm">{message.text}</p>
+                          {message.imageUrl && (
+                            <div className="mt-2">
+                              <img
+                                src={message.imageUrl}
+                                alt="Uploaded content"
+                                className="max-w-full h-auto rounded-lg shadow-sm"
+                              />
+                            </div>
+                          )}
                           <p className={`text-xs mt-1 ${
                             message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'
                           }`}>
@@ -356,26 +494,43 @@ export default function FloatingChatWidget() {
                     {/* Quick Action Buttons - show only if no messages */}
                     {messages.length === 1 && (
                       <div className="space-y-2 mt-4">
-                        <button className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 p-3 rounded-lg text-left text-sm transition-colors">
+                        <button onClick={() => {
+                          // Prefill chat input and switch to chat
+                          if (!isOpen) setIsOpen(true);
+                          setChatStage('chat');
+                          setCurrentMessage('I have symptoms to report: ');
+                          setTimeout(() => inputRef.current?.focus(), 100);
+                        }} className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 p-3 rounded-lg text-left text-sm transition-colors">
                           🤒 I have symptoms to report
                         </button>
-                        <button className="w-full bg-green-50 hover:bg-green-100 text-green-700 p-3 rounded-lg text-left text-sm transition-colors">
-                          📄 Upload medical document
-                        </button>
-                        <button className="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 p-3 rounded-lg text-left text-sm transition-colors">
+                        <button onClick={() => router.push('/map')} className="w-full bg-purple-50 hover:bg-purple-100 text-purple-700 p-3 rounded-lg text-left text-sm transition-colors">
                           🏥 Find nearby medical centers
                         </button>
-                        <button className="w-full bg-orange-50 hover:bg-orange-100 text-orange-700 p-3 rounded-lg text-left text-sm transition-colors">
+                        <button onClick={() => router.push('/diseases')} className="w-full bg-orange-50 hover:bg-orange-100 text-orange-700 p-3 rounded-lg text-left text-sm transition-colors">
                           💧 Water-borne disease info
                         </button>
                       </div>
                     )}
+                    
+                    {/* Invisible element to scroll to */}
+                    <div ref={messagesEndRef} />
                   </div>
 
                   {/* Input Area */}
                   <div className="p-4 border-t bg-white">
+                    {/* Selected image preview (if any) */}
+                    {selectedImageUrl && (
+                      <div className="p-2 border rounded mb-2 flex items-start gap-2">
+                        <img src={selectedImageUrl} alt="preview" className="w-20 h-20 object-cover rounded" />
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-700 mb-1">Image selected — add a caption or press send</p>
+                          <button onClick={() => { setSelectedImage(null); setSelectedImageUrl(null); }} className="text-red-500 text-sm">Remove</button>
+                        </div>
+                      </div>
+                    )}
                     <div className="flex gap-2">
                       <input
+                        ref={inputRef}
                         type="text"
                         value={currentMessage}
                         onChange={(e) => setCurrentMessage(e.target.value)}
@@ -384,14 +539,24 @@ export default function FloatingChatWidget() {
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         disabled={isTyping}
                       />
+                      {/* Image upload button (logo) */}
+                      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+                      <button
+                        onClick={() => fileInputRef.current?.click()}
+                        title="Upload image"
+                        className="bg-white hover:bg-gray-100 text-gray-700 px-3 py-2 rounded-lg mr-2 border"
+                      >
+                        📷
+                      </button>
+
                       <button 
                         onClick={handleSendMessage}
-                        disabled={!currentMessage.trim() || isTyping}
+                        disabled={(!currentMessage.trim() && !selectedImage) || isTyping}
                         className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-colors"
                       >
                         <Send size={16} />
                       </button>
-                    </div>
+                     </div>
                     
                     <p className="text-xs text-gray-500 mt-2 text-center">
                       ⚠️ For medical emergencies, contact your doctor immediately
@@ -405,4 +570,4 @@ export default function FloatingChatWidget() {
       </AnimatePresence>
     </>
   );
-}
+ }
