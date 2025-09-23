@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, UserPlus, LogIn, AlertCircle, CheckCircle } from 'lucide-react';
@@ -27,7 +27,7 @@ const userRoles = [
   { value: 'INCIDENT_REPORTER', label: 'General Public - Incident Reporter' }
 ];
 
-export default function AuthPage() {
+function AuthComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
@@ -431,5 +431,13 @@ export default function AuthPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthComponent />
+    </Suspense>
   );
 }
