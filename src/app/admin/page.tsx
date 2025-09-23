@@ -39,14 +39,16 @@ export default function AdminPage() {
     }
   ]);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (loginData.email === "debjitsaha069@gmail.com" && loginData.password === "12345678") {
-      setIsLoggedIn(true);
-    } else {
-      alert("Invalid email or password. Please check your credentials.");
-    }
-  };
+    const handleLogin = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (loginData.email === "debjitsaha069@gmail.com" && loginData.password === "12345678") {
+            setIsLoggedIn(true);
+        } else if (loginData.email === "biswasjaydeep51@gmail.com" && loginData.password === "12345678") {
+            setIsLoggedIn(true);
+        } else {
+            alert("Invalid email or password. Please check your credentials.");
+        }
+    };
 
   const updateStatus = (id: string, status: 'approved' | 'rejected') => {
     setRegistrations(prev => 
