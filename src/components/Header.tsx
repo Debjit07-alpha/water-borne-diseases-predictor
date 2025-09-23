@@ -31,7 +31,7 @@ export default function Header() {
           <Link href="/" className="text-white">
             <div className="text-xs font-medium opacity-90">A Digital India Initiative</div>
             <h1 className="text-xl font-bold tracking-tight">
-              Curevo
+              RIVER PULSE
               <span className="text-sm font-normal opacity-80 ml-2">
                 Water-Borne Disease Prevention Platform
               </span>
