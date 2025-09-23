@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import LocationSearch from "@/components/LocationSearch";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
@@ -37,7 +38,7 @@ const diseases = [
   "Leptospirosis"
 ];
 
-export default function ReportPage() {
+function ReportPageContent() {
   const [position, setPosition] = useState<[number, number] | null>(null);
   const [selectedAddress, setSelectedAddress] = useState<string>("");
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
@@ -245,5 +246,13 @@ export default function ReportPage() {
         </Button>
       </form>
     </div>
+  );
+}
+
+export default function ReportPage() {
+  return (
+    <ProtectedRoute allowedRoles={['ASHA_WORKER', 'COMMUNITY_VOLUNTEER', 'CLINIC_STAFF', 'INCIDENT_REPORTER', 'ADMIN']}>
+      <ReportPageContent />
+    </ProtectedRoute>
   );
 }

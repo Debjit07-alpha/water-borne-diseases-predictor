@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Send, Users, MapPin, Clock, AlertTriangle, CheckCircle, MessageSquare, TrendingUp } from "lucide-react";
+import { Send, Users, MapPin, Clock, AlertTriangle, CheckCircle, MessageSquare, TrendingUp, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 interface SMSResponse {
   id: string;
@@ -30,7 +31,7 @@ interface SMSAlert {
   responses?: SMSResponse[];
 }
 
-export default function SMSAlertsPage() {
+function SMSAlertsPageContent() {
   const [alerts, setAlerts] = useState<SMSAlert[]>([]);
   const [selectedAlert, setSelectedAlert] = useState<SMSAlert | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -236,6 +237,30 @@ Reply with your household status or additional cases.
 - Community Health System`;
   };
 
+  // Function to generate Google Maps URL from location
+  const generateGoogleMapsURL = (location: string): string => {
+    if (!location.trim()) {
+      return '';
+    }
+    
+    // Clean and encode the location for URL
+    const encodedLocation = encodeURIComponent(location.trim());
+    
+    // Generate Google Maps search URL
+    return `https://www.google.com/maps/search/?api=1&query=${encodedLocation}`;
+  };
+
+  // Function to open location in Google Maps
+  const openInMap = () => {
+    if (!formData.location.trim()) {
+      alert('Please enter a location first');
+      return;
+    }
+    
+    const mapsURL = generateGoogleMapsURL(formData.location);
+    window.open(mapsURL, '_blank', 'noopener,noreferrer');
+  };
+
   const getAllResponses = (): SMSResponse[] => {
     return alerts.reduce((allResponses: SMSResponse[], alert) => {
       if (alert.responses) {
@@ -418,6 +443,35 @@ Reply with your household status or additional cases.
                       </select>
                     </div>
 
+                    {/* Open in Map Button - Shows after severity is selected */}
+                    {formData.severity && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="text-sm font-medium text-blue-900">Location Mapping</h4>
+                            <p className="text-xs text-blue-700 mt-1">
+                              View alert location on map for better coordination
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={openInMap}
+                            disabled={!formData.location.trim()}
+                            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                          >
+                            <MapPin size={16} />
+                            <ExternalLink size={14} />
+                            Open in Map
+                          </button>
+                        </div>
+                        {!formData.location.trim() && (
+                          <p className="text-xs text-blue-600 mt-2">
+                            💡 Enter a location below to enable map view
+                          </p>
+                        )}
+                      </div>
+                    )}
+
                     {/* Affected Count */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -438,14 +492,20 @@ Reply with your household status or additional cases.
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Location/Village
                       </label>
-                      <input
-                        type="text"
-                        value={formData.location}
-                        onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                        placeholder="Enter location"
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        required
-                      />
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={formData.location}
+                          onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+                          placeholder="Enter village name, landmark, or address"
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          required
+                        />
+                        <MapPin className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">
+                        📍 Be specific (e.g., "Village Name, District" or "Near Landmark")
+                      </p>
                     </div>
 
                     {/* Action Required */}
@@ -543,11 +603,10 @@ Reply with your household status or additional cases.
                         key={alert.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="p-4 hover:bg-gray-50 cursor-pointer"
-                        onClick={() => setSelectedAlert(alert)}
+                        className="p-4 hover:bg-gray-50"
                       >
                         <div className="flex items-start justify-between">
-                          <div className="flex-1">
+                          <div className="flex-1" onClick={() => setSelectedAlert(alert)}>
                             <div className="flex items-center gap-2 mb-2">
                               <span className="font-medium text-gray-900">{alert.diseaseType}</span>
                               <span className={`px-2 py-1 text-xs rounded-full ${severityColors[alert.severity]}`}>
@@ -585,6 +644,23 @@ Reply with your household status or additional cases.
                                 </span>
                               )}
                             </div>
+                          </div>
+                          
+                          {/* Open in Map button for existing alerts */}
+                          <div className="ml-4">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const mapsURL = generateGoogleMapsURL(alert.location);
+                                window.open(mapsURL, '_blank', 'noopener,noreferrer');
+                              }}
+                              className="flex items-center gap-1 bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-lg text-xs font-medium transition-colors"
+                              title="View location on Google Maps"
+                            >
+                              <MapPin size={12} />
+                              <ExternalLink size={10} />
+                              Map
+                            </button>
                           </div>
                         </div>
                       </motion.div>
@@ -664,5 +740,13 @@ Reply with your household status or additional cases.
         )}
       </div>
     </div>
+  );
+}
+
+export default function SMSAlertsPage() {
+  return (
+    <ProtectedRoute allowedRoles={['ASHA_WORKER', 'COMMUNITY_VOLUNTEER', 'CLINIC_STAFF', 'ADMIN']}>
+      <SMSAlertsPageContent />
+    </ProtectedRoute>
   );
 }

@@ -3,9 +3,27 @@
 import Link from "next/link";
 import { Button } from "./ui/button";
 import ThemeToggle from "./ThemeToggle";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { LogOut, User } from "lucide-react";
 
 export default function Header() {
+  const { user, isAuthenticated, logout } = useAuth();
+  const router = useRouter();
+
+  const handleProtectedNavigation = (targetPath: string) => {
+    if (!isAuthenticated) {
+      router.push(`/auth?redirect=${encodeURIComponent(targetPath)}`);
+    } else {
+      router.push(targetPath);
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    router.push('/');
+  };
+
   return (
     <header className="h-16 bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg">
       <div className="flex h-full items-center justify-between px-6">
@@ -32,16 +50,48 @@ export default function Header() {
             <Link href="/diseases" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
               LEARN MORE
             </Link>
-            <Link href="/report" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
+            <button 
+              onClick={() => handleProtectedNavigation('/report')}
+              className="text-white/80 hover:text-white text-sm font-medium transition-colors cursor-pointer"
+            >
               REPORT
-            </Link>
-            <Link href="/sms-alerts" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
+            </button>
+            <button 
+              onClick={() => handleProtectedNavigation('/sms-alerts')}
+              className="text-white/80 hover:text-white text-sm font-medium transition-colors cursor-pointer"
+            >
               SMS ALERTS
-            </Link>
-            <Link href="/admin" className="text-red-300 hover:text-red-100 text-sm font-medium transition-colors">
-              ADMIN
-            </Link>
+            </button>
+            {isAuthenticated && user?.role === 'ADMIN' && (
+              <Link href="/admin" className="text-red-300 hover:text-red-100 text-sm font-medium transition-colors">
+                ADMIN
+              </Link>
+            )}
           </nav>
+          
+          {/* User Authentication Section */}
+          {isAuthenticated ? (
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 text-white/80 text-sm">
+                <User className="w-4 h-4" />
+                <span>Welcome, {user?.fullName || user?.username}</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-1 text-white/80 hover:text-white text-sm font-medium transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
+              </button>
+            </div>
+          ) : (
+            <Link 
+              href="/auth" 
+              className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            >
+              Login / Register
+            </Link>
+          )}
           
           <ThemeToggle />
         </div>

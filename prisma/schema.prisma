@@ -19,7 +19,28 @@ model Incident {
   latitude    Float
   longitude   Float
   details     String?
+  // Reporter information
+  reportedBy  String?  // User ID
+  reporterPhone String?
+  reporterName  String?
+  status      IncidentStatus @default(PENDING)
   createdAt   DateTime @default(now())
+  
+  // Relations
+  reporter    User?    @relation(fields: [reportedBy], references: [id], onDelete: SetNull)
+  
+  @@index([reportedBy])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Incident status enum
+enum IncidentStatus {
+  PENDING
+  VERIFIED
+  INVESTIGATING
+  RESOLVED
+  DISMISSED
 }
 
 model Disease {
@@ -31,6 +52,47 @@ model Disease {
   prevention     String[]
   treatment      String    @db.Text
   slug           String    @unique
+}
+
+// User authentication and role management
+model User {
+  id           String     @id @default(cuid())
+  username     String     @unique
+  email        String     @unique
+  fullName     String
+  password     String     // Hashed password
+  role         UserRole
+  assignedArea String?    // For ASHA workers and volunteers
+  isActive     Boolean    @default(true)
+  // Profile information
+  phoneNumber  String?
+  address      String?
+  // Authentication metadata
+  lastLoginAt  DateTime?
+  isVerified   Boolean    @default(false)
+  verificationToken String?
+  resetToken   String?
+  resetTokenExpiry DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  
+  // Relations
+  incidents    Incident[]
+  smsAlerts    SmsAlert[]
+  
+  @@index([role])
+  @@index([isActive])
+  @@index([assignedArea])
+  @@index([email])
+}
+
+// User roles enum
+enum UserRole {
+  ASHA_WORKER
+  COMMUNITY_VOLUNTEER
+  CLINIC_STAFF
+  INCIDENT_REPORTER
+  ADMIN
 }
 
 // Water quality reports - could be uploaded daily/weekly per location
@@ -110,17 +172,21 @@ model SmsAlert {
   messageContent  String      @db.Text
   recipients      String[]    // Phone numbers
   status          AlertStatus @default(SENT)
+  // Alert creator information
+  createdBy       String?     // User ID of health worker who created the alert
   sentAt          DateTime    @default(now())
   createdAt       DateTime    @default(now())
   
   // Relations
   responses       SmsResponse[]
+  creator         User?       @relation(fields: [createdBy], references: [id], onDelete: SetNull)
   
   @@index([sentAt])
   @@index([status])
   @@index([diseaseType])
   @@index([severity])
   @@index([location])
+  @@index([createdBy])
 }
 
 // SMS responses from community members
