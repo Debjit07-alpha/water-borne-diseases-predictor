@@ -13,10 +13,7 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
 
   return (
     <div 
-      className={cn(
-        "flex flex-col min-h-screen transition-all duration-300",
-        collapsed ? "ml-16" : "ml-64"
-      )}
+      className="flex flex-col min-h-screen transition-all duration-300 m-0 p-0"
     >
       {children}
     </div>

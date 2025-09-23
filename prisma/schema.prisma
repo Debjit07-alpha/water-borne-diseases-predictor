@@ -79,11 +79,31 @@ model User {
   // Relations
   incidents    Incident[]
   smsAlerts    SmsAlert[]
+  otpCodes     OtpCode[]
   
   @@index([role])
   @@index([isActive])
   @@index([assignedArea])
   @@index([email])
+}
+
+// OTP Code model for email verification during login
+model OtpCode {
+  id        String   @id @default(cuid())
+  userId    String
+  email     String
+  code      String   // 6-digit OTP code
+  expiresAt DateTime // OTP expiry time (usually 10 minutes)
+  isUsed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([email])
+  @@index([code])
+  @@index([expiresAt])
 }
 
 // User roles enum

@@ -37,6 +37,10 @@ function AuthComponent() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [otpStep, setOtpStep] = useState(false);
+  const [otpData, setOtpData] = useState({ userId: '', email: '', maskedEmail: '' });
+  const [otp, setOtp] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   const [loginForm, setLoginForm] = useState<LoginForm>({
     usernameOrEmail: '',
@@ -58,6 +62,16 @@ function AuthComponent() {
     setMessage({ type: '', text: '' });
   }, [isLogin]);
 
+  // Countdown effect for resend OTP
+  useEffect(() => {
+    if (resendCooldown > 0) {
+      const timer = setTimeout(() => {
+        setResendCooldown(resendCooldown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendCooldown]);
+
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -72,13 +86,82 @@ function AuthComponent() {
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (response.ok && data.requiresOTP) {
+        setMessage({ type: 'success', text: data.message });
+        setOtpData({ userId: data.userId, email: data.email, maskedEmail: data.maskedEmail });
+        setOtpStep(true);
+        setResendCooldown(60); // 60 seconds cooldown
+      } else if (response.ok) {
         setMessage({ type: 'success', text: 'Login successful! Redirecting...' });
         setTimeout(() => {
           router.push(redirectTo);
         }, 1000);
       } else {
         setMessage({ type: 'error', text: data.message || 'Login failed' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Network error. Please try again.' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOTPVerification = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: otpData.userId,
+          email: otpData.email,
+          otp: otp
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'Login successful! Redirecting...' });
+        setTimeout(() => {
+          router.push(redirectTo);
+        }, 1000);
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Invalid OTP' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Network error. Please try again.' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendOTP = async () => {
+    if (resendCooldown > 0) return;
+    
+    setIsLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await fetch('/api/auth/generate-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: otpData.email,
+          password: loginForm.password
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'New OTP sent to your email!' });
+        setResendCooldown(60);
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Failed to resend OTP' });
       }
     } catch (error) {
       setMessage({ type: 'error', text: 'Network error. Please try again.' });
@@ -206,7 +289,90 @@ function AuthComponent() {
 
           {/* Login Form */}
           {isLogin ? (
-            <form onSubmit={handleLoginSubmit} className="space-y-4">
+            otpStep ? (
+              /* OTP Verification Form */
+              <form onSubmit={handleOTPVerification} className="space-y-4">
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    >
+                      📧
+                    </motion.div>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Check Your Email</h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    We've sent a 6-digit verification code to
+                  </p>
+                  <p className="font-medium text-blue-600">{otpData.maskedEmail}</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Enter 6-Digit OTP
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                    className="w-full px-3 py-3 text-center text-2xl font-bold tracking-widest border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    placeholder="000000"
+                  />
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={isLoading || otp.length !== 6}
+                  className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                >
+                  {isLoading ? 'Verifying...' : 'Verify OTP'}
+                </motion.button>
+
+                <div className="flex items-center justify-between text-sm">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOtpStep(false);
+                      setOtp('');
+                      setMessage({ type: '', text: '' });
+                    }}
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    ← Back to Login
+                  </button>
+                  
+                  <div className="text-center">
+                    {resendCooldown > 0 ? (
+                      <span className="text-gray-500">
+                        Resend in {resendCooldown}s
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleResendOTP}
+                        disabled={isLoading}
+                        className="text-blue-600 hover:text-blue-800 disabled:opacity-50"
+                      >
+                        Resend OTP
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                  <p className="text-xs text-blue-800">
+                    💡 <strong>Tip:</strong> Check your spam folder if you don't see the email in your inbox.
+                  </p>
+                </div>
+              </form>
+            ) : (
+              /* Login Credentials Form */
+              <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Username or Email
@@ -274,6 +440,7 @@ function AuthComponent() {
                 </button>
               </p>
             </form>
+            )
           ) : (
             /* Register Form */
             <form onSubmit={handleRegisterSubmit} className="space-y-4">

@@ -1,46 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
+import bcryptjs from 'bcryptjs';
 import { generateOTP, sendOTPEmail } from '@/lib/emailService';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { usernameOrEmail, password } = body;
+    const { email, password } = await request.json();
 
-    // Validation
-    if (!usernameOrEmail || !password) {
+    if (!email || !password) {
       return NextResponse.json(
-        { message: 'Username/email and password are required' },
+        { error: 'Email and password are required' },
         { status: 400 }
       );
     }
 
-    // Find user by username or email
+    // Find user by email
     const user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { email: usernameOrEmail },
-          { username: usernameOrEmail }
-        ],
-        isActive: true
-      }
+      where: { email: email.toLowerCase() }
     });
 
     if (!user) {
       return NextResponse.json(
-        { message: 'Invalid credentials' },
+        { error: 'Invalid email or password' },
         { status: 401 }
       );
     }
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
+    const isValidPassword = await bcryptjs.compare(password, user.password);
+    if (!isValidPassword) {
       return NextResponse.json(
-        { message: 'Invalid credentials' },
+        { error: 'Invalid email or password' },
         { status: 401 }
+      );
+    }
+
+    // Check if user is active
+    if (!user.isActive) {
+      return NextResponse.json(
+        { error: 'Account is deactivated. Please contact support.' },
+        { status: 403 }
       );
     }
 
@@ -72,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     if (!emailSent) {
       return NextResponse.json(
-        { message: 'Failed to send OTP email. Please try again.' },
+        { error: 'Failed to send OTP email. Please try again.' },
         { status: 500 }
       );
     }
@@ -80,16 +79,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'OTP sent to your email address. Please check your inbox.',
-      requiresOTP: true,
       userId: user.id,
-      email: user.email,
-      maskedEmail: user.email.replace(/(.{2})(.*)(@.*)/, '$1***$3')
+      email: user.email
     });
 
   } catch (error) {
-    console.error('Login with OTP error:', error);
+    console.error('OTP generation error:', error);
     return NextResponse.json(
-      { message: 'Internal server error' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }

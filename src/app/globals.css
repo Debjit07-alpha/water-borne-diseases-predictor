@@ -40,6 +40,12 @@
 }
 
 @layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   html {
     font-family: var(--font-sans);
   }
@@ -51,6 +57,10 @@
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100vw;
+    overflow-x: hidden;
   }
 
   h1 {
