@@ -96,3 +96,170 @@ model OutbreakPrediction {
   @@index([latitude, longitude, targetDate])
   @@index([riskCategory])
 }
+
+// SMS Alert campaigns for community health monitoring
+model SmsAlert {
+  id              String      @id @default(cuid())
+  diseaseType     String
+  severity        SeverityLevel
+  affectedCount   Int
+  location        String
+  actionRequired  String      @db.Text
+  customMessage   String?     @db.Text
+  // Generated SMS message content
+  messageContent  String      @db.Text
+  recipients      String[]    // Phone numbers
+  status          AlertStatus @default(SENT)
+  sentAt          DateTime    @default(now())
+  createdAt       DateTime    @default(now())
+  
+  // Relations
+  responses       SmsResponse[]
+  
+  @@index([sentAt])
+  @@index([status])
+  @@index([diseaseType])
+  @@index([severity])
+  @@index([location])
+}
+
+// SMS responses from community members
+model SmsResponse {
+  id            String        @id @default(cuid())
+  alertId       String
+  phone         String
+  messageText   String        @db.Text
+  // Parsed response data
+  casesReported Int?          // Number of cases reported
+  responseType  ResponseType
+  symptoms      String[]      // Extracted symptoms
+  urgencyLevel  UrgencyLevel?
+  isEmergency   Boolean       @default(false)
+  // Location if provided in response
+  latitude      Float?
+  longitude     Float?
+  // Processing metadata
+  parsedAt      DateTime?
+  confidence    Float?        // AI parsing confidence (0-1)
+  rawParsedData Json?         // Full parsing results
+  receivedAt    DateTime      @default(now())
+  
+  // Relations
+  alert         SmsAlert      @relation(fields: [alertId], references: [id], onDelete: Cascade)
+  
+  @@index([alertId])
+  @@index([receivedAt])
+  @@index([responseType])
+  @@index([isEmergency])
+  @@index([phone])
+}
+
+// Contact groups for SMS distribution
+model ContactGroup {
+  id          String    @id @default(cuid())
+  name        String
+  description String?   @db.Text
+  location    String?   // Geographic area coverage
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  
+  // Relations
+  contacts    Contact[]
+  
+  @@index([isActive])
+  @@index([location])
+}
+
+// Individual contacts for SMS alerts
+model Contact {
+  id          String        @id @default(cuid())
+  phone       String        @unique
+  name        String?
+  location    String?
+  // Contact metadata
+  preferredLanguage String? @default("en")
+  isActive    Boolean       @default(true)
+  // Opt-in status for different alert types
+  diseaseAlerts   Boolean   @default(true)
+  emergencyAlerts Boolean   @default(true)
+  surveyRequests  Boolean   @default(true)
+  // Response tracking
+  lastResponseAt DateTime?
+  totalResponses Int       @default(0)
+  createdAt     DateTime   @default(now())
+  
+  // Relations
+  groups      ContactGroup[]
+  
+  @@index([phone])
+  @@index([isActive])
+  @@index([location])
+  @@index([lastResponseAt])
+}
+
+// SMS templates for quick alert creation
+model SmsTemplate {
+  id            String      @id @default(cuid())
+  name          String
+  diseaseType   String
+  severity      SeverityLevel
+  messageTemplate String    @db.Text // Template with placeholders like {location}, {count}
+  actionRequired  String    @db.Text
+  isActive      Boolean     @default(true)
+  usageCount    Int         @default(0)
+  createdBy     String?     // Health worker/admin who created it
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  @@index([diseaseType])
+  @@index([severity])
+  @@index([isActive])
+}
+
+// Analytics aggregation for dashboard
+model SmsAnalytics {
+  id              String   @id @default(cuid())
+  date            DateTime // Daily aggregation
+  totalAlerts     Int      @default(0)
+  totalRecipients Int      @default(0)
+  totalResponses  Int      @default(0)
+  emergencyCount  Int      @default(0)
+  caseCount       Int      @default(0)
+  responseRate    Float?   // Percentage
+  // Geographic breakdown (JSON)
+  locationStats   Json?
+  // Disease breakdown (JSON)
+  diseaseStats    Json?
+  createdAt       DateTime @default(now())
+  
+  @@unique([date])
+  @@index([date])
+}
+
+// Enums for SMS system
+enum SeverityLevel {
+  MILD
+  MODERATE
+  SEVERE
+}
+
+enum AlertStatus {
+  DRAFT
+  SENT
+  DELIVERED
+  RESPONDED
+  FAILED
+}
+
+enum ResponseType {
+  NO_CASES
+  CASES_REPORTED
+  EMERGENCY
+  UNCLEAR
+}
+
+enum UrgencyLevel {
+  LOW
+  MEDIUM
+  HIGH
+}

@@ -13,7 +13,7 @@ export default function Header() {
           <Link href="/" className="text-white">
             <div className="text-xs font-medium opacity-90">A Digital India Initiative</div>
             <h1 className="text-xl font-bold tracking-tight">
-              River Pulse
+              Curevo
               <span className="text-sm font-normal opacity-80 ml-2">
                 Water-Borne Disease Prevention Platform
               </span>
@@ -34,6 +34,9 @@ export default function Header() {
             </Link>
             <Link href="/report" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
               REPORT
+            </Link>
+            <Link href="/sms-alerts" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
+              SMS ALERTS
             </Link>
           </nav>
           
