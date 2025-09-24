@@ -27,15 +27,16 @@ const formSchema = z.object({
   details: z.string().optional(),
 });
 
+// Disease configurations with colors and emojis
 const diseases = [
-  "Diarrhea", 
-  "Cholera", 
-  "Typhoid", 
-  "Hepatitis A", 
-  "Dysentery", 
-  "Giardiasis", 
-  "Salmonellosis", 
-  "Leptospirosis"
+  { name: "Diarrhea", emoji: "🤒", color: "from-yellow-400 to-amber-500", bgColor: "from-yellow-50 to-amber-100", textColor: "text-yellow-800", borderColor: "border-yellow-300" },
+  { name: "Cholera", emoji: "🦠", color: "from-red-400 to-red-600", bgColor: "from-red-50 to-red-100", textColor: "text-red-800", borderColor: "border-red-300" },
+  { name: "Typhoid", emoji: "🌡️", color: "from-indigo-400 to-indigo-600", bgColor: "from-indigo-50 to-indigo-100", textColor: "text-indigo-800", borderColor: "border-indigo-300" },
+  { name: "Hepatitis A", emoji: "🔴", color: "from-purple-400 to-purple-600", bgColor: "from-purple-50 to-purple-100", textColor: "text-purple-800", borderColor: "border-purple-300" },
+  { name: "Dysentery", emoji: "💊", color: "from-orange-400 to-orange-600", bgColor: "from-orange-50 to-orange-100", textColor: "text-orange-800", borderColor: "border-orange-300" },
+  { name: "Giardiasis", emoji: "🧬", color: "from-green-400 to-green-600", bgColor: "from-green-50 to-green-100", textColor: "text-green-800", borderColor: "border-green-300" },
+  { name: "Salmonellosis", emoji: "🍽️", color: "from-pink-400 to-pink-600", bgColor: "from-pink-50 to-pink-100", textColor: "text-pink-800", borderColor: "border-pink-300" },
+  { name: "Leptospirosis", emoji: "🐭", color: "from-blue-400 to-blue-600", bgColor: "from-blue-50 to-blue-100", textColor: "text-blue-800", borderColor: "border-blue-300" },
 ];
 
 function ReportPageContent() {
@@ -111,140 +112,250 @@ function ReportPageContent() {
       return;
     }
 
-    const response = await fetch("/api/incidents", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch("/api/incidents", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
       if (response.ok) {
-        alert("Incident reported successfully!");
+        alert("🎉 Incident reported successfully! Thank you for your contribution to community health.");
         form.reset();
         setPosition(null);
         setSelectedAddress("");
         setIsLoadingAddress(false);
       } else {
-      let msg = "Failed to report incident.";
-      try {
-        const data = await response.json();
-        if (data?.error) {
-          msg += `\n${typeof data.error === 'string' ? data.error : JSON.stringify(data.error)}`;
-        }
-      } catch {}
-      alert(msg);
+        let msg = "❌ Failed to report incident.";
+        try {
+          const data = await response.json();
+          if (data?.error) {
+            msg += `\n${typeof data.error === 'string' ? data.error : JSON.stringify(data.error)}`;
+          }
+        } catch {}
+        alert(msg);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="py-12">
-      <h1 className="text-3xl font-bold text-center font-heading-serif">Report an Incident (for ASHA/Community Volunteers/Local Clinic workers only)</h1>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-heading-sans">Step 1: Select Disease</CardTitle>
-            <CardDescription>
-              Choose the suspected water-borne disease.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              {diseases.map((disease) => (
-                <Button
-                  key={disease}
-                  type="button"
-                  variant={
-                    form.watch("disease") === disease ? "default" : "outline"
-                  }
-                  onClick={() => form.setValue("disease", disease)}
-                  className="font-bookman-old-style text-lg md:text-xl"
-                >
-                  {disease}
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12">
+      <div className="max-w-6xl mx-auto px-4">
+        {/* Header Section */}
+        <div className="text-center mb-12">
+          <div className="inline-block p-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl shadow-xl mb-6 transform hover:scale-105 transition-all duration-300">
+            <h1 className="text-3xl lg:text-4xl font-bold text-white font-heading-serif">
+              Report Water-Borne Disease Incident
+            </h1>
+          </div>
+          <div className="bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 rounded-xl p-4 max-w-3xl mx-auto shadow-lg">
+            <p className="text-lg text-amber-800 font-semibold mb-1">
+              For ASHA/Community Volunteers/Local Clinic Workers Only
+            </p>
+            <p className="text-base text-amber-700">
+              Report incidents to help protect community health
+            </p>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-heading-sans">Step 2: Select Location</CardTitle>
-            <CardDescription>
-              Search for a location, use auto-detect, or click on the map to drop a pin.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Location Search */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Search for Location
-              </label>
-              <LocationSearch
-                onLocationSelect={handleLocationSearchSelect}
-                placeholder="Search for incident location..."
-                className="mb-4"
-              />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          {/* Step 1: Disease Selection */}
+          <div className="relative">
+            <div className="absolute -left-4 top-6 w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+              1
             </div>
-            
-            {/* Map */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Or Click on Map
-              </label>
-              <div className="h-96 rounded-lg overflow-hidden border border-gray-200">
-                <Map
-                  position={position}
-                  onPositionChange={handleMapClick}
-                  selectedAddress={selectedAddress}
-                />
-              </div>
-            </div>
-            
-            {/* Location Info */}
-            {position && (
-              <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-sm text-green-800">
-                  <strong>Selected Location:</strong>
-                </p>
-                {isLoadingAddress ? (
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-sm text-green-600">Getting location details...</span>
-                  </div>
-                ) : (
-                  <>
-                    {selectedAddress && (
-                      <p className="text-sm text-green-700 mt-1 leading-relaxed">
-                        📍 {selectedAddress}
-                      </p>
-                    )}
-                    <p className="text-xs text-green-600 mt-2">
-                      Coordinates: {position[0].toFixed(6)}, {position[1].toFixed(6)}
+            <Card className="bg-gradient-to-r from-white to-blue-50 border-blue-200 border-2 shadow-lg hover:shadow-xl transition-all duration-300 ml-6">
+              <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg py-4">
+                <CardTitle className="font-heading-sans text-xl">
+                  Disease Selection
+                </CardTitle>
+                <CardDescription className="text-blue-100 text-base">
+                  Select the suspected water-borne disease
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {diseases.map((disease) => (
+                    <Button
+                      key={disease.name}
+                      type="button"
+                      variant="outline"
+                      onClick={() => form.setValue("disease", disease.name)}
+                      className={`
+                        relative overflow-hidden h-12 text-base font-semibold transition-all duration-300 transform hover:scale-105
+                        ${form.watch("disease") === disease.name 
+                          ? `bg-gradient-to-r ${disease.color} text-white border-2 shadow-lg scale-105` 
+                          : `bg-gradient-to-r ${disease.bgColor} ${disease.textColor} ${disease.borderColor} border-2 hover:shadow-md`
+                        }
+                      `}
+                    >
+                      <span className="text-lg mr-2">{disease.emoji}</span>
+                      {disease.name}
+                      {form.watch("disease") === disease.name && (
+                        <div className="absolute top-1 right-2 w-2 h-2 bg-white rounded-full"></div>
+                      )}
+                    </Button>
+                  ))}
+                </div>
+                {form.watch("disease") && (
+                  <div className="mt-4 p-3 bg-gradient-to-r from-green-100 to-emerald-100 border border-green-300 rounded-lg">
+                    <p className="text-green-800 font-medium flex items-center gap-2">
+                      <span className="text-base">✓</span>
+                      Selected: <span className="font-semibold">{form.watch("disease")}</span>
                     </p>
-                  </>
+                  </div>
                 )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Step 2: Location Selection */}
+          <div className="relative">
+            <div className="absolute -left-4 top-6 w-10 h-10 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+              2
+            </div>
+            <Card className="bg-gradient-to-r from-white to-green-50 border-green-200 border-2 shadow-lg hover:shadow-xl transition-all duration-300 ml-6">
+              <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-t-lg py-4">
+                <CardTitle className="font-heading-sans text-xl">
+                  Location Selection
+                </CardTitle>
+                <CardDescription className="text-green-100 text-base">
+                  Search or click on map to select incident location
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 p-4">
+                {/* Location Search */}
+                <div className="bg-gradient-to-r from-gray-50 to-white p-3 rounded-lg border border-gray-200">
+                  <label className="block text-base font-semibold text-gray-800 mb-2">
+                    Search Location
+                  </label>
+                  <LocationSearch
+                    onLocationSelect={handleLocationSearchSelect}
+                    placeholder="Enter location, address, or landmark..."
+                    className="text-base h-10 border-2 border-blue-300 focus:border-blue-500 rounded-lg shadow-sm"
+                  />
+                </div>
+                
+                {/* Map Section */}
+                <div className="bg-gradient-to-r from-gray-50 to-white p-3 rounded-lg border border-gray-200">
+                  <label className="block text-base font-semibold text-gray-800 mb-2">
+                    Interactive Map
+                  </label>
+                  <div className="h-80 rounded-lg overflow-hidden border-2 border-blue-300 shadow-lg">
+                    <Map
+                      position={position}
+                      onPositionChange={handleMapClick}
+                      selectedAddress={selectedAddress}
+                    />
+                  </div>
+                </div>
+                
+                {/* Location Info */}
+                {position && (
+                  <div className="bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 rounded-lg p-3 shadow-md">
+                    <div className="flex items-start gap-2">
+                      <span className="text-lg">📍</span>
+                      <div className="flex-1">
+                        <p className="text-base font-semibold text-green-800 mb-1">
+                          Location Selected
+                        </p>
+                        {isLoadingAddress ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                            <span className="text-green-700 text-sm">Getting address...</span>
+                          </div>
+                        ) : (
+                          <>
+                            {selectedAddress && (
+                              <p className="text-green-800 mb-2 text-sm leading-relaxed">
+                                <span className="font-medium">Address:</span> {selectedAddress}
+                              </p>
+                            )}
+                            <p className="text-xs text-green-600 font-mono bg-green-50 p-1 rounded border border-green-200">
+                              Coordinates: {position[0].toFixed(6)}, {position[1].toFixed(6)}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Step 3: Additional Details */}
+          <div className="relative">
+            <div className="absolute -left-4 top-6 w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+              3
+            </div>
+            <Card className="bg-gradient-to-r from-white to-purple-50 border-purple-200 border-2 shadow-lg hover:shadow-xl transition-all duration-300 ml-6">
+              <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-lg py-4">
+                <CardTitle className="font-heading-sans text-xl">
+                  Additional Details
+                </CardTitle>
+                <CardDescription className="text-purple-100 text-base">
+                  Optional: Add relevant information about the incident
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="space-y-3">
+                  <label className="block text-base font-semibold text-gray-800 mb-2">
+                    Additional Information
+                  </label>
+                  <Textarea 
+                    {...form.register("details")} 
+                    placeholder="Describe symptoms, affected individuals, timeline, or other relevant details..."
+                    className="min-h-24 text-base p-3 border-2 border-purple-300 focus:border-purple-500 rounded-lg shadow-sm"
+                  />
+                  <p className="text-sm text-gray-600">
+                    Include: symptoms observed, number affected, incident timeline, water source information
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Submit Button */}
+          <div className="text-center pt-6">
+            <Button 
+              type="submit" 
+              size="lg" 
+              disabled={!form.watch("disease") || !position || isSubmitting}
+              className={`
+                text-lg font-semibold py-3 px-8 rounded-xl transform transition-all duration-300 shadow-lg
+                ${(!form.watch("disease") || !position || isSubmitting)
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white hover:scale-105 hover:shadow-xl'
+                }
+              `}
+            >
+              {isSubmitting ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Submitting...</span>
+                </div>
+              ) : (
+                <span>Submit Incident Report</span>
+              )}
+            </Button>
+            
+            {(!form.watch("disease") || !position) && (
+              <div className="mt-3 p-3 bg-gradient-to-r from-yellow-100 to-amber-100 border border-yellow-300 rounded-lg max-w-md mx-auto">
+                <p className="text-yellow-800 text-sm font-medium">
+                  Complete steps {!form.watch("disease") ? "1" : ""}{!form.watch("disease") && !position ? " and " : ""}{!position ? "2" : ""} to submit
+                </p>
               </div>
             )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="font-heading-sans">Step 3: Additional Details (Optional)</CardTitle>
-            <CardDescription>
-              Provide any other relevant information.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Textarea {...form.register("details")} />
-          </CardContent>
-        </Card>
-
-        <Button type="submit" size="lg" className="w-full" disabled={!form.watch("disease") || !position}>
-          Submit Report
-        </Button>
-      </form>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
