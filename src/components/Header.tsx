@@ -25,9 +25,9 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg w-full m-0 p-0">
+    <header className="shadow-lg w-full m-0 p-0" style={{backgroundColor: '#0f172a'}}>
       {/* First Line - Platform Title */}
-      <div className="bg-blue-800/30 py-2 px-6 border-b border-blue-500/20 w-full">
+      <div className="py-2 px-6 border-b w-full" style={{backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(15, 23, 42, 0.7)'}}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Link href="/" className="text-white group">
