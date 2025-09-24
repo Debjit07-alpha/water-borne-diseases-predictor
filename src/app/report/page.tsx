@@ -247,7 +247,7 @@ function ReportPageContent() {
                 </div>
                 
                 {/* Map Section */}
-                <div className="bg-gradient-to-r from-gray-50 to-white p-3 rounded-lg border border-gray-200 transform transition-all duration-300 hover:shadow-md">
+                <div className="bg-gradient-to-r from-gray-50 to-white p-3 rounded-lg border border-gray-200 transform transition-all duration-300 hover:shadow-md mt-6">
                   <label className="block text-base font-semibold text-gray-800 mb-2">
                     Interactive Map
                   </label>
