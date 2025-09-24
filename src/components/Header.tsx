@@ -39,7 +39,6 @@ export default function Header() {
                 <div>
                   <h1 className="text-lg font-bold tracking-tight transition-all duration-300 group-hover:scale-105">
                     <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">RIVER PULSE</span>
-                    <span className="text-white ml-2">Water-Borne Disease Prevention Platform</span>
                   </h1>
                   <div className="text-xs font-medium opacity-90 animate-pulse" style={{color: 'rgba(255, 255, 255, 0.7)'}}>
                     🇮🇳 A Digital India Initiative - Empowering Communities Through Technology
