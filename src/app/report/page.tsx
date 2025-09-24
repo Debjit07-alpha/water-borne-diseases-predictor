@@ -145,16 +145,16 @@ function ReportPageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 animate-fadeIn">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header Section */}
-        <div className="text-center mb-12">
-          <div className="inline-block p-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl shadow-xl mb-6 transform hover:scale-105 transition-all duration-300">
+        <div className="text-center mb-12 animate-slideInDown">
+          <div className="inline-block p-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl shadow-xl mb-6 transform hover:scale-105 transition-all duration-300 hover:shadow-2xl animate-pulse hover:animate-none">
             <h1 className="text-3xl lg:text-4xl font-bold text-white font-heading-serif">
               Report Water-Borne Disease Incident
             </h1>
           </div>
-          <div className="bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 rounded-xl p-4 max-w-3xl mx-auto shadow-lg">
+          <div className="bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 rounded-xl p-4 max-w-3xl mx-auto shadow-lg transform hover:scale-[1.02] transition-all duration-300 hover:shadow-xl animate-slideInLeft">
             <p className="text-lg text-amber-800 font-semibold mb-1">
               For ASHA/Community Volunteers/Local Clinic Workers Only
             </p>
@@ -164,50 +164,53 @@ function ReportPageContent() {
           </div>
         </div>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 animate-fadeIn">
           {/* Step 1: Disease Selection */}
-          <div className="relative">
-            <div className="absolute -left-4 top-6 w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+          <div className="relative animate-slideInLeft" style={{animationDelay: '0.3s'}}>
+            <div className="absolute -left-4 top-6 w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg animate-bounce hover:animate-pulse">
               1
             </div>
-            <Card className="bg-gradient-to-r from-white to-blue-50 border-blue-200 border-2 shadow-lg hover:shadow-xl transition-all duration-300 ml-6">
-              <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg py-4">
-                <CardTitle className="font-heading-sans text-xl">
+            <Card className="bg-gradient-to-r from-white to-blue-50 border-blue-200 border-2 shadow-lg hover:shadow-xl transition-all duration-500 ml-6 transform hover:-translate-y-1 hover:scale-[1.01]">
+              <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg py-4 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 transform -translate-x-full animate-shimmer"></div>
+                <CardTitle className="font-heading-sans text-xl relative z-10">
                   Disease Selection
                 </CardTitle>
-                <CardDescription className="text-blue-100 text-base">
+                <CardDescription className="text-blue-100 text-base relative z-10">
                   Select the suspected water-borne disease
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {diseases.map((disease) => (
+                  {diseases.map((disease, index) => (
                     <Button
                       key={disease.name}
                       type="button"
                       variant="outline"
                       onClick={() => form.setValue("disease", disease.name)}
+                      style={{animationDelay: `${index * 0.1}s`}}
                       className={`
-                        relative overflow-hidden h-12 text-base font-semibold transition-all duration-300 transform hover:scale-105
+                        relative overflow-hidden h-12 text-base font-semibold transition-all duration-300 transform hover:scale-105 animate-slideInUp
                         ${form.watch("disease") === disease.name 
-                          ? `bg-gradient-to-r ${disease.color} text-white border-2 shadow-lg scale-105` 
-                          : `bg-gradient-to-r ${disease.bgColor} ${disease.textColor} ${disease.borderColor} border-2 hover:shadow-md`
+                          ? `bg-gradient-to-r ${disease.color} text-white border-2 shadow-lg scale-105 animate-pulse` 
+                          : `bg-gradient-to-r ${disease.bgColor} ${disease.textColor} ${disease.borderColor} border-2 hover:shadow-md hover:brightness-105`
                         }
                       `}
                     >
-                      <span className="text-lg mr-2">{disease.emoji}</span>
+                      <span className="text-lg mr-2 animate-bounce" style={{animationDuration: '2s'}}>{disease.emoji}</span>
                       {disease.name}
                       {form.watch("disease") === disease.name && (
-                        <div className="absolute top-1 right-2 w-2 h-2 bg-white rounded-full"></div>
+                        <div className="absolute top-1 right-2 w-2 h-2 bg-white rounded-full animate-ping"></div>
                       )}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                     </Button>
                   ))}
                 </div>
                 {form.watch("disease") && (
-                  <div className="mt-4 p-3 bg-gradient-to-r from-green-100 to-emerald-100 border border-green-300 rounded-lg">
+                  <div className="mt-4 p-3 bg-gradient-to-r from-green-100 to-emerald-100 border border-green-300 rounded-lg animate-slideInUp transform transition-all duration-300">
                     <p className="text-green-800 font-medium flex items-center gap-2">
-                      <span className="text-base">✓</span>
-                      Selected: <span className="font-semibold">{form.watch("disease")}</span>
+                      <span className="text-base animate-bounce">✓</span>
+                      Selected: <span className="font-semibold animate-pulse">{form.watch("disease")}</span>
                     </p>
                   </div>
                 )}
@@ -216,16 +219,17 @@ function ReportPageContent() {
           </div>
 
           {/* Step 2: Location Selection */}
-          <div className="relative">
-            <div className="absolute -left-4 top-6 w-10 h-10 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+          <div className="relative animate-slideInLeft" style={{animationDelay: '0.6s'}}>
+            <div className="absolute -left-4 top-6 w-10 h-10 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg animate-bounce hover:animate-spin">
               2
             </div>
-            <Card className="bg-gradient-to-r from-white to-green-50 border-green-200 border-2 shadow-lg hover:shadow-xl transition-all duration-300 ml-6">
-              <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-t-lg py-4">
-                <CardTitle className="font-heading-sans text-xl">
+            <Card className="bg-gradient-to-r from-white to-green-50 border-green-200 border-2 shadow-lg hover:shadow-xl transition-all duration-500 ml-6 transform hover:-translate-y-1 hover:scale-[1.01]">
+              <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-t-lg py-4 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 transform -translate-x-full animate-shimmer" style={{animationDelay: '1s'}}></div>
+                <CardTitle className="font-heading-sans text-xl relative z-10">
                   Location Selection
                 </CardTitle>
-                <CardDescription className="text-green-100 text-base">
+                <CardDescription className="text-green-100 text-base relative z-10">
                   Search or click on map to select incident location
                 </CardDescription>
               </CardHeader>
@@ -243,11 +247,11 @@ function ReportPageContent() {
                 </div>
                 
                 {/* Map Section */}
-                <div className="bg-gradient-to-r from-gray-50 to-white p-3 rounded-lg border border-gray-200">
+                <div className="bg-gradient-to-r from-gray-50 to-white p-3 rounded-lg border border-gray-200 transform transition-all duration-300 hover:shadow-md">
                   <label className="block text-base font-semibold text-gray-800 mb-2">
                     Interactive Map
                   </label>
-                  <div className="h-80 rounded-lg overflow-hidden border-2 border-blue-300 shadow-lg">
+                  <div className="h-80 rounded-lg overflow-hidden border-2 border-blue-300 shadow-lg transform transition-all duration-300 hover:border-blue-400 hover:shadow-xl">
                     <Map
                       position={position}
                       onPositionChange={handleMapClick}
@@ -258,9 +262,9 @@ function ReportPageContent() {
                 
                 {/* Location Info */}
                 {position && (
-                  <div className="bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 rounded-lg p-3 shadow-md">
+                  <div className="bg-gradient-to-r from-green-100 to-emerald-100 border-2 border-green-300 rounded-lg p-3 shadow-md animate-slideInUp transform transition-all duration-300 hover:shadow-lg">
                     <div className="flex items-start gap-2">
-                      <span className="text-lg">📍</span>
+                      <span className="text-lg animate-bounce">📍</span>
                       <div className="flex-1">
                         <p className="text-base font-semibold text-green-800 mb-1">
                           Location Selected
@@ -268,16 +272,16 @@ function ReportPageContent() {
                         {isLoadingAddress ? (
                           <div className="flex items-center gap-2">
                             <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-                            <span className="text-green-700 text-sm">Getting address...</span>
+                            <span className="text-green-700 text-sm animate-pulse">Getting address...</span>
                           </div>
                         ) : (
                           <>
                             {selectedAddress && (
-                              <p className="text-green-800 mb-2 text-sm leading-relaxed">
+                              <p className="text-green-800 mb-2 text-sm leading-relaxed animate-fadeIn">
                                 <span className="font-medium">Address:</span> {selectedAddress}
                               </p>
                             )}
-                            <p className="text-xs text-green-600 font-mono bg-green-50 p-1 rounded border border-green-200">
+                            <p className="text-xs text-green-600 font-mono bg-green-50 p-1 rounded border border-green-200 animate-slideInLeft">
                               Coordinates: {position[0].toFixed(6)}, {position[1].toFixed(6)}
                             </p>
                           </>
@@ -291,16 +295,17 @@ function ReportPageContent() {
           </div>
 
           {/* Step 3: Additional Details */}
-          <div className="relative">
-            <div className="absolute -left-4 top-6 w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+          <div className="relative animate-slideInLeft" style={{animationDelay: '0.9s'}}>
+            <div className="absolute -left-4 top-6 w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg animate-bounce hover:animate-pulse">
               3
             </div>
-            <Card className="bg-gradient-to-r from-white to-purple-50 border-purple-200 border-2 shadow-lg hover:shadow-xl transition-all duration-300 ml-6">
-              <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-lg py-4">
-                <CardTitle className="font-heading-sans text-xl">
+            <Card className="bg-gradient-to-r from-white to-purple-50 border-purple-200 border-2 shadow-lg hover:shadow-xl transition-all duration-500 ml-6 transform hover:-translate-y-1 hover:scale-[1.01]">
+              <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-lg py-4 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 transform -translate-x-full animate-shimmer" style={{animationDelay: '1.5s'}}></div>
+                <CardTitle className="font-heading-sans text-xl relative z-10">
                   Additional Details
                 </CardTitle>
-                <CardDescription className="text-purple-100 text-base">
+                <CardDescription className="text-purple-100 text-base relative z-10">
                   Optional: Add relevant information about the incident
                 </CardDescription>
               </CardHeader>
@@ -323,31 +328,36 @@ function ReportPageContent() {
           </div>
 
           {/* Submit Button */}
-          <div className="text-center pt-6">
+          <div className="text-center pt-6 animate-slideInUp" style={{animationDelay: '1.2s'}}>
             <Button 
               type="submit" 
               size="lg" 
               disabled={!form.watch("disease") || !position || isSubmitting}
               className={`
-                text-lg font-semibold py-3 px-8 rounded-xl transform transition-all duration-300 shadow-lg
+                text-lg font-semibold py-3 px-8 rounded-xl transform transition-all duration-300 shadow-lg relative overflow-hidden
                 ${(!form.watch("disease") || !position || isSubmitting)
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white hover:scale-105 hover:shadow-xl'
+                  : 'bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white hover:scale-105 hover:shadow-xl group'
                 }
               `}
             >
-              {isSubmitting ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Submitting...</span>
-                </div>
-              ) : (
-                <span>Submit Incident Report</span>
+              {!(!form.watch("disease") || !position || isSubmitting) && (
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
               )}
+              <span className="relative z-10">
+                {isSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Submitting...</span>
+                  </div>
+                ) : (
+                  <span>Submit Incident Report</span>
+                )}
+              </span>
             </Button>
             
             {(!form.watch("disease") || !position) && (
-              <div className="mt-3 p-3 bg-gradient-to-r from-yellow-100 to-amber-100 border border-yellow-300 rounded-lg max-w-md mx-auto">
+              <div className="mt-3 p-3 bg-gradient-to-r from-yellow-100 to-amber-100 border border-yellow-300 rounded-lg max-w-md mx-auto animate-bounce">
                 <p className="text-yellow-800 text-sm font-medium">
                   Complete steps {!form.watch("disease") ? "1" : ""}{!form.watch("disease") && !position ? " and " : ""}{!position ? "2" : ""} to submit
                 </p>
