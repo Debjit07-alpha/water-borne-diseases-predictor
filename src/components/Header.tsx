@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Button } from "./ui/button";
-import ThemeToggle from "./ThemeToggle";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, User } from "lucide-react";
@@ -132,8 +131,6 @@ export default function Header() {
               <span className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500 rounded-full"></span>
             </Link>
           )}
-          
-          <ThemeToggle />
         </div>
       </div>
     </header>

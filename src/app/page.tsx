@@ -166,7 +166,7 @@ export default function Home() {
       {/* Map Section */}
       <section id="map" className="w-full max-w-7xl mx-auto py-12 px-4">
         <div className={`transition-all duration-1000 delay-1200 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
-          <h2 className="text-3xl md:text-4xl font-bold text-black mb-6 text-center font-bookman-old-style">Interactive Risk Map</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-black mb-6 text-center font-bookman-old-style">GeoSpatial Health Monitoring & Hospital Tracking</h2>
         </div>
         <div className={`w-full h-[50vh] sm:h-[60vh] rounded-2xl overflow-hidden shadow-2xl border-4 border-white/80 bg-white/60 relative transition-all duration-1000 delay-1400 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
           {!isMapLoaded ? (
