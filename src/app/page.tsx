@@ -191,26 +191,26 @@ export default function Home() {
       {/* FAQ/PAQ Section */}
       <section className="w-full max-w-5xl mx-auto py-16 px-4" id="faq">
         <div className={`transition-all duration-1000 delay-1600 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
-          <h2 className="text-2xl md:text-3xl font-bold text-black mb-8 text-center font-bookman-old-style">Frequently Asked Questions</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-black mb-8 text-center font-bookman-old-style bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent animate-pulse">Frequently Asked Questions</h2>
         </div>
         <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 transition-all duration-1000 delay-1800 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}>
           <div className="space-y-6">
-            <div className="bg-white/60 rounded-lg p-6">
-              <h4 className="font-semibold mb-2 text-xl md:text-2xl font-book-antiqua">What are water-borne diseases?</h4>
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-100 hover:from-blue-100 hover:to-cyan-200 rounded-lg p-6 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border-l-4 border-blue-500 hover:border-blue-600">
+              <h4 className="font-semibold mb-2 text-xl md:text-2xl font-book-antiqua text-blue-800 hover:text-blue-900 transition-colors duration-300">What are water-borne diseases?</h4>
               <p className="text-gray-700 text-lg md:text-xl font-bell-mt">Diseases caused by microorganisms in contaminated water, such as cholera, dysentery, and typhoid. They spread through drinking or using unsafe water.</p>
             </div>
-            <div className="bg-white/60 rounded-lg p-6">
-              <h4 className="font-semibold mb-2 text-xl md:text-2xl font-book-antiqua">How can I protect my family?</h4>
+            <div className="bg-gradient-to-br from-green-50 to-emerald-100 hover:from-green-100 hover:to-emerald-200 rounded-lg p-6 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border-l-4 border-green-500 hover:border-green-600">
+              <h4 className="font-semibold mb-2 text-xl md:text-2xl font-book-antiqua text-green-800 hover:text-green-900 transition-colors duration-300">How can I protect my family?</h4>
               <p className="text-gray-700 text-lg md:text-xl font-bell-mt">Boil or treat water before use, practice good hygiene, and avoid open defecation near water sources. Follow local health advisories.</p>
             </div>
           </div>
           <div className="space-y-6">
-            <div className="bg-white/60 rounded-lg p-6">
-              <h4 className="font-semibold mb-2 text-xl md:text-2xl font-book-antiqua">What should I do if someone gets sick?</h4>
+            <div className="bg-gradient-to-br from-purple-50 to-pink-100 hover:from-purple-100 hover:to-pink-200 rounded-lg p-6 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border-l-4 border-purple-500 hover:border-purple-600">
+              <h4 className="font-semibold mb-2 text-xl md:text-2xl font-book-antiqua text-purple-800 hover:text-purple-900 transition-colors duration-300">What should I do if someone gets sick?</h4>
               <p className="text-gray-700 text-lg md:text-xl font-bell-mt">Start oral rehydration immediately for diarrhea. Seek medical help for severe symptoms like high fever or blood in stool.</p>
             </div>
-            <div className="bg-white/60 rounded-lg p-6">
-              <h4 className="font-semibold mb-2 text-xl md:text-2xl font-book-antiqua">Where can I report an outbreak?</h4>
+            <div className="bg-gradient-to-br from-orange-50 to-red-100 hover:from-orange-100 hover:to-red-200 rounded-lg p-6 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border-l-4 border-orange-500 hover:border-orange-600">
+              <h4 className="font-semibold mb-2 text-xl md:text-2xl font-book-antiqua text-orange-800 hover:text-orange-900 transition-colors duration-300">Where can I report an outbreak?</h4>
               <p className="text-gray-700 text-lg md:text-xl font-bell-mt">Use the "Report an Incident" button above or contact your local health authorities. Your report helps protect the community.</p>
             </div>
           </div>

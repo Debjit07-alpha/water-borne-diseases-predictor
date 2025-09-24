@@ -19,10 +19,10 @@ export default function ThemeToggle() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-3 min-w-[200px] z-50">
+        <div className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 py-3 min-w-[200px] z-50">
           {/* Header */}
-          <div className="px-4 pb-2 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-semibold text-blue-600 dark:text-blue-400">Theme Options</h3>
+          <div className="px-4 pb-2 border-b border-gray-200">
+            <h3 className="text-sm font-semibold text-blue-600">Theme Options</h3>
           </div>
           
           {/* Theme Options */}
@@ -32,8 +32,8 @@ export default function ThemeToggle() {
                 if (theme !== 'light') toggleTheme();
                 setIsOpen(false);
               }}
-              className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors ${
-                theme === 'light' ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+              className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors ${
+                theme === 'light' ? 'bg-blue-50' : ''
               }`}
             >
               <div className="flex items-center gap-3">
@@ -41,8 +41,8 @@ export default function ThemeToggle() {
                   <Sun size={14} className="text-white" />
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-700 dark:text-gray-200">Light Theme</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">Bright and clean</div>
+                  <div className="text-sm font-medium text-gray-700">Light Theme</div>
+                  <div className="text-xs text-gray-500">Bright and clean</div>
                 </div>
               </div>
               {theme === 'light' && (
@@ -55,8 +55,8 @@ export default function ThemeToggle() {
                 if (theme !== 'dark') toggleTheme();
                 setIsOpen(false);
               }}
-              className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors ${
-                theme === 'dark' ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+              className={`w-full px-4 py-3 text-left hover:bg-gray-50 flex items-center gap-3 transition-colors ${
+                theme === 'dark' ? 'bg-blue-50' : ''
               }`}
             >
               <div className="flex items-center gap-3">
@@ -64,8 +64,8 @@ export default function ThemeToggle() {
                   <Moon size={14} className="text-white" />
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-gray-700 dark:text-gray-200">Dark Theme</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">Easy on the eyes</div>
+                  <div className="text-sm font-medium text-gray-700">Dark Theme</div>
+                  <div className="text-xs text-gray-500">Easy on the eyes</div>
                 </div>
               </div>
               {theme === 'dark' && (

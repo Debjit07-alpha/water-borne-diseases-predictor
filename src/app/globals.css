@@ -1,8 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* @tailwind base;.animate-fadeIn {
+  animation: fadeIn 0.8s ease-out both;
+}
+
+.animate-slideInDown {
+  animation: slideInDown 0.6s ease-out both;
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 0.8s ease-out both;
+}
+
+.animate-slideInUp {
+  animation: slideInUp 0.6s ease-out both;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}ilwind components; */
+/* @tailwind utilities; */
 
 :root {
   /* Light theme colors */
@@ -45,8 +62,8 @@
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: #ffffff;
+    color: #0b1220;
     transition: background-color 0.3s ease, color 0.3s ease;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
@@ -80,14 +97,17 @@
 
 @layer components {
   .glass-panel {
-    @apply backdrop-blur-md;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     box-shadow: 0 8px 32px 0 var(--glass-shadow);
   }
-
   .hover-lift {
-    @apply transition-transform duration-200;
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
   }
 
   .hover-lift:hover {
@@ -101,7 +121,7 @@
   .slide-out {
     animation: slideOut 0.3s ease-in forwards;
   }
-}
+
 
 @keyframes slideIn {
   from {
@@ -174,6 +194,26 @@
   }
 }
 
+@keyframes slideInUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(300%) skewX(-12deg);
+  }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -195,11 +235,15 @@
 }
 
 .animate-slideInLeft {
-  animation: slideInLeft 0.8s ease-out both;
+  animation: slideInLeft 0.6s ease-out both;
 }
 
 .container {
-  @apply max-w-6xl mx-auto px-4;
+  max-width: 72rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 @media (max-width: 768px) {
