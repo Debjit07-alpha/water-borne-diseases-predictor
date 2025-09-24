@@ -1,29 +1,66 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&display=swap');
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+<<<<<<< Updated upstream
 .animate-fadeIn {
   animation: fadeIn 0.8s ease-out both;
+=======
+/* --- Custom Animations for Feature Cards --- */
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.animate-bounce-slow {
+  animation: bounce-slow 2.5s infinite;
+}
+.animate-bounce-fast {
+  animation: bounce-slow 0.7s infinite;
+>>>>>>> Stashed changes
 }
 
-.animate-slideInDown {
-  animation: slideInDown 0.6s ease-out both;
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 2.5s infinite;
+}
+.animate-pulse-fast {
+  animation: pulse-slow 0.7s infinite;
 }
 
-.animate-slideInLeft {
-  animation: slideInLeft 0.8s ease-out both;
+@keyframes spin-slow {
+  100% { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+.animate-spin-fast {
+  animation: spin-slow 0.7s linear infinite;
 }
 
-.animate-slideInUp {
-  animation: slideInUp 0.6s ease-out both;
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s cubic-bezier(0.4,0,0.2,1) both;
+}
+<<<<<<< Updated upstream
 
 .animate-shimmer {
   animation: shimmer 2s ease-in-out infinite;
 }
+=======
+>>>>>>> Stashed changes
 
 :root {
   /* Light theme colors */
