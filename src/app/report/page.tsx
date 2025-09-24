@@ -93,6 +93,59 @@ function ReportPageContent() {
     form.setValue("longitude", lng);
   };
 
+  // Handle auto detect location using browser geolocation
+  const handleAutoDetectLocation = async () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by this browser.");
+      return;
+    }
+
+    setIsLoadingAddress(true);
+    
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        setPosition([lat, lng]);
+        form.setValue("latitude", lat);
+        form.setValue("longitude", lng);
+        
+        try {
+          const address = await reverseGeocode(lat, lng);
+          setSelectedAddress(address);
+        } catch (error) {
+          setSelectedAddress(`${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+        } finally {
+          setIsLoadingAddress(false);
+        }
+      },
+      (error) => {
+        setIsLoadingAddress(false);
+        let errorMessage = "Unable to detect location.";
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Location access denied. Please enable location permissions.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Location information unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Location request timed out.";
+            break;
+        }
+        
+        alert(errorMessage);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
+      }
+    );
+  };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -148,8 +201,8 @@ function ReportPageContent() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12 animate-fadeIn">
       <div className="max-w-6xl mx-auto px-4">
         {/* Header Section */}
-        <div className="text-center mb-12 animate-slideInDown">
-          <div className="inline-block p-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl shadow-xl mb-6 transform hover:scale-105 transition-all duration-300 hover:shadow-2xl animate-pulse hover:animate-none">
+        <div className="text-center mb-12">
+          <div className="inline-block p-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl shadow-xl mb-6">
             <h1 className="text-3xl lg:text-4xl font-bold text-white font-heading-serif">
               Report Water-Borne Disease Incident
             </h1>
@@ -233,9 +286,9 @@ function ReportPageContent() {
                   Search or click on map to select incident location
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4 p-4">
+              <CardContent className="p-4">
                 {/* Location Search */}
-                <div className="bg-gradient-to-r from-gray-50 to-white p-3 rounded-lg border border-gray-200">
+                <div className="bg-gradient-to-r from-gray-50 to-white p-3 rounded-lg border border-gray-200 mb-4">
                   <label className="block text-base font-semibold text-gray-800 mb-2">
                     Search Location
                   </label>
@@ -245,9 +298,9 @@ function ReportPageContent() {
                     className="text-base h-10 border-2 border-blue-300 focus:border-blue-500 rounded-lg shadow-sm text-gray-900 bg-white"
                   />
                 </div>
-                
+
                 {/* Map Section */}
-                <div className="bg-gradient-to-r from-gray-50 to-white p-3 rounded-lg border border-gray-200 transform transition-all duration-300 hover:shadow-md mt-6">
+                <div className="bg-gradient-to-r from-gray-50 to-white p-3 rounded-lg border border-gray-200 transform transition-all duration-300 hover:shadow-md mb-4">
                   <label className="block text-base font-semibold text-gray-800 mb-2">
                     Interactive Map
                   </label>
