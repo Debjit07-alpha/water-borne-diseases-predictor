@@ -40,12 +40,6 @@
 }
 
 @layer base {
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
   html {
     font-family: var(--font-sans);
   }
@@ -57,10 +51,6 @@
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100vw;
-    overflow-x: hidden;
   }
 
   h1 {
@@ -176,7 +166,7 @@
 @keyframes slideInLeft {
   from { 
     opacity: 0; 
-    transform: translateX(-20px); 
+    transform: translateX(-30px); 
   }
   to { 
     opacity: 1; 
@@ -197,15 +187,15 @@
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.5s ease-in-out both;
-}
-
-.animate-slideIn {
-  animation: slideInLeft 0.6s ease-out both;
+  animation: fadeIn 0.8s ease-out both;
 }
 
 .animate-slideInDown {
-  animation: slideInDown 0.5s ease-out both;
+  animation: slideInDown 0.6s ease-out both;
+}
+
+.animate-slideInLeft {
+  animation: slideInLeft 0.8s ease-out both;
 }
 
 .container {

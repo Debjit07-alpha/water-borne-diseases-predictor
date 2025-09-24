@@ -238,7 +238,7 @@ function ReportPageContent() {
                   <LocationSearch
                     onLocationSelect={handleLocationSearchSelect}
                     placeholder="Enter location, address, or landmark..."
-                    className="text-base h-10 border-2 border-blue-300 focus:border-blue-500 rounded-lg shadow-sm"
+                    className="text-base h-10 border-2 border-blue-300 focus:border-blue-500 rounded-lg shadow-sm text-gray-900 bg-white"
                   />
                 </div>
                 
@@ -312,7 +312,7 @@ function ReportPageContent() {
                   <Textarea 
                     {...form.register("details")} 
                     placeholder="Describe symptoms, affected individuals, timeline, or other relevant details..."
-                    className="min-h-24 text-base p-3 border-2 border-purple-300 focus:border-purple-500 rounded-lg shadow-sm"
+                    className="min-h-24 text-base p-3 border-2 border-purple-300 focus:border-purple-500 rounded-lg shadow-sm text-gray-900 bg-white"
                   />
                   <p className="text-sm text-gray-600">
                     Include: symptoms observed, number affected, incident timeline, water source information
