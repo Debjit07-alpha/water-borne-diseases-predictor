@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, UserPlus, LogIn, AlertCircle, CheckCircle } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface LoginForm {
   usernameOrEmail: string;
@@ -30,7 +31,8 @@ const userRoles = [
 function AuthComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || '/';
+  const redirectTo = searchParams.get('redirect') || '/report';
+  const { login } = useAuth();
   
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -93,6 +95,10 @@ function AuthComponent() {
         setResendCooldown(60); // 60 seconds cooldown
       } else if (response.ok) {
         setMessage({ type: 'success', text: 'Login successful! Redirecting...' });
+        // Update auth context with user data
+        if (data.user) {
+          login(data.user);
+        }
         setTimeout(() => {
           router.push(redirectTo);
         }, 1000);
@@ -126,6 +132,10 @@ function AuthComponent() {
 
       if (response.ok) {
         setMessage({ type: 'success', text: 'Login successful! Redirecting...' });
+        // Update auth context with user data
+        if (data.user) {
+          login(data.user);
+        }
         setTimeout(() => {
           router.push(redirectTo);
         }, 1000);
@@ -205,6 +215,10 @@ function AuthComponent() {
 
       if (response.ok) {
         setMessage({ type: 'success', text: 'Registration successful! Logging you in...' });
+        // Update auth context with user data
+        if (data.user) {
+          login(data.user);
+        }
         setTimeout(() => {
           router.push(redirectTo);
         }, 1000);

@@ -76,7 +76,7 @@ export default function ReportLoginPage() {
         }));
 
         // Redirect to report dashboard
-        window.location.href = '/report/dashboard';
+        window.location.href = '/report';
       } else {
         setError(data.error || 'Invalid credentials');
       }
