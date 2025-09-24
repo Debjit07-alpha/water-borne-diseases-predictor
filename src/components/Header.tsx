@@ -99,10 +99,6 @@ export default function Header() {
               <span className="relative z-10">🚨 24/7</span>
               <span className="absolute inset-0 bg-gradient-to-r from-red-500/20 to-red-300/20 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></span>
             </Link>
-            <Link href="/admin" className="text-orange-300 hover:text-orange-100 text-sm font-medium transition-all duration-300 hover:scale-110 px-4 py-2 rounded-full relative group hover:shadow-lg" style={{color: 'rgba(255, 165, 0, 0.8)'}} onMouseEnter={(e) => e.currentTarget.style.color = 'white'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 165, 0, 0.8)'}>
-              <span className="relative z-10">👑 ADMIN</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-yellow-500/20 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></span>
-            </Link>
           </nav>
           
           {/* User Authentication Section */}

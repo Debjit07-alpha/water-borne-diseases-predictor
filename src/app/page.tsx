@@ -57,6 +57,11 @@ export default function Home() {
                 Report an Incident
               </Button>
             </Link>
+            <Link href="/admin">
+              <Button size="lg" className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold shadow-lg hover:from-orange-600 hover:to-yellow-600 hover:scale-105 hover:shadow-xl transition-all duration-200">
+                👑 Admin Panel
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
