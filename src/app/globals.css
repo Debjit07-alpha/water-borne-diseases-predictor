@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&display=swap');
-/* @tailwind base;.animate-fadeIn {
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.animate-fadeIn {
   animation: fadeIn 0.8s ease-out both;
 }
 
@@ -18,8 +23,7 @@
 
 .animate-shimmer {
   animation: shimmer 2s ease-in-out infinite;
-}ilwind components; */
-/* @tailwind utilities; */
+}
 
 :root {
   /* Light theme colors */
@@ -108,7 +112,6 @@
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 200ms;
   }
-  }
 
   .hover-lift:hover {
     transform: translateY(-2px);
@@ -143,6 +146,7 @@
     transform: translateX(100%);
     opacity: 0;
   }
+}
 }
 
 @keyframes glowing {
