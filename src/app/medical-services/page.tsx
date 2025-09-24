@@ -59,52 +59,111 @@ const MedicalServicesPage = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white transition-all duration-500 hover:text-blue-600 dark:hover:text-blue-400 hover:scale-105 cursor-default">24/7 Medical Services</h1>
-      <p className="mb-8 text-lg text-gray-600 dark:text-gray-300 transition-all duration-300 hover:text-gray-800 dark:hover:text-gray-100">
-        Here you can find a list of 24/7 medical helpline numbers and emergency contacts for various states.
-      </p>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Header Section */}
+        <div className="text-center mb-12">
+          <div className="inline-block p-6 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg mb-6 transform hover:scale-105 transition-all duration-300 animate-fadeIn">
+            <h1 className="text-4xl font-bold text-white font-heading-serif">
+              24/7 Medical Services
+            </h1>
+          </div>
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed animate-slideInDown">
+            Emergency medical helpline numbers and contacts for Northeast India states
+          </p>
+        </div>
 
-      <div className="space-y-12">
-        {states.map((state) => (
-          <div key={state.name} className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-700 dark:hover:to-gray-600">
-            <h2 className="text-2xl font-semibold mb-4 text-blue-600 dark:text-blue-400 transition-colors duration-300 hover:text-blue-800 dark:hover:text-blue-300">🏥 {state.name}</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700 transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-gray-600">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider transition-all duration-200 hover:text-gray-700 dark:hover:text-gray-100">
-                      Helpline / Service
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider transition-all duration-200 hover:text-gray-700 dark:hover:text-gray-100">
-                      Contact Number
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider transition-all duration-200 hover:text-gray-700 dark:hover:text-gray-100">
-                      Details / Source
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {state.helplines.map((helpline, index) => (
-                    <tr key={index} className="transition-all duration-300 hover:bg-blue-50 dark:hover:bg-gray-700 hover:scale-[1.02] hover:shadow-md cursor-pointer">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white transition-colors duration-200 hover:text-blue-700 dark:hover:text-blue-300">
-                        {helpline.service}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300 transition-all duration-200 hover:text-blue-600 dark:hover:text-blue-400 hover:font-semibold hover:animate-bounce">
-                        <span className="inline-block transition-transform duration-200 hover:scale-110 hover:animate-pulse">
-                          {helpline.number}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-normal text-sm text-gray-500 dark:text-gray-300 transition-colors duration-200 hover:text-gray-700 dark:hover:text-gray-100">
-                        {'details' in helpline ? helpline.details : helpline.source}
-                      </td>
+        {/* States List */}
+        <div className="space-y-8">
+          {states.map((state, index) => (
+            <div 
+              key={state.name} 
+              className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] animate-slideInLeft"
+              style={{ animationDelay: `${index * 150}ms` }}
+            >
+              {/* State Header */}
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/80 to-blue-700/80"></div>
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-bold font-heading-serif transform hover:scale-105 transition-transform duration-300">
+                      {state.name}
+                    </h2>
+                    <div className="text-sm bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm animate-pulse">
+                      {state.helplines.length} Services
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Services Table */}
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider hover:text-blue-600 transition-colors duration-300">
+                        Helpline / Service
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider hover:text-blue-600 transition-colors duration-300">
+                        Contact Number
+                      </th>
+                      <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-gray-900 uppercase tracking-wider hover:text-blue-600 transition-colors duration-300">
+                        Details / Source
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {state.helplines.map((helpline, helplineIndex) => (
+                      <tr 
+                        key={helplineIndex} 
+                        className="hover:bg-blue-50 transition-all duration-300 transform hover:scale-[1.01] group"
+                      >
+                        <td className="px-6 py-4 text-sm font-medium text-gray-900 group-hover:text-blue-700 transition-colors duration-300">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse opacity-75"></div>
+                            {helpline.service}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-sm">
+                          <span className="inline-block px-4 py-2 bg-blue-600 text-white font-mono font-bold rounded-lg hover:bg-blue-700 hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg">
+                            {helpline.number}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
+                          {'details' in helpline ? helpline.details : helpline.source}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Emergency Instructions */}
+        <div className="mt-16 bg-red-600 text-white p-8 rounded-xl shadow-lg animate-fadeIn">
+          <div className="text-center">
+            <h3 className="text-2xl font-bold mb-6 animate-slideInDown">Emergency Guidelines</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white/10 p-6 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-all duration-300 transform hover:scale-105 animate-slideInLeft" style={{ animationDelay: '200ms' }}>
+                <div className="text-3xl mb-3 animate-bounce">📞</div>
+                <p className="font-semibold text-lg mb-2">Call Immediately</p>
+                <p className="text-red-100 text-sm">Dial the appropriate emergency number</p>
+              </div>
+              <div className="bg-white/10 p-6 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-all duration-300 transform hover:scale-105 animate-slideInLeft" style={{ animationDelay: '400ms' }}>
+                <div className="text-3xl mb-3 animate-bounce" style={{ animationDelay: '1s' }}>📍</div>
+                <p className="font-semibold text-lg mb-2">Provide Location</p>
+                <p className="text-red-100 text-sm">Share exact address or landmarks</p>
+              </div>
+              <div className="bg-white/10 p-6 rounded-lg backdrop-blur-sm hover:bg-white/20 transition-all duration-300 transform hover:scale-105 animate-slideInLeft" style={{ animationDelay: '600ms' }}>
+                <div className="text-3xl mb-3 animate-bounce" style={{ animationDelay: '2s' }}>🩺</div>
+                <p className="font-semibold text-lg mb-2">Stay Calm</p>
+                <p className="text-red-100 text-sm">Follow operator instructions</p>
+              </div>
             </div>
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );
