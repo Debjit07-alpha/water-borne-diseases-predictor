@@ -66,28 +66,51 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features/PAQ Section */}
+      {/* Features/PAQ Section - Enhanced Animations */}
       <section className="w-full max-w-6xl mx-auto py-16 px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8" id="features">
-        <div className={`bg-white/80 rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center group cursor-pointer ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`} style={{ transitionDelay: '600ms' }}>
-          <div>
-            <svg width="48" height="48" fill="none" viewBox="0 0 48 48"><circle cx="24" cy="24" r="24" fill="#0B86FF" opacity="0.1"/><path d="M24 8C16 8 10 14 10 21.5C10 34 24 44 24 44s14-10 14-22.5C38 14 32 8 24 8z" fill="#0B86FF"/></svg>
+        {/* High-Risk Zones Card */}
+        <div
+          className={`relative bg-white/80 rounded-3xl shadow-xl border border-blue-200 p-8 flex flex-col items-center group cursor-pointer overflow-hidden transition-transform duration-500 hover:scale-105 hover:shadow-2xl hover:border-blue-400 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}
+          style={{ transitionDelay: '600ms' }}
+        >
+          <div className="flex justify-center mb-2">
+            <div className="bg-gradient-to-br from-blue-400 to-blue-200 rounded-full p-4 shadow-lg animate-bounce-slow group-hover:animate-bounce-fast transition-all duration-300">
+              <svg width="40" height="40" fill="none" viewBox="0 0 48 48"><circle cx="24" cy="24" r="24" fill="#0B86FF" opacity="0.1"/><path d="M24 8C16 8 10 14 10 21.5C10 34 24 44 24 44s14-10 14-22.5C38 14 32 8 24 8z" fill="#0B86FF"/></svg>
+            </div>
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold mt-4 mb-2 font-book-antiqua">High-Risk Zones</h3>
-          <p className="text-lg md:text-xl text-gray-700 text-center font-bell-mt">Interactive map of flood-prone, riverine, and remote communities at risk for water-borne diseases.</p>
+          <h3 className="text-2xl md:text-3xl font-bold mt-4 mb-2 font-book-antiqua animate-fadeInUp">High-Risk Zones</h3>
+          <p className="text-lg md:text-xl text-gray-700 text-center font-bell-mt animate-fadeInUp delay-100">Interactive map of flood-prone, riverine, and remote communities at risk for water-borne diseases.</p>
+          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-blue-200/30 to-blue-100/10 blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none" />
         </div>
-        <div className={`bg-white/80 rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center group cursor-pointer ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`} style={{ transitionDelay: '800ms' }}>
-          <div>
-            <svg width="48" height="48" fill="none" viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="8" fill="#0B86FF" opacity="0.1"/><rect x="16" y="16" width="16" height="16" rx="4" fill="#0B86FF"/></svg>
+
+        {/* Real-Time Incidents Card */}
+        <div
+          className={`relative bg-white/80 rounded-3xl shadow-xl border border-indigo-200 p-8 flex flex-col items-center group cursor-pointer overflow-hidden transition-transform duration-500 hover:scale-105 hover:shadow-2xl hover:border-indigo-400 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}
+          style={{ transitionDelay: '800ms' }}
+        >
+          <div className="flex justify-center mb-2">
+            <div className="bg-gradient-to-br from-indigo-400 to-blue-200 rounded-full p-4 shadow-lg animate-pulse-slow group-hover:animate-pulse-fast transition-all duration-300">
+              <svg width="40" height="40" fill="none" viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="8" fill="#0B86FF" opacity="0.1"/><rect x="16" y="16" width="16" height="16" rx="4" fill="#0B86FF"/></svg>
+            </div>
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold mt-4 mb-2 font-book-antiqua">Real-Time Incidents</h3>
-          <p className="text-lg md:text-xl text-gray-700 text-center font-bell-mt">See recent outbreaks, case numbers, and trends. Stay informed and prepared for seasonal peaks.</p>
+          <h3 className="text-2xl md:text-3xl font-bold mt-4 mb-2 font-book-antiqua animate-fadeInUp">Real-Time Incidents</h3>
+          <p className="text-lg md:text-xl text-gray-700 text-center font-bell-mt animate-fadeInUp delay-100">See recent outbreaks, case numbers, and trends. Stay informed and prepared for seasonal peaks.</p>
+          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-indigo-200/30 to-blue-100/10 blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none" />
         </div>
-        <div className={`bg-white/80 rounded-xl shadow-lg p-6 lg:p-8 flex flex-col items-center group cursor-pointer sm:col-span-2 lg:col-span-1 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`} style={{ transitionDelay: '1000ms' }}>
-          <div>
-            <svg width="48" height="48" fill="none" viewBox="0 0 48 48"><rect x="0" y="0" width="48" height="48" rx="24" fill="#0B86FF" opacity="0.1"/><path d="M24 14a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16zm-1 3v6l5 3" fill="#0B86FF"/></svg>
+
+        {/* Prevention & Response Card */}
+        <div
+          className={`relative bg-white/80 rounded-3xl shadow-xl border border-purple-200 p-8 flex flex-col items-center group cursor-pointer overflow-hidden sm:col-span-2 lg:col-span-1 transition-transform duration-500 hover:scale-105 hover:shadow-2xl hover:border-purple-400 ${isLoading ? 'opacity-0 translate-y-8' : 'opacity-100 translate-y-0'}`}
+          style={{ transitionDelay: '1000ms' }}
+        >
+          <div className="flex justify-center mb-2">
+            <div className="bg-gradient-to-br from-purple-400 to-blue-200 rounded-full p-4 shadow-lg animate-spin-slow group-hover:animate-spin-fast transition-all duration-300">
+              <svg width="40" height="40" fill="none" viewBox="0 0 48 48"><rect x="0" y="0" width="48" height="48" rx="24" fill="#0B86FF" opacity="0.1"/><path d="M24 14a10 10 0 100 20 10 10 0 000-20zm0 2a8 8 0 110 16 8 8 0 010-16zm-1 3v6l5 3" fill="#0B86FF"/></svg>
+            </div>
           </div>
-          <h3 className="text-2xl md:text-3xl font-bold mt-4 mb-2 font-book-antiqua">Prevention & Response</h3>
-          <p className="text-lg md:text-xl text-gray-700 text-center font-bell-mt">Guidance for communities: how to prevent, respond, and recover from water-borne disease outbreaks.</p>
+          <h3 className="text-2xl md:text-3xl font-bold mt-4 mb-2 font-book-antiqua animate-fadeInUp">Prevention & Response</h3>
+          <p className="text-lg md:text-xl text-gray-700 text-center font-bell-mt animate-fadeInUp delay-100">Guidance for communities: how to prevent, respond, and recover from water-borne disease outbreaks.</p>
+          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-purple-200/30 to-blue-100/10 blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none" />
         </div>
       </section>
 
