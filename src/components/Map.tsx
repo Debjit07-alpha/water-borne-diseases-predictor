@@ -15,12 +15,13 @@ interface MapProps {
 export default function Map({ position, onPositionChange, onZoneClick, zones, selectedAddress }: MapProps) {
   const [leafletLoaded, setLeafletLoaded] = useState(false);
   const [LeafletComponents, setLeafletComponents] = useState<any>(null);
+  const [currentZoom, setCurrentZoom] = useState<number>(position ? 16 : 7);
 
   useEffect(() => {
     let mounted = true;
     (async () => {
-      // Import Popup component as well
-      const [{ MapContainer, TileLayer, Marker, useMapEvents, useMap, CircleMarker, Tooltip, Popup }, L] = await Promise.all([
+      // Import Polygon component for overlay zones
+      const [{ MapContainer, TileLayer, Marker, useMapEvents, useMap, CircleMarker, Tooltip, Popup, Polygon }, L] = await Promise.all([
         import("react-leaflet"),
         import("leaflet"),
         // @ts-ignore - importing CSS dynamically; types for CSS files are not available
@@ -75,7 +76,7 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
       };
 
       // Create a small wrapper for LocationMarker that uses the imported useMapEvents
-      function LocationMarker({ onPositionChange }: { onPositionChange: (lat: number, lng: number) => void }) {
+      function LocationMarker({ onPositionChange, onZoomChange }: { onPositionChange: (lat: number, lng: number) => void, onZoomChange: (zoom: number) => void }) {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const map = useMapEvents({
           click(e: any) {
@@ -85,6 +86,9 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
           locationfound(e: any) {
             onPositionChange(e.latlng.lat, e.latlng.lng);
             map.setView(e.latlng, map.getZoom()); // Direct jump without animation
+          },
+          zoomend() {
+            onZoomChange(map.getZoom());
           },
         });
 
@@ -106,7 +110,24 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
         return null;
       }
 
-      setLeafletComponents({ MapContainer, TileLayer, Marker, LocationMarker, MapCenterController, useMap, CircleMarker, Tooltip, Popup, L, createPinIcon, createHospitalIcon });
+      // Create a component to handle initial zoom level setup
+      function ZoomInitializer() {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const map = useMap();
+        
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useEffect(() => {
+          // Set initial zoom level based on position
+          const initialZoom = position ? 16 : 7;
+          if (map.getZoom() !== initialZoom) {
+            setCurrentZoom(initialZoom);
+          }
+        }, [map]);
+
+        return null;
+      }
+
+      setLeafletComponents({ MapContainer, TileLayer, Marker, LocationMarker, MapCenterController, useMap, CircleMarker, Tooltip, Popup, Polygon, L, createPinIcon, createHospitalIcon, ZoomInitializer });
       setLeafletLoaded(true);
     })();
 
@@ -152,6 +173,77 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
       case "Low": return 6;
       default: return 7;
     }
+  };
+
+  // Function to calculate bounding areas for transparent overlays
+  const calculateOverlayAreas = () => {
+    if (!zones?.length) return [];
+
+    // Combine zones and hospitals into a single array of locations
+    const allLocations = [
+      ...zones.map(zone => ({ lat: zone.lat, lng: zone.lng, type: 'zone' })),
+      ...hospitals.map(hospital => ({ lat: hospital.lat, lng: hospital.lng, type: 'hospital' }))
+    ];
+
+    // Group locations into geographic regions (simplified clustering)
+    const regions: { bounds: [number, number][]; center: [number, number] }[] = [];
+    
+    // Define major geographic regions based on actual location clusters
+    const regionDefinitions = [
+      // Guwahati metropolitan area (high hospital concentration)
+      {
+        center: [26.1445, 91.7362] as [number, number],
+        radius: 0.15, // ~15km radius
+      },
+      // Western Assam riverine areas
+      {
+        center: [26.18, 91.75] as [number, number],
+        radius: 0.25, // ~25km radius  
+      },
+      // Central Assam flood plains
+      {
+        center: [26.75, 93.8] as [number, number],
+        radius: 0.3, // ~30km radius
+      },
+      // Eastern Assam high-risk zones
+      {
+        center: [27.0, 94.5] as [number, number],
+        radius: 0.35, // ~35km radius
+      },
+      // Northern border tea garden regions
+      {
+        center: [27.3, 93.9] as [number, number],
+        radius: 0.2, // ~20km radius
+      }
+    ];
+
+    // Create polygons for each region that has any locations
+    regionDefinitions.forEach(regionDef => {
+      const locationsInRegion = allLocations.filter(location => {
+        const distance = Math.sqrt(
+          Math.pow(location.lat - regionDef.center[0], 2) + 
+          Math.pow(location.lng - regionDef.center[1], 2)
+        );
+        return distance <= regionDef.radius;
+      });
+
+      if (locationsInRegion.length > 0) {
+        // Create a rough rectangular boundary around the region
+        const bounds: [number, number][] = [
+          [regionDef.center[0] - regionDef.radius * 0.8, regionDef.center[1] - regionDef.radius * 0.8],
+          [regionDef.center[0] - regionDef.radius * 0.8, regionDef.center[1] + regionDef.radius * 0.8],
+          [regionDef.center[0] + regionDef.radius * 0.8, regionDef.center[1] + regionDef.radius * 0.8],
+          [regionDef.center[0] + regionDef.radius * 0.8, regionDef.center[1] - regionDef.radius * 0.8],
+        ];
+        
+        regions.push({
+          bounds,
+          center: regionDef.center
+        });
+      }
+    });
+
+    return regions;
   };
 
   function HighRiskZoneMarkers() {
@@ -287,6 +379,37 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
     );
   }
 
+  function TransparentZoneOverlay() {
+    // Only show overlays when zoomed out (zoom level < 9) and individual zones are not clearly visible
+    if (currentZoom >= 9) return null;
+
+    // Create transparent circles for each zone and hospital cluster
+    const allLocations = [
+      ...zones?.map(zone => ({ lat: zone.lat, lng: zone.lng, type: 'zone' })) || [],
+      ...hospitals.map(hospital => ({ lat: hospital.lat, lng: hospital.lng, type: 'hospital' }))
+    ];
+    
+    return (
+      <>
+        {allLocations.map((location, index) => (
+          <CircleMarker
+            key={`transparent-circle-${index}`}
+            center={[location.lat, location.lng]}
+            radius={20} // Larger radius for area marking
+            pathOptions={{
+              color: '#dc2626', // Red border
+              fillColor: '#ef4444', // Red fill
+              fillOpacity: 0.12, // Very transparent
+              weight: 1,
+              opacity: 0.4,
+              className: 'transparent-area-circle'
+            }}
+          />
+        ))}
+      </>
+    );
+  }
+
   function Legend() {
     return (
       <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm p-2 rounded-lg shadow-xl border-2 border-gray-200 max-w-44">
@@ -317,6 +440,12 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
             </div>
             <span className="text-gray-700 text-xs"><strong>Hospitals</strong></span>
           </div>
+          {currentZoom < 9 && (
+            <div className="flex items-center mt-1.5 pt-1 border-t border-gray-200">
+              <div className="w-3 h-3 bg-red-600/15 rounded-full border border-red-600/40 mr-1.5 shadow-sm"></div>
+              <span className="text-gray-700 text-xs"><strong>Area Markers</strong> - Zoom for details</span>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -326,7 +455,7 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
     return <div className="h-full w-full flex items-center justify-center text-[#2C3E50]">Loading map…</div>;
   }
 
-  const { MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip, Popup, createPinIcon, createHospitalIcon, MapCenterController } = LeafletComponents;
+  const { MapContainer, TileLayer, Marker, LocationMarker, useMap, CircleMarker, Tooltip, Popup, Polygon, createPinIcon, createHospitalIcon, MapCenterController, ZoomInitializer } = LeafletComponents;
 
   return (
     <div style={{ 
@@ -524,6 +653,29 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
           border-top: none !important;
           border-right: none !important;
         }
+        
+        /* Transparent area circle styles */
+        .transparent-area-circle {
+          transition: all 0.3s ease-in-out;
+          z-index: 50 !important;
+          animation: areaCirclePulse 5s ease-in-out infinite;
+          pointer-events: none; /* No interaction needed */
+        }
+        
+        @keyframes areaCirclePulse {
+          0% { 
+            fill-opacity: 0.08;
+            stroke-opacity: 0.3;
+          }
+          50% { 
+            fill-opacity: 0.16;
+            stroke-opacity: 0.5;
+          }
+          100% { 
+            fill-opacity: 0.08;
+            stroke-opacity: 0.3;
+          }
+        }
       `}</style>
 
       <MapContainer
@@ -575,8 +727,10 @@ export default function Map({ position, onPositionChange, onZoneClick, zones, se
             </Popup>
           </Marker>
         )}
-        <LocationMarker onPositionChange={onPositionChange} />
+        <LocationMarker onPositionChange={onPositionChange} onZoomChange={setCurrentZoom} />
         <MapCenterController position={position} />
+        <ZoomInitializer />
+        <TransparentZoneOverlay />
         <HighRiskZoneMarkers />
         <HospitalMarkers />
       </MapContainer>
