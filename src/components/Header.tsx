@@ -23,9 +23,10 @@ export default function Header() {
     await logout();
     router.push('/');
   };
+  
 
   return (
-    <header className="shadow-lg w-full m-0 p-0" style={{backgroundColor: '#0f172a'}}>
+    <header className="shadow-lg w-full m-0 p-0" style={{backgroundColor: '  '}}>
       {/* First Line - Platform Title */}
       <div className="py-2 px-6 border-b w-full" style={{backgroundColor: 'rgba(15, 23, 42, 0.9)', borderColor: 'rgba(15, 23, 42, 0.7)'}}>
         <div className="flex items-center justify-between">
