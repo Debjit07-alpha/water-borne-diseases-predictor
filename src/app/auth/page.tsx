@@ -25,6 +25,8 @@ const userRoles = [
   { value: 'ASHA_WORKER', label: 'ASHA Worker' },
   { value: 'COMMUNITY_VOLUNTEER', label: 'Community Volunteer' },
   { value: 'CLINIC_STAFF', label: 'Clinic Staff' },
+  { value: 'HOSPITAL_STAFF', label: 'Hospital Staff' },
+  { value: 'NGO_WORKER', label: 'NGO Worker' },
   { value: 'INCIDENT_REPORTER', label: 'General Public - Incident Reporter' }
 ];
 
