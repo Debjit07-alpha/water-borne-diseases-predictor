@@ -66,8 +66,8 @@ export default function Header() {
               <span className="relative z-10 animate-pulse">🏠 HOME</span>
               <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/30 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></span>
             </Link>
-            <Link href="/map" className="text-sm font-medium transition-all duration-300 hover:scale-110 px-4 py-2 rounded-full relative group hover:shadow-lg" style={{color: 'rgba(255, 255, 255, 0.8)'}} onMouseEnter={(e) => e.currentTarget.style.color = 'white'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}>
-              <span className="relative z-10">🛡️ PREVENTION</span>
+            <Link href="/education" className="text-sm font-medium transition-all duration-300 hover:scale-110 px-4 py-2 rounded-full relative group hover:shadow-lg" style={{color: 'rgba(255, 255, 255, 0.8)'}} onMouseEnter={(e) => e.currentTarget.style.color = 'white'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}>
+              <span className="relative z-10">🎓 EDUCATION</span>
               <span className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300"></span>
             </Link>
             <Link href="/diseases" className="text-sm font-medium transition-all duration-300 hover:scale-110 px-4 py-2 rounded-full relative group hover:shadow-lg" style={{color: 'rgba(255, 255, 255, 0.8)'}} onMouseEnter={(e) => e.currentTarget.style.color = 'white'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}>
