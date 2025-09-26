@@ -1031,7 +1031,7 @@ Reply with your household status or additional cases.
 
 export default function SMSAlertsPage() {
   return (
-    <ProtectedRoute allowedRoles={['ASHA_WORKER', 'COMMUNITY_VOLUNTEER', 'CLINIC_STAFF', 'INCIDENT_REPORTER', 'ADMIN']}>
+    <ProtectedRoute allowedRoles={['ASHA_WORKER', 'COMMUNITY_VOLUNTEER', 'CLINIC_STAFF', 'HOSPITAL_STAFF', 'NGO_WORKER', 'INCIDENT_REPORTER', 'ADMIN']}>
       <SMSAlertsPageContent />
     </ProtectedRoute>
   );

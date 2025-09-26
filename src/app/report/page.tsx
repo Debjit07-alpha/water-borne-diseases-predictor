@@ -425,7 +425,7 @@ function ReportPageContent() {
 
 export default function ReportPage() {
   return (
-    <ProtectedRoute allowedRoles={['ASHA_WORKER', 'COMMUNITY_VOLUNTEER', 'CLINIC_STAFF', 'INCIDENT_REPORTER', 'ADMIN']}>
+    <ProtectedRoute allowedRoles={['ASHA_WORKER', 'COMMUNITY_VOLUNTEER', 'CLINIC_STAFF', 'HOSPITAL_STAFF', 'NGO_WORKER', 'INCIDENT_REPORTER', 'ADMIN']}>
       <ReportPageContent />
     </ProtectedRoute>
   );
