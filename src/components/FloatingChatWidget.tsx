@@ -270,22 +270,22 @@ export default function FloatingChatWidget() {
         <AnimatePresence>
           {showPopup && !isOpen && (
             <motion.div
-              className="absolute -top-16 -left-32 bg-blue-600 text-white px-4 py-3 rounded-lg shadow-xl whitespace-nowrap"
+              className="absolute -top-12 -left-24 bg-blue-600 text-white px-2 py-1.5 rounded-md shadow-xl whitespace-nowrap"
               initial={{ opacity: 0, y: 10, scale: 0.8 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.8 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-sm">NEED HELP? ASK CUREVO</span>
+              <div className="flex items-center">
+                <span className="font-medium text-xs">NEED HELP? ASK CUREVO</span>
                 <button
                   onClick={hidePopup}
-                  className="ml-2 text-white/80 hover:text-white"
+                  className="ml-1 text-white/80 hover:text-white"
                 >
-                  <X size={14} />
+                  <X size={12} />
                 </button>
               </div>
-              <div className="absolute top-full right-8 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-blue-600"></div>
+              <div className="absolute top-full right-4 w-0 h-0 border-l-3 border-r-3 border-t-3 border-transparent border-t-blue-600"></div>
             </motion.div>
           )}
         </AnimatePresence>

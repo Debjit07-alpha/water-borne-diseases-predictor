@@ -13,7 +13,6 @@ import {
   ChevronDown,
   ChevronUp,
   BookOpen,
-  MessageCircle,
   Globe,
   CheckCircle,
   Play,
@@ -261,7 +260,7 @@ export default function EducationPage() {
           >
             <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-90" />
             <h1 className="text-4xl font-bold mb-4 leading-tight">
-              Prevention
+              Disease Prevention Guide
             </h1>
             <p className="text-lg opacity-90 max-w-2xl mx-auto leading-relaxed">
               Comprehensive Water-Borne Disease Prevention for Communities
@@ -494,22 +493,6 @@ export default function EducationPage() {
           })}
         </div>
 
-        {/* Help Section */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2, duration: 0.6 }}
-          className="fixed bottom-6 right-6 z-50"
-        >
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
-          >
-            <MessageCircle className="w-6 h-6" />
-            <span className="hidden md:inline font-medium">NEED HELP? ASK QUERIES</span>
-          </motion.button>
-        </motion.div>
       </div>
 
 
