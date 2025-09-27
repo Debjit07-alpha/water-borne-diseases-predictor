@@ -216,14 +216,29 @@ function AuthComponent() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Registration successful! Logging you in...' });
-        // Update auth context with user data
-        if (data.user) {
-          login(data.user);
-        }
+        setMessage({ type: 'success', text: 'Registration complete, moving to the login page' });
+        // Store email for pre-filling login form
+        const registeredEmail = registerForm.email;
+        // Clear the registration form
+        setRegisterForm({
+          fullName: '',
+          email: '',
+          username: '',
+          password: '',
+          confirmPassword: '',
+          role: '',
+          assignedArea: ''
+        });
+        // Switch to login form after showing the success message
         setTimeout(() => {
-          router.push(redirectTo);
-        }, 1000);
+          setIsLogin(true);
+          setMessage({ type: '', text: '' });
+          // Pre-fill the login form with the registered email
+          setLoginForm(prev => ({
+            ...prev,
+            usernameOrEmail: registeredEmail
+          }));
+        }, 2000);
       } else {
         setMessage({ type: 'error', text: data.message || 'Registration failed' });
       }

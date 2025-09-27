@@ -60,19 +60,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { 
-        userId: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role
-      },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    // Create response with user data (excluding password)
+    // Create response with user data (excluding password and sensitive info)
     const userData = {
       id: user.id,
       username: user.username,
@@ -82,19 +70,12 @@ export async function POST(request: NextRequest) {
       assignedArea: user.assignedArea
     };
 
-    // Set HTTP-only cookie
+    // Return success response without setting auth token
+    // User will need to login with OTP verification
     const response = NextResponse.json({
-      message: 'Registration successful',
+      message: 'Registration successful. Please login to continue.',
       user: userData
     }, { status: 201 });
-
-    response.cookies.set('auth-token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60, // 7 days
-      path: '/'
-    });
 
     return response;
 
