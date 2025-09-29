@@ -81,7 +81,7 @@ export default function Footer() {
         <div className="mt-8 pt-6 border-t border-gray-700">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-gray-400">
-              Copyright © 2024 - 2025. All Rights Reserved | River Pulse - Water-Borne Disease Prevention Platform
+              River Pulse - Water-Borne Disease Prevention Platform
             </div>
             <div className="text-sm text-gray-400">
               Best viewed in Firefox 58.0.1 or above, Google Chrome 58.0 or above, Safari 11.0 or above.
