@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Montserrat, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
@@ -29,6 +29,19 @@ const playfairDisplay = Playfair_Display({
 export const metadata: Metadata = {
   title: "River Pulse — Water-Borne Disease Prevention & Monitoring Platform",
   description: "AI-powered disease identification, risk mapping, and community health surveillance for water-borne diseases including Cholera, Typhoid, Hepatitis A, and more.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icons/icon.svg",
+    apple: "/icons/icon.svg",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0ea5e9",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
