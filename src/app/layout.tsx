@@ -31,8 +31,8 @@ export const metadata: Metadata = {
   description: "AI-powered disease identification, risk mapping, and community health surveillance for water-borne diseases including Cholera, Typhoid, Hepatitis A, and more.",
   manifest: "/manifest.json",
   icons: {
-    icon: "/icons/icon.svg",
-    apple: "/icons/icon.svg",
+    icon: "/icons/icon-512.png",
+    apple: "/icons/icon-192.png",
   },
 };
 
