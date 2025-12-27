@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { MessageCircle, ImageIcon, Send, Loader2, X } from "lucide-react";
+import { MessageCircle, ImageIcon, Send, Loader2, X, RotateCcw } from "lucide-react";
 
 interface Message {
   id: string;
@@ -96,6 +96,12 @@ export default function Chat() {
     }
   };
 
+  const startNewChat = () => {
+    setMessages([]);
+    setInput("");
+    clearImage();
+  };
+
   const handleSend = async () => {
     if (!input.trim() && !selectedImage) return;
 
@@ -147,7 +153,6 @@ export default function Chat() {
         throw new Error("HTTP error! status: " + response.status);
       }
 
-      // Check if it's a JSON response (greetings, help, disease info)
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
         const data = await response.json();
@@ -160,8 +165,6 @@ export default function Chat() {
         );
         return;
       }
-
-      // Handle streaming response (AI analysis)
       const reader = response.body?.getReader();
       if (!reader) throw new Error("No response stream available");
 
@@ -252,11 +255,21 @@ export default function Chat() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="bg-primary text-primary-foreground p-3 rounded-t-lg">
+      <div className="bg-primary text-primary-foreground p-3 rounded-t-lg flex items-center justify-between">
         <h2 className="text-base font-medium flex items-center gap-2 font-baskerville">
           <MessageCircle className="h-4 w-4" />
           River Pulse
         </h2>
+        <Button
+          onClick={startNewChat}
+          size="sm"
+          variant="ghost"
+          className="text-primary-foreground hover:bg-primary-foreground/20 h-7 px-2"
+          title="Start new chat"
+        >
+          <RotateCcw className="h-3.5 w-3.5 mr-1" />
+          <span className="text-xs">New Chat</span>
+        </Button>
       </div>
       
       <div 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from 'next/navigation';
-import { MessageCircle, X, Send, User } from "lucide-react";
+import { MessageCircle, X, Send, User, RotateCcw, History, ChevronLeft, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function FloatingChatWidget() {
@@ -23,6 +23,70 @@ export default function FloatingChatWidget() {
   // For selected image before sending
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedImageUrl, setSelectedImageUrl] = useState<string | null>(null);
+
+  // Chat history state
+  interface SavedChat {
+    id: string;
+    title: string;
+    userName: string;
+    messages: Array<{id: string, text: string, sender: 'user' | 'bot', timestamp: string, imageUrl?: string}>;
+    createdAt: string;
+  }
+  const [chatHistory, setChatHistory] = useState<SavedChat[]>([]);
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+
+  // Load chat history from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('curevo-chat-history');
+    if (saved) {
+      try {
+        setChatHistory(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to parse chat history:', e);
+      }
+    }
+  }, []);
+
+  // Save chat history to localStorage whenever it changes
+  useEffect(() => {
+    if (chatHistory.length > 0) {
+      localStorage.setItem('curevo-chat-history', JSON.stringify(chatHistory));
+    }
+  }, [chatHistory]);
+
+  // Auto-save current chat when messages change
+  useEffect(() => {
+    if (currentChatId && messages.length > 1 && userName) {
+      const chatTitle = generateChatTitle(messages);
+      setChatHistory(prev => {
+        const existingIndex = prev.findIndex(c => c.id === currentChatId);
+        const updatedChat: SavedChat = {
+          id: currentChatId,
+          title: chatTitle,
+          userName,
+          messages: messages.map(m => ({...m, timestamp: m.timestamp.toISOString()})),
+          createdAt: existingIndex >= 0 ? prev[existingIndex].createdAt : new Date().toISOString()
+        };
+        if (existingIndex >= 0) {
+          const newHistory = [...prev];
+          newHistory[existingIndex] = updatedChat;
+          return newHistory;
+        }
+        return [updatedChat, ...prev];
+      });
+    }
+  }, [messages, currentChatId, userName]);
+
+  // Generate chat title from first user message
+  const generateChatTitle = (msgs: typeof messages) => {
+    const firstUserMsg = msgs.find(m => m.sender === 'user');
+    if (firstUserMsg) {
+      const text = firstUserMsg.text.slice(0, 30);
+      return text.length < firstUserMsg.text.length ? text + '...' : text;
+    }
+    return 'New Chat';
+  };
 
   // Helper to remove markdown and stray asterisks for clean display
   const sanitizeText = (text: string) => {
@@ -100,6 +164,8 @@ export default function FloatingChatWidget() {
     if (currentName.trim()) {
       setUserName(currentName.trim());
       setChatStage('welcome');
+      // Create new chat ID for this session
+      setCurrentChatId(Date.now().toString());
       
       // Welcome message with AI voice
       const welcomeMessage = `Hello ${currentName.trim()}! Welcome to Curevo Health Assistant. I'm here to help you with your medical questions and water-borne disease concerns. How can I assist you today?`;
@@ -255,6 +321,49 @@ export default function FloatingChatWidget() {
 
   const hidePopup = () => {
     setShowPopup(false);
+  };
+
+  const startNewChat = () => {
+    // Current chat is auto-saved via useEffect, just start fresh
+    setCurrentChatId(Date.now().toString());
+    setMessages([]);
+    setCurrentMessage("");
+    setSelectedImage(null);
+    setSelectedImageUrl(null);
+    // Keep userName so user doesn't have to re-enter
+    setChatStage('chat');
+    // Add welcome message for new chat
+    setMessages([{
+      id: '1',
+      text: `Hello ${userName}! 👋 Starting a new conversation. How can I help you today?`,
+      sender: 'bot',
+      timestamp: new Date()
+    }]);
+    setShowHistory(false);
+    // Stop any playing speech
+    if ('speechSynthesis' in window) {
+      speechSynthesis.cancel();
+    }
+    setIsPlaying(false);
+  };
+
+  const loadChat = (chat: typeof chatHistory[0]) => {
+    setCurrentChatId(chat.id);
+    setUserName(chat.userName);
+    setMessages(chat.messages.map(m => ({...m, timestamp: new Date(m.timestamp)})));
+    setChatStage('chat');
+    setShowHistory(false);
+  };
+
+  const deleteChat = (chatId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setChatHistory(prev => prev.filter(c => c.id !== chatId));
+    if (currentChatId === chatId) {
+      startNewChat();
+    }
+    // Update localStorage
+    const updated = chatHistory.filter(c => c.id !== chatId);
+    localStorage.setItem('curevo-chat-history', JSON.stringify(updated));
   };
 
   return (
@@ -426,18 +535,102 @@ export default function FloatingChatWidget() {
               {chatStage === 'chat' && (
                 <>
                   {/* Header */}
-                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                      <span className="text-xl">👩‍💼</span>
+                  <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => setShowHistory(!showHistory)}
+                        className="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
+                        title="Chat history"
+                      >
+                        <History size={20} />
+                      </button>
+                      <div>
+                        <h3 className="font-bold text-lg">Hello, {userName}!</h3>
+                        <p className="text-blue-100 text-sm flex items-center gap-1">
+                          Curevo Health Assistant
+                          {isPlaying && <span className="text-yellow-300">🔊</span>}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-bold text-lg">Hello, {userName}!</h3>
-                      <p className="text-blue-100 text-sm flex items-center gap-1">
-                        Curevo Health Assistant
-                        {isPlaying && <span className="text-yellow-300">🔊</span>}
-                      </p>
-                    </div>
+                    <button
+                      onClick={startNewChat}
+                      className="flex items-center gap-1 bg-white/20 hover:bg-white/30 text-white px-2 py-1.5 rounded-lg text-xs font-medium transition-colors"
+                      title="Start new chat"
+                    >
+                      <RotateCcw size={14} />
+                      New
+                    </button>
                   </div>
+
+                  {/* Chat History Panel */}
+                  <AnimatePresence>
+                    {showHistory && (
+                      <motion.div
+                        initial={{ x: -300, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: -300, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute inset-0 bg-white z-10 flex flex-col"
+                      >
+                        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center gap-3">
+                          <button
+                            onClick={() => setShowHistory(false)}
+                            className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
+                          >
+                            <ChevronLeft size={20} />
+                          </button>
+                          <h3 className="font-bold text-lg">Chat History</h3>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-2">
+                          {chatHistory.length === 0 ? (
+                            <div className="text-center text-gray-500 py-8">
+                              <History size={40} className="mx-auto mb-2 opacity-50" />
+                              <p className="text-sm">No saved chats yet</p>
+                            </div>
+                          ) : (
+                            <div className="space-y-1">
+                              {chatHistory.map((chat) => (
+                                <div
+                                  key={chat.id}
+                                  onClick={() => loadChat(chat)}
+                                  className={`p-3 rounded-lg cursor-pointer transition-colors flex items-center justify-between group ${
+                                    currentChatId === chat.id 
+                                      ? 'bg-blue-100 border-l-4 border-blue-600' 
+                                      : 'hover:bg-gray-100'
+                                  }`}
+                                >
+                                  <div className="flex-1 min-w-0">
+                                    <p className="font-medium text-sm text-gray-800 truncate">
+                                      {chat.title || 'New Chat'}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                      {new Date(chat.createdAt).toLocaleDateString()}
+                                    </p>
+                                  </div>
+                                  <button
+                                    onClick={(e) => deleteChat(chat.id, e)}
+                                    className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-100 rounded transition-all"
+                                    title="Delete chat"
+                                  >
+                                    <Trash2 size={14} className="text-red-500" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-3 border-t">
+                          <button
+                            onClick={startNewChat}
+                            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors"
+                          >
+                            <RotateCcw size={16} />
+                            New Chat
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
                   {/* Messages Area */}
                   <div className="flex-1 p-4 overflow-y-auto bg-gray-50 max-h-80">
