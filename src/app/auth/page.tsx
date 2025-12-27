@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, UserPlus, LogIn, AlertCircle, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, UserPlus, LogIn, AlertCircle, CheckCircle, KeyRound, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface LoginForm {
@@ -34,6 +34,7 @@ function AuthComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/report';
+  const resetToken = searchParams.get('reset');
   const { login } = useAuth();
   
   const [isLogin, setIsLogin] = useState(true);
@@ -45,6 +46,12 @@ function AuthComponent() {
   const [otpData, setOtpData] = useState({ userId: '', email: '', maskedEmail: '' });
   const [otp, setOtp] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
+
+  // Forgot password states
+  const [forgotPasswordStep, setForgotPasswordStep] = useState<'none' | 'email' | 'reset'>('none');
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [resetPasswordForm, setResetPasswordForm] = useState({ password: '', confirmPassword: '' });
+  const [resetUserInfo, setResetUserInfo] = useState({ email: '', fullName: '' });
 
   const [loginForm, setLoginForm] = useState<LoginForm>({
     usernameOrEmail: '',
@@ -61,10 +68,33 @@ function AuthComponent() {
     assignedArea: ''
   });
 
+  // Check for reset token on mount
+  useEffect(() => {
+    if (resetToken) {
+      verifyResetToken(resetToken);
+    }
+  }, [resetToken]);
+
+  const verifyResetToken = async (token: string) => {
+    try {
+      const response = await fetch(`/api/auth/reset-password?token=${token}`);
+      const data = await response.json();
+      
+      if (data.valid) {
+        setForgotPasswordStep('reset');
+        setResetUserInfo({ email: data.email, fullName: data.fullName });
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Invalid or expired reset link' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Failed to verify reset link' });
+    }
+  };
+
   // Clear message when switching between forms
   useEffect(() => {
     setMessage({ type: '', text: '' });
-  }, [isLogin]);
+  }, [isLogin, forgotPasswordStep]);
 
   // Countdown effect for resend OTP
   useEffect(() => {
@@ -249,6 +279,79 @@ function AuthComponent() {
     }
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: forgotEmail })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: '✅ We\'ve sent a password reset link to your email. Please check your inbox, change your password, and login.' });
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Failed to send reset email' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Network error. Please try again.' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage({ type: '', text: '' });
+
+    if (resetPasswordForm.password !== resetPasswordForm.confirmPassword) {
+      setMessage({ type: 'error', text: 'Passwords do not match' });
+      setIsLoading(false);
+      return;
+    }
+
+    if (resetPasswordForm.password.length < 6) {
+      setMessage({ type: 'error', text: 'Password must be at least 6 characters long' });
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          token: resetToken,
+          password: resetPasswordForm.password 
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: data.message });
+        // Redirect to login after 2 seconds
+        setTimeout(() => {
+          setForgotPasswordStep('none');
+          setResetPasswordForm({ password: '', confirmPassword: '' });
+          router.push('/auth');
+        }, 2000);
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Failed to reset password' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Network error. Please try again.' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center p-4">
       <motion.div
@@ -318,8 +421,131 @@ function AuthComponent() {
             </motion.div>
           )}
 
+          {/* Forgot Password - Email Form */}
+          {forgotPasswordStep === 'email' && (
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <KeyRound className="w-8 h-8 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Forgot Password?</h3>
+                <p className="text-sm text-gray-600">
+                  Enter your email address and we'll send you a link to reset your password.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="Enter your email address"
+                />
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+              >
+                {isLoading ? 'Sending...' : 'Send Reset Link'}
+              </motion.button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setForgotPasswordStep('none');
+                  setForgotEmail('');
+                  setMessage({ type: '', text: '' });
+                }}
+                className="w-full flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-gray-800"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Login
+              </button>
+            </form>
+          )}
+
+          {/* Reset Password Form */}
+          {forgotPasswordStep === 'reset' && (
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <KeyRound className="w-8 h-8 text-green-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Reset Your Password</h3>
+                <p className="text-sm text-gray-600">
+                  Hello {resetUserInfo.fullName}! Enter your new password below.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  New Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={resetPasswordForm.password}
+                    onChange={(e) => setResetPasswordForm(prev => ({ ...prev, password: e.target.value }))}
+                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    placeholder="Enter new password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Confirm New Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    required
+                    value={resetPasswordForm.confirmPassword}
+                    onChange={(e) => setResetPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    placeholder="Confirm new password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+              >
+                {isLoading ? 'Resetting...' : 'Reset Password'}
+              </motion.button>
+            </form>
+          )}
+
           {/* Login Form */}
-          {isLogin ? (
+          {forgotPasswordStep === 'none' && isLogin ? (
             otpStep ? (
               /* OTP Verification Form */
               <form onSubmit={handleOTPVerification} className="space-y-4">
@@ -444,6 +670,7 @@ function AuthComponent() {
               <div className="flex items-center justify-between">
                 <button
                   type="button"
+                  onClick={() => setForgotPasswordStep('email')}
                   className="text-sm text-blue-600 hover:text-blue-800"
                 >
                   Forgot Password?
@@ -472,23 +699,9 @@ function AuthComponent() {
               </p>
             </form>
             )
-          ) : (
+          ) : forgotPasswordStep === 'none' ? (
             /* Register Form */
             <form onSubmit={handleRegisterSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={registerForm.fullName}
-                  onChange={(e) => setRegisterForm(prev => ({ ...prev, fullName: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                  placeholder="Enter your full name"
-                />
-              </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Email Address
@@ -597,6 +810,20 @@ function AuthComponent() {
                 </div>
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={registerForm.fullName}
+                  onChange={(e) => setRegisterForm(prev => ({ ...prev, fullName: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="Enter your full name"
+                />
+              </div>
+
               <div className="text-xs text-gray-600">
                 By registering, you agree to our{' '}
                 <a href="/privacy" className="text-blue-600 hover:text-blue-800">Privacy Policy</a>
@@ -625,7 +852,7 @@ function AuthComponent() {
                 </button>
               </p>
             </form>
-          )}
+          ) : null}
         </div>
       </motion.div>
     </div>
