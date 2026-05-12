@@ -16,8 +16,6 @@ interface Registration {
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginData, setLoginData] = useState({ email: "", password: "" });
-  
-  // Mock registration data
   const [registrations, setRegistrations] = useState<Registration[]>([
     {
       id: "1",
@@ -25,33 +23,51 @@ export default function AdminPage() {
       email: "priya@health.gov.in",
       phone: "+91 9876543210",
       role: "ASHA Worker",
-      status: "pending",
-      date: "2025-09-22"
+      status: "approved",
+      date: "2025-12-22"
     },
     {
-      id: "2", 
+      id: "2",
       name: "Raj Kumar",
       email: "raj@volunteer.org",
       phone: "+91 9123456789",
       role: "Local Volunteer",
-      status: "pending", 
-      date: "2025-09-21"
+      status: "pending",
+      date: "2025-12-21"
+    },
+    {
+      id: "3",
+      name: "Rajesh Shetty",
+      email: "rajesh@volunteer.org",
+      phone: "+91 9152256789",
+      role: "Local Volunteer",
+      status: "approved",
+      date: "2025-12-21"
+    },
+    {
+      id: "4",
+      name: "Shounak Chatterjee",
+      email: "shounak@asha.org",
+      phone: "+91 9152256789",
+      role: "Asha Worker",
+      status: "rejected",
+      date: "2025-12-21"
     }
   ]);
 
-    const handleLogin = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (loginData.email === "debjitsaha069@gmail.com" && loginData.password === "12345678") {
-            setIsLoggedIn(true);
-        } else if (loginData.email === "biswasjaydeep51@gmail.com" && loginData.password === "12345678") {
-            setIsLoggedIn(true);
-        } else {
-            alert("Invalid email or password. Please check your credentials.");
-        }
-    };
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loginData.email === "debjitsaha069@gmail.com" && loginData.password === "12345678") {
+      setIsLoggedIn(true);
+    } else if (loginData.email === "biswasjaydeep51@gmail.com" && loginData.password === "12345678") {
+      setIsLoggedIn(true);
+    } else {
+      alert("Invalid email or password. Please check your credentials.");
+    }
+  };
 
   const updateStatus = (id: string, status: 'approved' | 'rejected') => {
-    setRegistrations(prev => 
+    setRegistrations(prev =>
       prev.map(reg => reg.id === id ? { ...reg, status } : reg)
     );
   };
@@ -67,7 +83,7 @@ export default function AdminPage() {
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Administrator Portal</h1>
             <p className="text-gray-600">Water-Borne Disease Prevention System</p>
           </div>
-          
+
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -77,12 +93,12 @@ export default function AdminPage() {
                 type="email"
                 placeholder="Enter your admin email address"
                 value={loginData.email}
-                onChange={(e) => setLoginData({...loginData, email: e.target.value})}
+                onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                 className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all bg-gray-50 text-gray-900"
                 required
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Password
@@ -91,12 +107,12 @@ export default function AdminPage() {
                 type="password"
                 placeholder="Enter secure password"
                 value={loginData.password}
-                onChange={(e) => setLoginData({...loginData, password: e.target.value})}
+                onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                 className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all bg-gray-50 text-gray-900"
                 required
               />
             </div>
-            
+
             <button
               type="submit"
               className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold p-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
@@ -104,7 +120,7 @@ export default function AdminPage() {
               Access Administrator Dashboard
             </button>
           </form>
-          
+
           <div className="mt-6 pt-6 border-t border-gray-200">
             <div className="flex items-center justify-center text-xs text-gray-500">
               <Shield size={12} className="mr-1" />
@@ -157,7 +173,7 @@ export default function AdminPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
@@ -170,7 +186,7 @@ export default function AdminPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300">
             <div className="flex items-center justify-between">
               <div>
@@ -198,7 +214,7 @@ export default function AdminPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="p-8">
             {registrations.length === 0 ? (
               <div className="text-center py-16">
@@ -221,7 +237,7 @@ export default function AdminPage() {
                             <p className="text-sm text-gray-600 font-medium">{reg.role}</p>
                           </div>
                         </div>
-                        
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                           <div className="flex items-center gap-2 text-gray-600">
                             <span className="text-blue-500">📧</span>
@@ -240,18 +256,17 @@ export default function AdminPage() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-3 ml-6">
-                        <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                          reg.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
-                          reg.status === 'approved' ? 'bg-green-100 text-green-800 border border-green-200' :
-                          'bg-red-100 text-red-800 border border-red-200'
-                        }`}>
+                        <span className={`px-4 py-2 rounded-full text-sm font-semibold ${reg.status === 'pending' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
+                            reg.status === 'approved' ? 'bg-green-100 text-green-800 border border-green-200' :
+                              'bg-red-100 text-red-800 border border-red-200'
+                          }`}>
                           {reg.status === 'pending' && '⏳ Pending Review'}
                           {reg.status === 'approved' && '✅ Approved'}
                           {reg.status === 'rejected' && '❌ Rejected'}
                         </span>
-                        
+
                         {reg.status === 'pending' && (
                           <div className="flex gap-2">
                             <button

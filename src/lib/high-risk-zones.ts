@@ -65,8 +65,6 @@ export const highRiskZones: HighRiskZone[] = [
       firstResponse: ["Isolate sick individuals to prevent spread.", "Administer ORS immediately.", "Report to local health authorities."],
     },
   },
-
-  // Tea Garden Settlements, Assam
   {
     lat: 27.4,
     lng: 95.0,

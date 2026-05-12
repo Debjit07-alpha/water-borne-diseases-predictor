@@ -683,7 +683,7 @@ export default function FloatingChatWidget() {
                         </motion.div>
                       )}
                     </div>
-                    
+
                     {/* Quick Action Buttons - show only if no messages */}
                     {messages.length === 1 && (
                       <div className="space-y-2 mt-4">
@@ -704,7 +704,7 @@ export default function FloatingChatWidget() {
                         </button>
                       </div>
                     )}
-                    
+
                     {/* Invisible element to scroll to */}
                     <div ref={messagesEndRef} />
                   </div>

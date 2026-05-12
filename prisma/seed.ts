@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-// Force TypeScript reload
 const prisma = new PrismaClient();
 
 const diseases = [
